@@ -1000,6 +1000,7 @@
     <string name="openai_error_api_error">OpenAI API error: %s</string>
     <string name="openai_error_recording_failed">Audio recording failed. Please try again.</string>
     <string name="openai_error_transcription_failed">Speech transcription failed. Please try again.</string>
+    <string name="openai_error_whisper_not_installed">Whisper to Input app is not installed. Please install it to use this feature.</string>
     
     <!-- OpenAI Status Messages -->
     <string name="openai_status_recording">Recording audio...</string>
