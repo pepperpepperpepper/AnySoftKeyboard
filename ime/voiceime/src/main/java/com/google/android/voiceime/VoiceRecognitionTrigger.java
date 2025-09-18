@@ -16,10 +16,13 @@
 
 package com.google.android.voiceime;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
+import android.preference.PreferenceManager;
 import android.view.inputmethod.InputMethodSubtype;
 
-/** Triggers a voice recognition by using {@link ImeTrigger} or {@link IntentApiTrigger}. */
+/** Triggers a voice recognition by using {@link ImeTrigger}, {@link IntentApiTrigger}, or {@link OpenAITrigger}. */
 public class VoiceRecognitionTrigger {
 
   private final InputMethodService mInputMethodService;
@@ -28,6 +31,7 @@ public class VoiceRecognitionTrigger {
 
   private ImeTrigger mImeTrigger;
   private IntentApiTrigger mIntentApiTrigger;
+  private OpenAITrigger mOpenAITrigger;
 
   public VoiceRecognitionTrigger(InputMethodService inputMethodService) {
     mInputMethodService = inputMethodService;
@@ -35,7 +39,10 @@ public class VoiceRecognitionTrigger {
   }
 
   private Trigger getTrigger() {
-    if (ImeTrigger.isInstalled(mInputMethodService)) {
+    // Check if OpenAI speech-to-text is enabled and configured
+    if (OpenAITrigger.isAvailable(mInputMethodService)) {
+      return getOpenAITrigger();
+    } else if (ImeTrigger.isInstalled(mInputMethodService)) {
       // Prioritize IME as it's usually a better experience
       return getImeTrigger();
     } else if (IntentApiTrigger.isInstalled(mInputMethodService)) {
@@ -59,6 +66,13 @@ public class VoiceRecognitionTrigger {
     return mImeTrigger;
   }
 
+  private Trigger getOpenAITrigger() {
+    if (mOpenAITrigger == null) {
+      mOpenAITrigger = new OpenAITrigger(mInputMethodService);
+    }
+    return mOpenAITrigger;
+  }
+
   public boolean isInstalled() {
     return mTrigger != null;
   }
@@ -69,7 +83,9 @@ public class VoiceRecognitionTrigger {
 
   // For testing
   public String getKind() {
-    if (mImeTrigger != null && mIntentApiTrigger != null) {
+    if (mOpenAITrigger != null) {
+      return "openai";
+    } else if (mImeTrigger != null && mIntentApiTrigger != null) {
       return "both";
     } else if (mImeTrigger != null) {
       return "ime";

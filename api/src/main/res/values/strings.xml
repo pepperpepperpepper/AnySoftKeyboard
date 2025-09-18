@@ -1,3 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- OpenAI Speech-to-Text Settings -->
+    <string name="openai_enabled_title">Enable OpenAI Speech-to-Text</string>
+    <string name="openai_enabled_summary">Use OpenAI API instead of Google speech recognition</string>
+    
+    <string name="openai_api_settings_group">API Settings</string>
+    <string name="openai_api_key_title">API Key</string>
+    <string name="openai_api_key_summary">Your OpenAI API key for speech-to-text</string>
+    <string name="openai_api_key_dialog_title">Enter OpenAI API Key</string>
+    
+    <string name="openai_endpoint_title">API Endpoint</string>
+    <string name="openai_endpoint_summary">URL for OpenAI audio transcription API</string>
+    <string name="openai_endpoint_dialog_title">Enter API Endpoint URL</string>
+    
+    <string name="openai_model_title">Model</string>
+    <string name="openai_model_summary">Whisper model to use for transcription</string>
+    <string name="openai_model_dialog_title">Select Whisper Model</string>
+    
+    <string name="openai_language_title">Language</string>
+    <string name="openai_language_summary">Language code for transcription (e.g., en, es, fr)</string>
+    <string name="openai_language_dialog_title">Enter Language Code</string>
+    
+    <string name="openai_audio_settings_group">Audio Settings</string>
+    <string name="openai_audio_format_title">Audio Format</string>
+    <string name="openai_audio_format_summary">Audio format for recording</string>
+    <string name="openai_audio_format_dialog_title">Select Audio Format</string>
+    
+    <string name="openai_auto_punctuation_title">Auto Punctuation</string>
+    <string name="openai_auto_punctuation_summary">Automatically add punctuation to transcribed text</string>
+    
+    <string name="openai_timestamps_title">Include Timestamps</string>
+    <string name="openai_timestamps_summary">Include word-level timestamps in response</string>
+    
+    <string name="openai_behavior_settings_group">Behavior Settings</string>
+    
+    <string name="openai_auto_switch_back_title">Auto Switch Back</string>
+    <string name="openai_auto_switch_back_summary">Switch to previous keyboard after transcription</string>
+    
+    <string name="openai_add_trailing_space_title">Add Trailing Space</string>
+    <string name="openai_add_trailing_space_summary">Add space after transcribed text</string>
+    
+    <!-- OpenAI Error Messages -->
+    <string name="openai_error_api_key_unset">OpenAI API key is not set. Please configure it in settings.</string>
+    <string name="openai_error_endpoint_unset">OpenAI API endpoint is not set. Please configure it in settings.</string>
+    <string name="openai_error_network">Network error occurred while contacting OpenAI API.</string>
+    <string name="openai_error_api_error">OpenAI API error: %s</string>
+    <string name="openai_error_recording_failed">Audio recording failed. Please try again.</string>
+    <string name="openai_error_transcription_failed">Speech transcription failed. Please try again.</string>
+    
+    <!-- OpenAI Status Messages -->
+    <string name="openai_status_recording">Recording audio...</string>
+    <string name="openai_status_processing">Processing audio...</string>
+    <string name="openai_status_transcribing">Transcribing with OpenAI...</string>
+    
+    <!-- OpenAI Settings Menu -->
+    <string name="speech_recognition_group">Speech Recognition</string>
+    <string name="openai_speech_settings_title">OpenAI Speech-to-Text</string>
+    <string name="openai_speech_settings_summary">Configure OpenAI API for voice input</string>
 </resources>

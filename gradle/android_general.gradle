@@ -35,7 +35,9 @@ android {
 
 
     androidResources {
-        noCompress ''
+        // Removing noCompress configuration since empty string causes XML resource processing issues
+        // If specific file extensions need to be uncompressed, add them here as a list
+        // noCompress 'png', 'jpg', 'mp3', 'mp4'
     }
 }
 

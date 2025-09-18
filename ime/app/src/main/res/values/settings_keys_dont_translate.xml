@@ -346,4 +346,33 @@
     <string name="settings_key_zoom_percent_in_landscape">settings_key_zoom_percent_in_landscape</string>
 
     <string name="settings_key_bottom_extra_padding_in_portrait">settings_key_bottom_extra_padding_in_portrait</string>
+
+    <!-- OpenAI Speech-to-Text Settings -->
+    <string name="settings_key_openai_enabled">settings_key_openai_enabled</string>
+    <string name="settings_key_openai_api_key">settings_key_openai_api_key</string>
+    <string name="settings_key_openai_endpoint">settings_key_openai_endpoint</string>
+    <string name="settings_key_openai_model">settings_key_openai_model</string>
+    <string name="settings_key_openai_language">settings_key_openai_language</string>
+    <string name="settings_key_openai_audio_format">settings_key_openai_audio_format</string>
+    <string name="settings_key_openai_auto_punctuation">settings_key_openai_auto_punctuation</string>
+    <string name="settings_key_openai_timestamps">settings_key_openai_timestamps</string>
+    <string name="settings_key_openai_auto_switch_back">settings_key_openai_auto_switch_back</string>
+    <string name="settings_key_openai_add_trailing_space">settings_key_openai_add_trailing_space</string>
+    <string name="settings_key_openai_speech_settings">settings_key_openai_speech_settings</string>
+    
+    <string-array name="openai_model_values">
+        <item>whisper-1</item>
+    </string-array>
+    <string-array name="openai_model_entries">
+        <item>Whisper-1</item>
+    </string-array>
+    
+    <string-array name="openai_audio_format_values">
+        <item>m4a</item>
+        <item>ogg</item>
+    </string-array>
+    <string-array name="openai_audio_format_entries">
+        <item>M4A (MP4)</item>
+        <item>OGG</item>
+    </string-array>
 </resources>

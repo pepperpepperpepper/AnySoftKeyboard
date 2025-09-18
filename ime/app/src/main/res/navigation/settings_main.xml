@@ -197,6 +197,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_additionalLanguageSettingsFragment_to_openAISpeechSettingsFragment"
+            app:destination="@id/openAISpeechSettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/userDictionaryEditorFragment"
@@ -311,4 +318,8 @@
         android:id="@+id/fullChangeLogFragment"
         android:name="com.anysoftkeyboard.releaseinfo.ChangeLogFragment$FullChangeLogFragment"
         android:label="FullChangeLogFragment" />
+    <fragment
+        android:id="@+id/openAISpeechSettingsFragment"
+        android:name="com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment"
+        android:label="OpenAI Speech Settings" />
 </navigation>
