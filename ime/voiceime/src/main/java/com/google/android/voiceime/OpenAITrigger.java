@@ -217,7 +217,10 @@ public class OpenAITrigger implements Trigger {
     
     private void showAlert(String message) {
         // Use Toast instead of AlertDialog since InputMethodService doesn't have a valid window token
-        android.widget.Toast.makeText(mInputMethodService, message, android.widget.Toast.LENGTH_LONG).show();
+        // Ensure Toast is shown on UI thread using Handler
+        new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+            android.widget.Toast.makeText(mInputMethodService, message, android.widget.Toast.LENGTH_LONG).show();
+        });
     }
     
     private void onTranscriptionResult(String result) {
@@ -285,8 +288,12 @@ public class OpenAITrigger implements Trigger {
     private void showError(String message) {
         // Show error as toast - FIXED VERSION
         String fixedMessage = "FIXED: " + message;
-        android.widget.Toast.makeText(mInputMethodService, fixedMessage, android.widget.Toast.LENGTH_LONG).show();
         Log.e(TAG, "Error: " + fixedMessage);
+        
+        // Ensure Toast is shown on UI thread using Handler
+        new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+            android.widget.Toast.makeText(mInputMethodService, fixedMessage, android.widget.Toast.LENGTH_LONG).show();
+        });
     }
     
     /**
