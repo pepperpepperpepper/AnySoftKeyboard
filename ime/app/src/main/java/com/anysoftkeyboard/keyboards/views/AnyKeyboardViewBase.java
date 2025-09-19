@@ -1005,6 +1005,16 @@ public class AnyKeyboardViewBase extends View implements InputViewBinder, Pointe
     return false;
   }
 
+  @Override
+  public boolean setVoice(boolean active, boolean locked) {
+    if (mKeyboard != null && mKeyboard.setVoice(active, locked)) {
+      // The whole keyboard probably needs to be redrawn
+      invalidateAllKeys();
+      return true;
+    }
+    return false;
+  }
+
   /**
    * When enabled, calls to {@link OnKeyboardActionListener#onKey} will include key mCodes for
    * adjacent keys. When disabled, only the primary key code will be reported.
@@ -1647,6 +1657,15 @@ public class AnyKeyboardViewBase extends View implements InputViewBinder, Pointe
         }
         case KeyCodes.CTRL -> {
           if (mKeyboard.isControl()) {
+            icon.setState(mDrawableStatesProvider.DRAWABLE_STATE_MODIFIER_PRESSED);
+          } else {
+            icon.setState(mDrawableStatesProvider.DRAWABLE_STATE_MODIFIER_NORMAL);
+          }
+        }
+        case KeyCodes.VOICE_INPUT -> {
+          if (mKeyboard.isVoiceLocked()) {
+            icon.setState(mDrawableStatesProvider.DRAWABLE_STATE_MODIFIER_LOCKED);
+          } else if (mKeyboard.isVoiceActive()) {
             icon.setState(mDrawableStatesProvider.DRAWABLE_STATE_MODIFIER_PRESSED);
           } else {
             icon.setState(mDrawableStatesProvider.DRAWABLE_STATE_MODIFIER_NORMAL);

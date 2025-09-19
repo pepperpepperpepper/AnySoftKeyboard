@@ -58,8 +58,10 @@ public abstract class AnyKeyboard extends Keyboard {
   static final int[] EMPTY_INT_ARRAY = new int[0];
   private int mShiftState = STICKY_KEY_OFF;
   private int mControlState = STICKY_KEY_OFF;
+  private int mVoiceState = STICKY_KEY_OFF;
   private Key mShiftKey;
   private Key mControlKey;
+  private Key mVoiceKey;
   private EnterKey mEnterKey;
   private boolean mRightToLeftLayout = false; // the "super" ctor will create
   private boolean mTopRowWasCreated;
@@ -477,6 +479,9 @@ public abstract class AnyKeyboard extends Keyboard {
         case KeyCodes.CTRL:
           mControlKey = key;
           break;
+        case KeyCodes.VOICE_INPUT:
+          mVoiceKey = key;
+          break;
         default:
           // no-op
           break;
@@ -624,6 +629,33 @@ public abstract class AnyKeyboard extends Keyboard {
     } else {
       return false;
     }
+  }
+
+  public boolean setVoice(boolean active, boolean locked) {
+    if (mVoiceKey != null) {
+      final int initialState = mVoiceState;
+      if (active) {
+        if (locked) {
+          mVoiceState = STICKY_KEY_LOCKED;
+        } else if (mVoiceState == STICKY_KEY_OFF) {
+          mVoiceState = STICKY_KEY_ON;
+        }
+      } else {
+        mVoiceState = STICKY_KEY_OFF;
+      }
+
+      return mVoiceState != initialState;
+    } else {
+      return false;
+    }
+  }
+
+  public boolean isVoiceActive() {
+    return mVoiceState != STICKY_KEY_OFF;
+  }
+
+  public boolean isVoiceLocked() {
+    return mVoiceState == STICKY_KEY_LOCKED;
   }
 
   @CallSuper

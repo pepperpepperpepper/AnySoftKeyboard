@@ -118,4 +118,15 @@ public class VoiceRecognitionTrigger {
     // The trigger is refreshed as the system may have changed in the meanwhile.
     mTrigger = getTrigger();
   }
+  
+  /**
+   * Checks if currently recording voice input.
+   * This allows the UI to update the microphone button state.
+   */
+  public boolean isRecording() {
+    if (mTrigger instanceof OpenAITrigger) {
+      return ((OpenAITrigger) mTrigger).isRecording();
+    }
+    return false;
+  }
 }

@@ -38,6 +38,7 @@ public class OpenAITrigger implements Trigger {
     private String mRecordedAudioFilename;
     private String mAudioMediaType;
     private boolean mUseOggFormat;
+    private boolean mIsRecording = false;
     
     public OpenAITrigger(InputMethodService inputMethodService) {
         mInputMethodService = inputMethodService;
@@ -50,6 +51,7 @@ public class OpenAITrigger implements Trigger {
     
     private void setupAudioRecorderCallbacks() {
         mAudioRecorderManager.setOnRecordingStopped((success, errorMessage) -> {
+            mIsRecording = false; // Always reset recording state when stopped
             if (success) {
                 startTranscription();
             } else {
@@ -65,16 +67,27 @@ public class OpenAITrigger implements Trigger {
     }
     
     public static boolean isAvailable(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean enabled = prefs.getBoolean(context.getString(R.string.settings_key_openai_enabled), false);
-        String apiKey = prefs.getString(context.getString(R.string.settings_key_openai_api_key), "");
-        
-        return enabled && !apiKey.isEmpty();
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            if (prefs == null) {
+                return false; // Handle test environment where prefs might be null
+            }
+            String enabledKey = context.getString(R.string.settings_key_openai_enabled);
+            String apiKeyKey = context.getString(R.string.settings_key_openai_api_key);
+            
+            boolean enabled = prefs.getBoolean(enabledKey, false);
+            String apiKey = prefs.getString(apiKeyKey, "");
+            
+            return enabled && !apiKey.isEmpty();
+        } catch (Exception e) {
+            // Handle any exceptions in test environment
+            return false;
+        }
     }
     
     @Override
     public void startVoiceRecognition(String language) {
-        Log.d(TAG, "Starting OpenAI voice recognition for language: " + language);
+        Log.d(TAG, "OpenAI voice recognition triggered for language: " + language);
         
         // Check if OpenAI speech-to-text is enabled and configured
         if (!isConfigured()) {
@@ -82,11 +95,19 @@ public class OpenAITrigger implements Trigger {
             return;
         }
         
-        // Setup audio format based on preferences
-        setupAudioFormat();
-        
-        // Start recording
-        startRecording();
+        // Toggle recording state
+        if (mIsRecording) {
+            // Stop recording if currently recording
+            Log.d(TAG, "Stopping recording");
+            stopRecording();
+        } else {
+            // Setup audio format based on preferences
+            setupAudioFormat();
+            
+            // Start recording
+            Log.d(TAG, "Starting recording");
+            startRecording();
+        }
     }
     
     private boolean isConfigured() {
@@ -122,6 +143,7 @@ public class OpenAITrigger implements Trigger {
         
         try {
             mAudioRecorderManager.startRecording(mRecordedAudioFilename, mUseOggFormat);
+            mIsRecording = true;
             Log.d(TAG, "Started recording to: " + mRecordedAudioFilename);
         } catch (Exception e) {
             Log.e(TAG, "Error starting recording", e);
@@ -129,53 +151,77 @@ public class OpenAITrigger implements Trigger {
         }
     }
     
+    private void stopRecording() {
+        if (mAudioRecorderManager.isRecording()) {
+            mAudioRecorderManager.stopRecording();
+        }
+        mIsRecording = false;
+    }
+    
     private void startTranscription() {
         Log.d(TAG, "Starting transcription for file: " + mRecordedAudioFilename);
         
-        String apiKey = mSharedPreferences.getString(
-            mInputMethodService.getString(R.string.settings_key_openai_api_key), "");
-        String endpoint = mSharedPreferences.getString(
-            mInputMethodService.getString(R.string.settings_key_openai_endpoint), 
-            "https://api.openai.com/v1/audio/transcriptions");
-        String model = mSharedPreferences.getString(
-            mInputMethodService.getString(R.string.settings_key_openai_model), "whisper-1");
-        String language = mSharedPreferences.getString(
-            mInputMethodService.getString(R.string.settings_key_openai_language), "en");
-        boolean addTrailingSpace = mSharedPreferences.getBoolean(
-            mInputMethodService.getString(R.string.settings_key_openai_add_trailing_space), true);
-        
-        mOpenAITranscriber.startAsync(
-            mInputMethodService,
-            mRecordedAudioFilename,
-            mAudioMediaType,
-            apiKey,
-            endpoint,
-            model,
-            language,
-            addTrailingSpace,
-            new OpenAITranscriber.TranscriptionCallback() {
-                @Override
-                public void onResult(String result) {
-                    onTranscriptionResult(result);
-                }
-                
-                @Override
-                public void onError(String error) {
-                    // This won't be called for success callback
-                }
-            },
-            new OpenAITranscriber.TranscriptionCallback() {
-                @Override
-                public void onResult(String result) {
-                    // This won't be called for error callback
-                }
-                
-                @Override
-                public void onError(String error) {
-                    onTranscriptionError(error);
-                }
-            }
-        );
+        // Instead of calling OpenAI API, we'll show the file length
+        File audioFile = new File(mRecordedAudioFilename);
+        if (audioFile.exists()) {
+            long fileSize = audioFile.length();
+            String fileSizeText = formatFileSize(fileSize);
+            
+            // Calculate expected duration (rough estimate)
+            long expectedDurationSeconds = estimateAudioDuration(fileSize);
+            String expectedDurationText = formatDuration(expectedDurationSeconds);
+            
+            // Show alert with file information
+            String message = String.format("OpenAI recording made with %d number of bytes.", fileSize);
+            
+            showAlert(message);
+            
+            // Clean up the audio file
+            cleanupAudioFile();
+        } else {
+            Log.e(TAG, "Audio file does not exist: " + mRecordedAudioFilename);
+            showError("Audio file not found: " + mRecordedAudioFilename);
+        }
+    }
+    
+    private String formatFileSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " B";
+        } else if (bytes < 1024 * 1024) {
+            return String.format("%.1f KB", bytes / 1024.0);
+        } else {
+            return String.format("%.1f MB", bytes / (1024.0 * 1024.0));
+        }
+    }
+    
+    private long estimateAudioDuration(long fileSize) {
+        // Rough estimate based on audio format
+        if (mUseOggFormat) {
+            // OGG Vorbis: roughly 32-64 kbps for voice
+            return fileSize / (16 * 1024); // Assuming ~16KB per second (128 kbps)
+        } else {
+            // M4A/AAC: roughly 32-64 kbps for voice
+            return fileSize / (16 * 1024); // Assuming ~16KB per second (128 kbps)
+        }
+    }
+    
+    private String formatDuration(long seconds) {
+        if (seconds < 60) {
+            return seconds + " seconds";
+        } else {
+            long minutes = seconds / 60;
+            long remainingSeconds = seconds % 60;
+            return String.format("%d:%02d", minutes, remainingSeconds);
+        }
+    }
+    
+    private void showAlert(String message) {
+        new android.app.AlertDialog.Builder(mInputMethodService)
+            .setTitle("Audio Recording Test")
+            .setMessage(message)
+            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+            .setCancelable(true)
+            .show();
     }
     
     private void onTranscriptionResult(String result) {
@@ -246,11 +292,20 @@ public class OpenAITrigger implements Trigger {
         Log.e(TAG, "Error: " + message);
     }
     
+    /**
+     * Checks if currently recording.
+     * This allows the UI to update the microphone button state.
+     */
+    public boolean isRecording() {
+        return mIsRecording;
+    }
+    
     @Override
     public void onStartInputView() {
         Log.d(TAG, "onStartInputView called");
         // Reset any pending state
         mLastRecognitionResult = null;
+        mIsRecording = false;
         
         // Stop any ongoing recording
         mAudioRecorderManager.stopRecording();

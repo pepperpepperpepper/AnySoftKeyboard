@@ -305,6 +305,9 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
     if (mVoiceRecognitionTrigger != null) {
       mVoiceRecognitionTrigger.onStartInputView();
     }
+    
+    // Reset voice key state when input view starts
+    updateVoiceKeyState();
 
     InputViewBinder inputView = getInputView();
     inputView.resetInputView();
@@ -408,6 +411,19 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
     updateShiftStateNow();
   }
 
+  private void updateVoiceKeyState() {
+    AnyKeyboard currentKeyboard = getCurrentAlphabetKeyboard();
+    if (currentKeyboard != null) {
+      boolean isRecording = mVoiceRecognitionTrigger.isRecording();
+      boolean stateChanged = currentKeyboard.setVoice(isRecording, false);
+      
+      if (stateChanged && getInputView() != null) {
+        // Invalidate the keyboard view to update the voice key appearance
+        getInputView().invalidateAllKeys();
+      }
+    }
+  }
+
   private void onFunctionKey(final int primaryCode, final Keyboard.Key key, final boolean fromUI) {
     if (BuildConfig.DEBUG) Logger.d(TAG, "onFunctionKey %d", primaryCode);
 
@@ -495,6 +511,9 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
         if (mVoiceRecognitionTrigger.isInstalled()) {
           mVoiceRecognitionTrigger.startVoiceRecognition(
               getCurrentAlphabetKeyboard().getDefaultDictionaryLocale());
+          
+          // Update voice key state based on recording state
+          updateVoiceKeyState();
         } else {
           Intent voiceInputNotInstalledIntent =
               new Intent(getApplicationContext(), VoiceInputNotInstalledActivity.class);
@@ -1029,6 +1048,17 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
     }
   }
 
+  private void handleVoice() {
+    if (getInputView() != null) {
+      Logger.d(
+          TAG,
+          "voice Setting UI active:%s, locked: %s",
+          mVoiceKeyState.isActive(),
+          mVoiceKeyState.isLocked());
+      getInputView().setVoice(mVoiceKeyState.isActive(), mVoiceKeyState.isLocked());
+    }
+  }
+
   private void handleShift() {
     if (getInputView() != null) {
       Logger.d(
@@ -1153,6 +1183,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
   private void setKeyboardFinalStuff() {
     mShiftKeyState.reset();
     mControlKeyState.reset();
+    mVoiceKeyState.reset();
     // changing dictionary
     setDictionariesForCurrentKeyboard();
     // Notifying if needed
@@ -1190,6 +1221,13 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
     } else {
       mControlKeyState.onOtherKeyPressed();
     }
+
+    if (primaryCode == KeyCodes.VOICE_INPUT) {
+      mVoiceKeyState.onPress();
+      handleVoice();
+    } else {
+      mVoiceKeyState.onOtherKeyPressed();
+    }
   }
 
   @Override
@@ -1210,6 +1248,13 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
       mControlKeyState.onRelease(mMultiTapTimeout, mLongPressTimeout);
     } else {
       mControlKeyState.onOtherKeyReleased();
+    }
+
+    if (primaryCode == KeyCodes.VOICE_INPUT) {
+      mVoiceKeyState.onRelease(mMultiTapTimeout, mLongPressTimeout);
+      handleVoice();
+    } else {
+      mVoiceKeyState.onOtherKeyReleased();
     }
     handleControl();
   }

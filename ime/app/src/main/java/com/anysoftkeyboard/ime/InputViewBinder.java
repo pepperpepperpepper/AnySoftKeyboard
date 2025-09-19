@@ -50,6 +50,15 @@ public interface InputViewBinder extends InputViewActionsProvider, ThemeableChil
   boolean setShiftLocked(boolean locked);
 
   /**
+   * Sets the state of the voice input key of the keyboard, if any.
+   *
+   * @param active whether or not to enable the state of the voice key
+   * @param locked whether or not to lock the voice key state
+   * @return true if the voice key state changed, false if there was no change
+   */
+  boolean setVoice(boolean active, boolean locked);
+
+  /**
    * Called when the user requests input-view reset
    *
    * @return returns true if something was closed (say, a child-view). Else, false - which means
