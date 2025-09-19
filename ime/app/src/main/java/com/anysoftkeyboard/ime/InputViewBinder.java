@@ -89,5 +89,8 @@ public interface InputViewBinder extends InputViewActionsProvider, ThemeableChil
   /** Is this View currently shown. */
   boolean isShown();
 
+  /** Invalidates all keys in the keyboard view */
+  void invalidateAllKeys();
+
   void setWatermark(@NonNull List<Drawable> watermarks);
 }

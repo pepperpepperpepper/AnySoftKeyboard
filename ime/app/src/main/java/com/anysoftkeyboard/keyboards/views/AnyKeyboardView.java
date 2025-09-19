@@ -376,6 +376,11 @@ public class AnyKeyboardView extends AnyKeyboardViewWithExtraDraw
     showMiniKeyboardForPopupKey(mDefaultAddOn, mUtilityKey, true);
   }
 
+  @Override
+  public void invalidateAllKeys() {
+    super.invalidateAllKeys();
+  }
+
   public void requestInAnimation(Animation animation) {
     if (mAnimationLevel != AnimationsLevel.None) {
       mInAnimation = animation;

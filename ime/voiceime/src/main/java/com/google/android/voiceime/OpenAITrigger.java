@@ -216,12 +216,8 @@ public class OpenAITrigger implements Trigger {
     }
     
     private void showAlert(String message) {
-        new android.app.AlertDialog.Builder(mInputMethodService)
-            .setTitle("Audio Recording Test")
-            .setMessage(message)
-            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-            .setCancelable(true)
-            .show();
+        // Use Toast instead of AlertDialog since InputMethodService doesn't have a valid window token
+        android.widget.Toast.makeText(mInputMethodService, message, android.widget.Toast.LENGTH_LONG).show();
     }
     
     private void onTranscriptionResult(String result) {
