@@ -61,7 +61,7 @@ public abstract class AnyKeyboard extends Keyboard {
   private int mVoiceState = STICKY_KEY_OFF;
   private Key mShiftKey;
   private Key mControlKey;
-  private Key mVoiceKey;
+  private AnyKey mVoiceKey;
   private EnterKey mEnterKey;
   private boolean mRightToLeftLayout = false; // the "super" ctor will create
   private boolean mTopRowWasCreated;
@@ -480,7 +480,10 @@ public abstract class AnyKeyboard extends Keyboard {
           mControlKey = key;
           break;
         case KeyCodes.VOICE_INPUT:
-          mVoiceKey = key;
+          key =
+              mVoiceKey =
+                  new VoiceKey(
+                      resourceMapping, keyboardContext, parent, keyboardDimens, x, y, parser);
           break;
         default:
           // no-op
@@ -950,6 +953,46 @@ public abstract class AnyKeyboard extends Keyboard {
         return provider.KEY_STATE_ACTION_PRESSED;
       } else {
         return provider.KEY_STATE_ACTION_NORMAL;
+      }
+    }
+  }
+
+  private static class VoiceKey extends AnyKey {
+    
+    public VoiceKey(
+        @NonNull AddOn.AddOnResourceMapping resourceMapping,
+        Context keyboardContext,
+        Row parent,
+        KeyboardDimens keyboardDimens,
+        int x,
+        int y,
+        XmlResourceParser parser) {
+      super(resourceMapping, keyboardContext, parent, keyboardDimens, x, y, parser);
+      // Voice key should always be treated as a functional key
+      // Note: mFunctionalKey is private in parent, so we'll handle this in getCurrentDrawableState
+    }
+
+    @Override
+    public int[] getCurrentDrawableState(KeyDrawableStateProvider provider) {
+      // Check if this is the voice key and if voice recording is active
+      if (row != null && row.mParent instanceof AnyKeyboard) {
+        AnyKeyboard keyboard = (AnyKeyboard) row.mParent;
+        if (keyboard.isVoiceActive()) {
+          if (pressed) {
+            // Voice key is pressed while recording - combine locked and pressed states
+            return new int[] {android.R.attr.state_checked, android.R.attr.state_pressed};
+          } else {
+            // Voice key is in recording state (locked) but not pressed
+            return new int[] {android.R.attr.state_checked};
+          }
+        }
+      }
+      // Voice key is not in recording state - use normal functional key behavior
+      // Since we can't access mFunctionalKey directly, we'll treat voice key as functional
+      if (pressed) {
+        return provider.KEY_STATE_FUNCTIONAL_PRESSED;
+      } else {
+        return provider.KEY_STATE_FUNCTIONAL_NORMAL;
       }
     }
   }

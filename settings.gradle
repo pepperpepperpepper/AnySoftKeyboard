@@ -1,4 +1,9 @@
 rootProject.name = 'AnySoftKeyboard'
+
+// Configure Gradle to show only errors and suppress warnings
+gradle.startParameter.showStacktrace = 'INTERNAL_EXCEPTIONS'
+gradle.startParameter.logLevel = 'ERROR'
+
 include ':deployment'
 
 include ':api'

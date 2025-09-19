@@ -6,14 +6,14 @@ dependencies {
 
     implementation project(path: ':ime:base')
     implementation project(path: ':api')
-    
+
     // OkHttp for HTTP requests to OpenAI API
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-    
+
     // AndroidX DataStore for preferences
     implementation 'androidx.datastore:datastore-preferences:1.1.3'
     implementation 'androidx.datastore:datastore-preferences-core:1.1.3'
-    
+
     // Coroutines for async operations
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0'

@@ -40,6 +40,13 @@ public class OpenAITrigger implements Trigger {
     private boolean mUseOggFormat;
     private boolean mIsRecording = false;
     
+    /** Callback interface for recording state changes */
+    public interface RecordingStateCallback {
+        void onRecordingStateChanged(boolean isRecording);
+    }
+    
+    private RecordingStateCallback mRecordingStateCallback;
+    
     public OpenAITrigger(InputMethodService inputMethodService) {
         mInputMethodService = inputMethodService;
         mOpenAITranscriber = new OpenAITranscriber();
@@ -49,9 +56,28 @@ public class OpenAITrigger implements Trigger {
         setupAudioRecorderCallbacks();
     }
     
+    /**
+     * Sets the callback for recording state changes.
+     * @param callback The callback to be notified when recording state changes
+     */
+    public void setRecordingStateCallback(RecordingStateCallback callback) {
+        mRecordingStateCallback = callback;
+    }
+    
+    /**
+     * Notifies the callback about recording state changes.
+     * @param isRecording The new recording state
+     */
+    private void notifyRecordingStateChanged(boolean isRecording) {
+        if (mRecordingStateCallback != null) {
+            mRecordingStateCallback.onRecordingStateChanged(isRecording);
+        }
+    }
+    
     private void setupAudioRecorderCallbacks() {
         mAudioRecorderManager.setOnRecordingStopped((success, errorMessage) -> {
             mIsRecording = false; // Always reset recording state when stopped
+            notifyRecordingStateChanged(false); // Notify about state change
             if (success) {
                 startTranscription();
             } else {
@@ -144,6 +170,7 @@ public class OpenAITrigger implements Trigger {
         try {
             mAudioRecorderManager.startRecording(mRecordedAudioFilename, mUseOggFormat);
             mIsRecording = true;
+            notifyRecordingStateChanged(true); // Notify about state change
             Log.d(TAG, "Started recording to: " + mRecordedAudioFilename);
         } catch (Exception e) {
             Log.e(TAG, "Error starting recording", e);
@@ -156,6 +183,7 @@ public class OpenAITrigger implements Trigger {
             mAudioRecorderManager.stopRecording();
         }
         mIsRecording = false;
+        notifyRecordingStateChanged(false); // Notify about state change
     }
     
     private void startTranscription() {
@@ -310,6 +338,7 @@ public class OpenAITrigger implements Trigger {
         // Reset any pending state
         mLastRecognitionResult = null;
         mIsRecording = false;
+        notifyRecordingStateChanged(false); // Notify about state change
         
         // Stop any ongoing recording
         mAudioRecorderManager.stopRecording();

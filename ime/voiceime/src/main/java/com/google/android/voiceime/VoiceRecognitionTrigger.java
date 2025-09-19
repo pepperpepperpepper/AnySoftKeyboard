@@ -16,10 +16,7 @@
 
 package com.google.android.voiceime;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
-import android.preference.PreferenceManager;
 import android.view.inputmethod.InputMethodSubtype;
 
 /** Triggers a voice recognition by using {@link ImeTrigger}, {@link IntentApiTrigger}, or {@link OpenAITrigger}. */

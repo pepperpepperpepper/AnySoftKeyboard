@@ -1,0 +1,874 @@
+> Task :buildSrc:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :buildSrc:compileKotlin UP-TO-DATE
+> Task :buildSrc:compileJava UP-TO-DATE
+> Task :buildSrc:compileGroovy UP-TO-DATE
+> Task :buildSrc:pluginDescriptors UP-TO-DATE
+> Task :buildSrc:processResources UP-TO-DATE
+> Task :buildSrc:classes UP-TO-DATE
+> Task :buildSrc:jar UP-TO-DATE
+
+> Configure project :addons
+Generated version 5.1.1 (version-code 1). Using StaticVersionGenerator for versioning.
+
+> Configure project :ime
+Generated version 1.13.1 (version-code 1). Using StaticVersionGenerator for versioning.
+
+> Configure project :ime:app
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :ime:app 1.13.1 (or 1.13.1), code 1.
+crash report email is: null
+
+> Configure project :addons:languages:afrikaans_oss:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:afrikaans_oss:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:arabic:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:arabic:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:armenian2:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:armenian2:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:basque:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:basque:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:belarusian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:belarusian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:brazilian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:brazilian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:bribri:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:bribri:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:bulgarian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:bulgarian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:catalan:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:catalan:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:coptic:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:coptic:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:croatian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:croatian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:czech:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:czech:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:danish:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:danish:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:dutch:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:dutch:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:esperanto:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:esperanto:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:finnish:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:finnish:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:french:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:french:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:georgian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:georgian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:german:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:german:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:greek:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:greek:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:hackerkeyboardlayout:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:hackerkeyboardlayout:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:hawaiian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:hawaiian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:hebrew:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:hebrew:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:hindi:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:hindi:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:hungarian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:hungarian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:icelandic:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:icelandic:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:indonesian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:indonesian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:italian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:italian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:kachin:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:kachin:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:kurdish:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:kurdish:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:latvian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:latvian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:lithuanian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:lithuanian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:luxembourgish:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:luxembourgish:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:nias:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:nias:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:norwegian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:norwegian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:numpad:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:numpad:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:oldnortharabian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:oldnortharabian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:ossturkish:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:ossturkish:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:persian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:persian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:piedmontese:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:piedmontese:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:pilaga:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:pilaga:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:polish:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:polish:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:portuguese:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:portuguese:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:romanian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:romanian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:russian2:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:russian2:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:rusyn:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:rusyn:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:sardinian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:sardinian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:serbian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:serbian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:sinhala:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:sinhala:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:slovak:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:slovak:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:slovene:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:slovene:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:songhay:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:songhay:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:spain:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:spain:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:swedish:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:swedish:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:tamazight:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:tamazight:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:thai:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:thai:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:ukrainian:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:ukrainian:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:languages:urdu:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:languages:urdu:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:quicktexts:bbcodes:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:quicktexts:bbcodes:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:themes:classic_pc:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:themes:classic_pc:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:themes:ics:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:themes:ics:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:themes:israel64:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:themes:israel64:apk 5.1.1 (or 5.1.1), code 1.
+
+> Configure project :addons:themes:three_d:apk
+Could not find '/tmp/anysoftkeyboard.keystore' file. Release APK will not be signed.
+Building :addons:themes:three_d:apk 5.1.1 (or 5.1.1), code 1.
+Found prebuilt word-list folder for :addons:languages:english:pack with 2 files.
+Found text inputs for :addons:languages:english:pack with 144 files.
+
+> Task :addons:base:preBuild UP-TO-DATE
+> Task :ime:dictionaries:preBuild UP-TO-DATE
+> Task :ime:nextword:preBuild UP-TO-DATE
+> Task :ime:gesturetyping:preBuild UP-TO-DATE
+> Task :ime:addons:preBuild UP-TO-DATE
+> Task :addons:base:preDebugBuild UP-TO-DATE
+> Task :ime:base:preBuild UP-TO-DATE
+> Task :ime:fileprovider:preBuild UP-TO-DATE
+> Task :ime:pixel:preBuild UP-TO-DATE
+> Task :ime:chewbacca:preBuild UP-TO-DATE
+> Task :ime:notification:preBuild UP-TO-DATE
+> Task :ime:permissions:preBuild UP-TO-DATE
+> Task :ime:overlay:preBuild UP-TO-DATE
+> Task :api:preBuild UP-TO-DATE
+> Task :ime:pixel:preDebugBuild UP-TO-DATE
+> Task :api:preDebugBuild UP-TO-DATE
+> Task :ime:addons:preDebugBuild UP-TO-DATE
+> Task :ime:base:preDebugBuild UP-TO-DATE
+> Task :addons:base:generateDebugResValues UP-TO-DATE
+> Task :ime:pixel:generateDebugResValues UP-TO-DATE
+> Task :ime:chewbacca:preDebugBuild UP-TO-DATE
+> Task :ime:base-rx:preBuild UP-TO-DATE
+> Task :ime:dictionaries:preDebugBuild UP-TO-DATE
+> Task :api:generateDebugResValues UP-TO-DATE
+> Task :ime:fileprovider:preDebugBuild UP-TO-DATE
+> Task :ime:notification:preDebugBuild UP-TO-DATE
+> Task :ime:nextword:preDebugBuild UP-TO-DATE
+> Task :ime:gesturetyping:preDebugBuild UP-TO-DATE
+> Task :ime:fileprovider:writeDebugAarMetadata UP-TO-DATE
+> Task :api:generateDebugResources UP-TO-DATE
+> Task :ime:addons:generateDebugResValues UP-TO-DATE
+> Task :ime:base-rx:preDebugBuild UP-TO-DATE
+> Task :ime:base:generateDebugResValues UP-TO-DATE
+> Task :addons:base:generateDebugResources UP-TO-DATE
+> Task :ime:chewbacca:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:dictionaries:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:pixel:generateDebugResources UP-TO-DATE
+> Task :ime:overlay:preDebugBuild UP-TO-DATE
+> Task :ime:notification:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:permissions:preDebugBuild UP-TO-DATE
+> Task :ime:overlay:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:prefs:preBuild UP-TO-DATE
+> Task :ime:nextword:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:base-rx:generateDebugResValues UP-TO-DATE
+> Task :ime:gesturetyping:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:permissions:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:addons:generateDebugResources UP-TO-DATE
+> Task :ime:base:generateDebugResources UP-TO-DATE
+> Task :api:packageDebugResources UP-TO-DATE
+> Task :ime:remote:preBuild UP-TO-DATE
+> Task :addons:base:packageDebugResources UP-TO-DATE
+> Task :ime:releaseinfo:preBuild UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:preBuild UP-TO-DATE
+> Task :ime:pixel:packageDebugResources UP-TO-DATE
+> Task :ime:remote:preDebugBuild UP-TO-DATE
+> Task :ime:prefs:preDebugBuild UP-TO-DATE
+> Task :api:processDebugNavigationResources UP-TO-DATE
+> Task :ime:voiceime:preBuild UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:preBuild UP-TO-DATE
+> Task :ime:base-rx:generateDebugResources UP-TO-DATE
+> Task :ime:releaseinfo:preDebugBuild UP-TO-DATE
+> Task :ime:addons:packageDebugResources UP-TO-DATE
+> Task :ime:base:packageDebugResources UP-TO-DATE
+> Task :ime:remote:writeDebugAarMetadata UP-TO-DATE
+> Task :addons:base:processDebugNavigationResources UP-TO-DATE
+> Task :ime:releaseinfo:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:base:processDebugNavigationResources UP-TO-DATE
+> Task :ime:voiceime:preDebugBuild UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:preDebugBuild UP-TO-DATE
+> Task :ime:prefs:writeDebugAarMetadata UP-TO-DATE
+> Task :addons:languages:english:pack:parseAospDictionary_en_wordlist_combined_gz UP-TO-DATE
+> Task :api:parseDebugLocalResources UP-TO-DATE
+> Task :ime:base-rx:packageDebugResources UP-TO-DATE
+> Task :addons:languages:english:pack:parseTextInputFiles UP-TO-DATE
+> Task :ime:pixel:processDebugNavigationResources UP-TO-DATE
+> Task :ime:addons:processDebugNavigationResources UP-TO-DATE
+> Task :ime:chewbacca:processDebugNavigationResources UP-TO-DATE
+> Task :ime:gesturetyping:processDebugNavigationResources UP-TO-DATE
+> Task :ime:fileprovider:processDebugNavigationResources UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:preDebugBuild UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:voiceime:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:base:parseDebugLocalResources UP-TO-DATE
+> Task :ime:dictionaries:processDebugNavigationResources UP-TO-DATE
+> Task :ime:nextword:processDebugNavigationResources UP-TO-DATE
+> Task :ime:notification:processDebugNavigationResources UP-TO-DATE
+> Task :ime:overlay:processDebugNavigationResources UP-TO-DATE
+> Task :ime:permissions:processDebugNavigationResources UP-TO-DATE
+> Task :ime:prefs:processDebugNavigationResources UP-TO-DATE
+> Task :ime:releaseinfo:processDebugNavigationResources UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:pixel:parseDebugLocalResources UP-TO-DATE
+> Task :addons:languages:english:pack:mergeAllWordLists UP-TO-DATE
+> Task :ime:voiceime:processDebugNavigationResources UP-TO-DATE
+> Task :ime:base-rx:processDebugNavigationResources UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:processDebugNavigationResources UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:processDebugNavigationResources UP-TO-DATE
+> Task :ime:dictionaries:generateDebugResValues UP-TO-DATE
+> Task :addons:base:parseDebugLocalResources UP-TO-DATE
+> Task :ime:base:javaPreCompileDebug UP-TO-DATE
+> Task :ime:fileprovider:generateDebugResValues UP-TO-DATE
+> Task :ime:addons:parseDebugLocalResources UP-TO-DATE
+> Task :ime:dictionaries:generateDebugResources UP-TO-DATE
+> Task :ime:remote:processDebugNavigationResources UP-TO-DATE
+> Task :api:generateDebugRFile UP-TO-DATE
+> Task :ime:pixel:javaPreCompileDebug UP-TO-DATE
+> Task :ime:chewbacca:generateDebugResValues UP-TO-DATE
+> Task :addons:languages:english:pack:makeDictionary UP-TO-DATE
+> Task :ime:addons:javaPreCompileDebug UP-TO-DATE
+> Task :addons:languages:english:pack:preBuild UP-TO-DATE
+> Task :ime:base:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:nextword:generateDebugResValues UP-TO-DATE
+> Task :ime:pixel:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:fileprovider:generateDebugResources UP-TO-DATE
+> Task :ime:gesturetyping:generateDebugResValues UP-TO-DATE
+> Task :ime:notification:generateDebugResValues UP-TO-DATE
+> Task :addons:base:javaPreCompileDebug UP-TO-DATE
+> Task :ime:base-rx:parseDebugLocalResources UP-TO-DATE
+> Task :ime:overlay:generateDebugResValues UP-TO-DATE
+> Task :ime:addons:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:nextword:generateDebugResources UP-TO-DATE
+> Task :ime:chewbacca:generateDebugResources UP-TO-DATE
+> Task :ime:dictionaries:packageDebugResources UP-TO-DATE
+> Task :addons:languages:english:pack:preDebugBuild UP-TO-DATE
+> Task :ime:addons:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:permissions:generateDebugResValues UP-TO-DATE
+> Task :ime:overlay:generateDebugResources UP-TO-DATE
+> Task :ime:notification:generateDebugResources UP-TO-DATE
+> Task :ime:base-rx:javaPreCompileDebug UP-TO-DATE
+> Task :ime:permissions:generateDebugResources UP-TO-DATE
+> Task :ime:gesturetyping:generateDebugResources UP-TO-DATE
+> Task :ime:fileprovider:packageDebugResources UP-TO-DATE
+> Task :ime:nextword:packageDebugResources UP-TO-DATE
+> Task :ime:chewbacca:packageDebugResources UP-TO-DATE
+> Task :ime:remote:generateDebugResValues UP-TO-DATE
+> Task :api:javaPreCompileDebug UP-TO-DATE
+> Task :ime:prefs:generateDebugResValues UP-TO-DATE
+> Task :ime:remote:generateDebugResources UP-TO-DATE
+> Task :ime:base-rx:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:gesturetyping:packageDebugResources UP-TO-DATE
+> Task :ime:voiceime:generateDebugResValues UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:generateDebugResValues UP-TO-DATE
+> Task :ime:overlay:packageDebugResources UP-TO-DATE
+> Task :ime:releaseinfo:generateDebugResValues UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:generateDebugResValues UP-TO-DATE
+> Task :ime:permissions:packageDebugResources UP-TO-DATE
+> Task :ime:addons:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:base-rx:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:releaseinfo:generateDebugResources UP-TO-DATE
+> Task :ime:notification:packageDebugResources UP-TO-DATE
+> Task :addons:base:generateDebugRFile UP-TO-DATE
+> Task :ime:base-rx:processDebugManifest UP-TO-DATE
+> Task :ime:prefs:generateDebugResources UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:generateDebugResources UP-TO-DATE
+> Task :addons:languages:english:pack:writeDebugAarMetadata
+> Task :ime:voiceime:generateDebugResources UP-TO-DATE
+> Task :ime:releaseinfo:packageDebugResources UP-TO-DATE
+> Task :ime:voiceime:packageDebugResources UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:packageDebugResources UP-TO-DATE
+> Task :api:compileDebugJavaWithJavac UP-TO-DATE
+> Task :ime:addons:processDebugManifest UP-TO-DATE
+> Task :addons:languages:english:pack:processDebugNavigationResources FROM-CACHE
+> Task :ime:dictionaries:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:chewbacca:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:notification:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:remote:packageDebugResources UP-TO-DATE
+> Task :api:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:generateDebugResources UP-TO-DATE
+> Task :ime:fileprovider:extractDeepLinksDebug UP-TO-DATE
+> Task :addons:base:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:prefs:packageDebugResources UP-TO-DATE
+> Task :ime:dictionaries:processDebugManifest UP-TO-DATE
+> Task :api:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:packageDebugResources UP-TO-DATE
+> Task :api:writeDebugAarMetadata UP-TO-DATE
+> Task :addons:languages:english:pack:generateDebugResValues FROM-CACHE
+> Task :ime:gesturetyping:extractDeepLinksDebug UP-TO-DATE
+> Task :api:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:chewbacca:processDebugManifest UP-TO-DATE
+> Task :ime:overlay:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:permissions:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:nextword:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:pixel:extractDeepLinksDebug UP-TO-DATE
+> Task :addons:languages:english:pack:generateDebugResources FROM-CACHE
+> Task :ime:permissions:processDebugManifest UP-TO-DATE
+> Task :ime:nextword:processDebugManifest UP-TO-DATE
+> Task :addons:base:compileDebugJavaWithJavac UP-TO-DATE
+> Task :api:processDebugManifest UP-TO-DATE
+> Task :ime:remote:extractDeepLinksDebug UP-TO-DATE
+> Task :addons:base:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:notification:processDebugManifest UP-TO-DATE
+> Task :ime:voiceime:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:releaseinfo:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:fileprovider:processDebugManifest UP-TO-DATE
+> Task :ime:pixel:processDebugManifest UP-TO-DATE
+> Task :ime:overlay:processDebugManifest UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:releaseinfo:processDebugManifest UP-TO-DATE
+> Task :ime:base-rx:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:voiceime:processDebugManifest UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:processDebugManifest UP-TO-DATE
+> Task :addons:base:writeDebugAarMetadata UP-TO-DATE
+> Task :ime:dictionaries:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:remote:processDebugManifest UP-TO-DATE
+> Task :ime:chewbacca:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:notification:parseDebugLocalResources UP-TO-DATE
+> Task :ime:permissions:parseDebugLocalResources UP-TO-DATE
+> Task :ime:prefs:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:processDebugManifest UP-TO-DATE
+> Task :ime:fileprovider:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:nextword:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:gesturetyping:processDebugManifest UP-TO-DATE
+> Task :ime:permissions:compileDebugLibraryResources UP-TO-DATE
+> Task :addons:base:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:overlay:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:pixel:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:notification:compileDebugLibraryResources UP-TO-DATE
+> Task :addons:base:processDebugManifest UP-TO-DATE
+> Task :ime:releaseinfo:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:remote:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:gesturetyping:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:voiceime:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:dictionaries:parseDebugLocalResources UP-TO-DATE
+> Task :ime:releaseinfo:parseDebugLocalResources UP-TO-DATE
+> Task :ime:overlay:parseDebugLocalResources UP-TO-DATE
+> Task :ime:prefs:processDebugManifest UP-TO-DATE
+> Task :ime:fileprovider:parseDebugLocalResources UP-TO-DATE
+> Task :ime:nextword:parseDebugLocalResources UP-TO-DATE
+> Task :ime:remote:parseDebugLocalResources UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:voiceime:parseDebugLocalResources UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:gesturetyping:parseDebugLocalResources UP-TO-DATE
+> Task :ime:notification:javaPreCompileDebug UP-TO-DATE
+> Task :ime:prefs:parseDebugLocalResources UP-TO-DATE
+> Task :ime:dictionaries:generateDebugBuildConfig UP-TO-DATE
+> Task :ime:prefs:compileDebugLibraryResources UP-TO-DATE
+> Task :ime:fileprovider:javaPreCompileDebug UP-TO-DATE
+> Task :ime:nextword:generateDebugBuildConfig UP-TO-DATE
+> Task :ime:gesturetyping:javaPreCompileDebug UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:parseDebugLocalResources UP-TO-DATE
+> Task :ime:chewbacca:parseDebugLocalResources UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:parseDebugLocalResources UP-TO-DATE
+> Task :ime:remote:javaPreCompileDebug UP-TO-DATE
+> Task :ime:releaseinfo:javaPreCompileDebug UP-TO-DATE
+> Task :ime:overlay:javaPreCompileDebug UP-TO-DATE
+> Task :ime:voiceime:javaPreCompileDebug UP-TO-DATE
+> Task :ime:prefs:javaPreCompileDebug UP-TO-DATE
+> Task :ime:permissions:javaPreCompileDebug FROM-CACHE
+> Task :api:mergeDebugShaders UP-TO-DATE
+> Task :ime:dictionaries:javaPreCompileDebug UP-TO-DATE
+> Task :ime:addons:mergeDebugShaders UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:javaPreCompileDebug UP-TO-DATE
+> Task :ime:base:generateDebugRFile UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:javaPreCompileDebug UP-TO-DATE
+> Task :ime:dictionaries:mergeDebugShaders UP-TO-DATE
+> Task :addons:base:mergeDebugShaders UP-TO-DATE
+> Task :ime:nextword:javaPreCompileDebug UP-TO-DATE
+> Task :api:compileDebugShaders NO-SOURCE
+> Task :api:generateDebugAssets UP-TO-DATE
+> Task :ime:chewbacca:javaPreCompileDebug UP-TO-DATE
+> Task :ime:dictionaries:compileDebugShaders NO-SOURCE
+> Task :api:mergeDebugAssets UP-TO-DATE
+> Task :addons:base:compileDebugShaders NO-SOURCE
+> Task :ime:fileprovider:mergeDebugShaders UP-TO-DATE
+> Task :ime:chewbacca:mergeDebugShaders UP-TO-DATE
+> Task :ime:app:preBuild UP-TO-DATE
+> Task :ime:fileprovider:compileDebugShaders NO-SOURCE
+> Task :ime:gesturetyping:mergeDebugShaders UP-TO-DATE
+> Task :ime:nextword:mergeDebugShaders UP-TO-DATE
+> Task :ime:nextword:compileDebugShaders NO-SOURCE
+> Task :ime:nextword:generateDebugAssets UP-TO-DATE
+> Task :ime:app:preDebugBuild UP-TO-DATE
+> Task :ime:overlay:generateDebugRFile UP-TO-DATE
+> Task :ime:pixel:mergeDebugShaders UP-TO-DATE
+> Task :ime:addons:compileDebugShaders NO-SOURCE
+> Task :ime:app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :ime:gesturetyping:compileDebugShaders NO-SOURCE
+> Task :ime:notification:mergeDebugShaders UP-TO-DATE
+> Task :ime:app:generateDebugBuildConfig UP-TO-DATE
+> Task :ime:dictionaries:generateDebugAssets UP-TO-DATE
+> Task :ime:fileprovider:generateDebugAssets UP-TO-DATE
+> Task :ime:chewbacca:compileDebugShaders NO-SOURCE
+> Task :ime:chewbacca:generateDebugAssets UP-TO-DATE
+> Task :ime:chewbacca:mergeDebugAssets UP-TO-DATE
+> Task :ime:gesturetyping:generateDebugAssets UP-TO-DATE
+> Task :addons:base:generateDebugAssets UP-TO-DATE
+> Task :ime:fileprovider:mergeDebugAssets UP-TO-DATE
+> Task :ime:notification:compileDebugShaders NO-SOURCE
+> Task :ime:nextword:mergeDebugAssets UP-TO-DATE
+> Task :ime:notification:generateDebugAssets UP-TO-DATE
+> Task :ime:gesturetyping:mergeDebugAssets UP-TO-DATE
+> Task :ime:pixel:compileDebugShaders NO-SOURCE
+> Task :ime:pixel:generateDebugAssets UP-TO-DATE
+> Task :ime:notification:mergeDebugAssets UP-TO-DATE
+> Task :addons:base:mergeDebugAssets UP-TO-DATE
+> Task :ime:remote:mergeDebugShaders UP-TO-DATE
+> Task :ime:overlay:mergeDebugShaders UP-TO-DATE
+> Task :ime:addons:generateDebugAssets UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:mergeDebugShaders UP-TO-DATE
+> Task :ime:overlay:compileDebugShaders NO-SOURCE
+> Task :ime:overlay:generateDebugAssets UP-TO-DATE
+> Task :ime:app:generateSafeArgsDebug UP-TO-DATE
+> Task :ime:releaseinfo:mergeDebugShaders UP-TO-DATE
+> Task :ime:overlay:mergeDebugAssets UP-TO-DATE
+> Task :ime:releaseinfo:compileDebugShaders NO-SOURCE
+> Task :ime:remote:compileDebugShaders NO-SOURCE
+> Task :ime:releaseinfo:generateDebugAssets UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:compileDebugShaders NO-SOURCE
+> Task :ime:dictionaries:jnidictionaryv1:generateDebugAssets UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv1:mergeDebugAssets UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:mergeDebugShaders UP-TO-DATE
+> Task :ime:dictionaries:mergeDebugAssets
+> Task :ime:addons:mergeDebugAssets UP-TO-DATE
+> Task :ime:base-rx:generateDebugRFile UP-TO-DATE
+> Task :ime:app:javaPreCompileDebug UP-TO-DATE
+> Task :ime:pixel:mergeDebugAssets
+> Task :ime:base-rx:mergeDebugShaders UP-TO-DATE
+> Task :ime:base-rx:compileDebugShaders NO-SOURCE
+> Task :ime:prefs:mergeDebugShaders
+> Task :ime:remote:generateDebugAssets UP-TO-DATE
+> Task :addons:base:bundleLibRuntimeToJarDebug
+> Task :ime:base:compileDebugJavaWithJavac UP-TO-DATE
+> Task :ime:permissions:generateDebugRFile UP-TO-DATE
+> Task :ime:remote:mergeDebugAssets UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:compileDebugShaders NO-SOURCE
+> Task :ime:base:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :ime:base-rx:generateDebugAssets UP-TO-DATE
+> Task :ime:base-rx:mergeDebugAssets UP-TO-DATE
+> Task :api:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :ime:releaseinfo:mergeDebugAssets UP-TO-DATE
+> Task :api:processDebugJavaRes NO-SOURCE
+> Task :addons:base:processDebugJavaRes NO-SOURCE
+> Task :ime:base-rx:processDebugJavaRes NO-SOURCE
+> Task :ime:base:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:addons:processDebugJavaRes NO-SOURCE
+> Task :ime:dictionaries:jnidictionaryv2:generateDebugAssets UP-TO-DATE
+> Task :ime:voiceime:generateDebugRFile UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:mergeDebugAssets UP-TO-DATE
+> Task :ime:chewbacca:processDebugJavaRes NO-SOURCE
+> Task :ime:gesturetyping:processDebugJavaRes NO-SOURCE
+> Task :ime:overlay:compileDebugJavaWithJavac UP-TO-DATE
+> Task :ime:nextword:processDebugJavaRes NO-SOURCE
+> Task :ime:releaseinfo:processDebugJavaRes NO-SOURCE
+> Task :ime:remote:processDebugJavaRes NO-SOURCE
+> Task :ime:dictionaries:jnidictionaryv1:processDebugJavaRes NO-SOURCE
+> Task :ime:dictionaries:jnidictionaryv2:processDebugJavaRes NO-SOURCE
+> Task :ime:dictionaries:generateDebugRFile UP-TO-DATE
+> Task :ime:base-rx:compileDebugJavaWithJavac UP-TO-DATE
+> Task :ime:dictionaries:processDebugJavaRes NO-SOURCE
+> Task :ime:notification:generateDebugRFile UP-TO-DATE
+> Task :ime:base:processDebugManifest UP-TO-DATE
+> Task :addons:languages:english:pack:packageDebugResources FROM-CACHE
+> Task :ime:base-rx:bundleLibRuntimeToJarDebug
+> Task :ime:base-rx:bundleLibCompileToJarDebug
+> Task :ime:base:compileDebugLibraryResources UP-TO-DATE
+> Task :addons:base:mergeDebugJniLibFolders
+> Task :ime:notification:processDebugJavaRes NO-SOURCE
+> Task :addons:languages:english:pack:extractDeepLinksDebug FROM-CACHE
+> Task :addons:base:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:base:mergeDebugShaders UP-TO-DATE
+> Task :ime:base:compileDebugShaders NO-SOURCE
+> Task :ime:dictionaries:jnidictionaryv2:generateDebugRFile UP-TO-DATE
+> Task :ime:base:generateDebugAssets UP-TO-DATE
+> Task :ime:base:mergeDebugAssets UP-TO-DATE
+> Task :addons:base:copyDebugJniLibsProjectOnly
+> Task :ime:fileprovider:generateDebugRFile UP-TO-DATE
+> Task :addons:languages:english:pack:processDebugManifest FROM-CACHE
+> Task :ime:overlay:bundleLibRuntimeToJarDebug
+> Task :api:mergeDebugJniLibFolders
+> Task :api:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:overlay:processDebugJavaRes NO-SOURCE
+> Task :ime:base:processDebugJavaRes NO-SOURCE
+> Task :ime:dictionaries:jnidictionaryv1:generateDebugRFile FROM-CACHE
+> Task :ime:overlay:bundleLibCompileToJarDebug
+> Task :ime:pixel:generateDebugRFile UP-TO-DATE
+> Task :ime:prefs:generateDebugRFile UP-TO-DATE
+> Task :ime:base-rx:mergeDebugJniLibFolders
+> Task :ime:base:bundleLibRuntimeToJarDebug
+> Task :ime:base:mergeDebugJniLibFolders
+> Task :ime:base:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:chewbacca:mergeDebugJniLibFolders
+> Task :api:copyDebugJniLibsProjectOnly
+> Task :ime:fileprovider:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:addons:mergeDebugJniLibFolders
+> Task :ime:permissions:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:app:checkDebugAarMetadata
+> Task :ime:base-rx:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:dictionaries:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:voiceime:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:nextword:generateDebugRFile UP-TO-DATE
+> Task :ime:base:copyDebugJniLibsProjectOnly
+> Task :ime:permissions:mergeDebugShaders
+> Task :ime:voiceime:mergeDebugShaders UP-TO-DATE
+> Task :ime:permissions:compileDebugShaders NO-SOURCE
+> Task :ime:fileprovider:bundleLibCompileToJarDebug
+> Task :ime:permissions:generateDebugAssets UP-TO-DATE
+> Task :ime:dictionaries:bundleLibCompileToJarDebug
+> Task :ime:permissions:mergeDebugAssets
+> Task :ime:voiceime:compileDebugShaders NO-SOURCE
+> Task :ime:voiceime:generateDebugAssets UP-TO-DATE
+> Task :ime:voiceime:mergeDebugAssets UP-TO-DATE
+> Task :ime:addons:generateDebugRFile UP-TO-DATE
+> Task :ime:base-rx:copyDebugJniLibsProjectOnly
+> Task :ime:chewbacca:generateDebugRFile FROM-CACHE
+> Task :ime:permissions:bundleLibRuntimeToJarDebug
+> Task :ime:app:processDebugNavigationResources FROM-CACHE
+> Task :ime:dictionaries:bundleLibRuntimeToJarDebug
+> Task :ime:fileprovider:processDebugJavaRes NO-SOURCE
+> Task :ime:voiceime:bundleLibCompileToJarDebug
+> Task :ime:fileprovider:bundleLibRuntimeToJarDebug
+> Task :ime:permissions:processDebugJavaRes NO-SOURCE
+> Task :ime:voiceime:processDebugJavaRes NO-SOURCE
+> Task :ime:dictionaries:jnidictionaryv1:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:voiceime:bundleLibRuntimeToJarDebug
+> Task :ime:dictionaries:jnidictionaryv2:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:pixel:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:remote:generateDebugRFile FROM-CACHE
+> Task :ime:prefs:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:releaseinfo:generateDebugRFile FROM-CACHE
+> Task :ime:app:compileDebugNavigationResources FROM-CACHE
+> Task :ime:dictionaries:jnidictionaryv1:bundleLibRuntimeToJarDebug
+> Task :ime:app:generateDebugResValues UP-TO-DATE
+> Task :ime:permissions:bundleLibCompileToJarDebug
+> Task :ime:prefs:compileDebugShaders NO-SOURCE
+> Task :ime:prefs:generateDebugAssets UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:bundleLibRuntimeToJarDebug
+> Task :ime:pixel:processDebugJavaRes NO-SOURCE
+> Task :ime:pixel:bundleLibRuntimeToJarDebug
+> Task :ime:addons:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:gesturetyping:generateDebugRFile FROM-CACHE
+> Task :ime:chewbacca:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:dictionaries:jnidictionaryv1:bundleLibCompileToJarDebug
+> Task :ime:dictionaries:jnidictionaryv2:bundleLibCompileToJarDebug
+> Task :ime:prefs:mergeDebugAssets
+> Task :ime:pixel:bundleLibCompileToJarDebug
+> Task :ime:chewbacca:copyDebugJniLibsProjectOnly
+> Task :ime:addons:copyDebugJniLibsProjectOnly
+> Task :ime:notification:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:gesturetyping:mergeDebugJniLibFolders
+> Task :ime:gesturetyping:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:prefs:bundleLibCompileToJarDebug
+> Task :ime:nextword:mergeDebugJniLibFolders
+> Task :ime:fileprovider:mergeDebugJniLibFolders
+> Task :ime:nextword:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:gesturetyping:copyDebugJniLibsProjectOnly
+> Task :ime:prefs:bundleLibRuntimeToJarDebug
+> Task :ime:dictionaries:mergeDebugJniLibFolders
+> Task :ime:overlay:mergeDebugJniLibFolders
+> Task :ime:prefs:processDebugJavaRes NO-SOURCE
+> Task :ime:fileprovider:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:overlay:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:dictionaries:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:pixel:mergeDebugJniLibFolders
+> Task :ime:pixel:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:permissions:mergeDebugJniLibFolders
+> Task :ime:app:mapDebugSourceSetPaths
+> Task :ime:app:generateDebugResources UP-TO-DATE
+> Task :ime:notification:bundleLibRuntimeToJarDebug
+> Task :ime:notification:mergeDebugJniLibFolders
+> Task :ime:dictionaries:copyDebugJniLibsProjectOnly
+> Task :ime:overlay:copyDebugJniLibsProjectOnly
+> Task :ime:notification:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:notification:bundleLibCompileToJarDebug
+> Task :ime:fileprovider:copyDebugJniLibsProjectOnly
+> Task :ime:remote:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:releaseinfo:mergeDebugJniLibFolders
+> Task :ime:pixel:copyDebugJniLibsProjectOnly
+> Task :ime:releaseinfo:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:notification:copyDebugJniLibsProjectOnly
+> Task :ime:permissions:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:addons:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:voiceime:mergeDebugJniLibFolders
+> Task :ime:nextword:compileDebugJavaWithJavac FROM-CACHE
+> Task :addons:languages:english:pack:compileDebugLibraryResources FROM-CACHE
+> Task :ime:permissions:copyDebugJniLibsProjectOnly
+> Task :ime:prefs:mergeDebugJniLibFolders
+> Task :ime:chewbacca:compileDebugJavaWithJavac FROM-CACHE
+> Task :addons:languages:english:pack:parseDebugLocalResources FROM-CACHE
+> Task :ime:nextword:bundleLibRuntimeToJarDebug
+> Task :ime:addons:bundleLibRuntimeToJarDebug
+> Task :ime:remote:bundleLibRuntimeToJarDebug
+> Task :ime:addons:bundleLibCompileToJarDebug
+> Task :ime:remote:bundleLibCompileToJarDebug
+> Task :ime:nextword:bundleLibCompileToJarDebug
+> Task :ime:nextword:copyDebugJniLibsProjectOnly
+> Task :ime:prefs:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:voiceime:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:releaseinfo:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:remote:mergeDebugJniLibFolders
+> Task :ime:remote:mergeDebugNativeLibs NO-SOURCE
+> Task :ime:chewbacca:bundleLibRuntimeToJarDebug
+> Task :ime:remote:copyDebugJniLibsProjectOnly
+> Task :addons:languages:english:pack:generateDebugRFile FROM-CACHE
+> Task :ime:prefs:copyDebugJniLibsProjectOnly
+> Task :ime:voiceime:copyDebugJniLibsProjectOnly
+> Task :ime:releaseinfo:bundleLibRuntimeToJarDebug
+> Task :ime:releaseinfo:copyDebugJniLibsProjectOnly
+> Task :addons:languages:english:pack:javaPreCompileDebug FROM-CACHE
+> Task :ime:chewbacca:bundleLibCompileToJarDebug
+> Task :ime:releaseinfo:bundleLibCompileToJarDebug
+> Task :ime:gesturetyping:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:gesturetyping:bundleLibRuntimeToJarDebug
+> Task :addons:languages:english:pack:compileDebugJavaWithJavac FROM-CACHE
+> Task :ime:gesturetyping:bundleLibCompileToJarDebug
+> Task :addons:languages:english:pack:mergeDebugShaders
+> Task :addons:languages:english:pack:compileDebugShaders NO-SOURCE
+> Task :addons:languages:english:pack:generateDebugAssets UP-TO-DATE
+> Task :addons:languages:english:pack:bundleLibCompileToJarDebug
+> Task :addons:languages:english:pack:mergeDebugAssets
+> Task :addons:languages:english:pack:processDebugJavaRes NO-SOURCE
+> Task :addons:languages:english:pack:bundleLibRuntimeToJarDebug
+> Task :addons:languages:english:pack:mergeDebugJniLibFolders
+> Task :addons:languages:english:pack:mergeDebugNativeLibs NO-SOURCE
+> Task :addons:languages:english:pack:copyDebugJniLibsProjectOnly
+> Task :ime:dictionaries:jnidictionaryv1:configureCMakeDebug[arm64-v8a]
+> Task :ime:dictionaries:jnidictionaryv2:configureCMakeDebug[arm64-v8a]
+> Task :ime:dictionaries:jnidictionaryv2:buildCMakeDebug[arm64-v8a]
+> Task :ime:dictionaries:jnidictionaryv1:buildCMakeDebug[arm64-v8a]
+> Task :ime:dictionaries:jnidictionaryv1:configureCMakeDebug[armeabi-v7a]
+> Task :ime:dictionaries:jnidictionaryv2:configureCMakeDebug[armeabi-v7a]
+> Task :ime:dictionaries:jnidictionaryv1:buildCMakeDebug[armeabi-v7a]
+> Task :ime:app:mergeDebugResources FROM-CACHE
+> Task :ime:dictionaries:jnidictionaryv1:configureCMakeDebug[x86]
+> Task :ime:app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :ime:app:extractDeepLinksDebug UP-TO-DATE
+> Task :ime:dictionaries:jnidictionaryv2:buildCMakeDebug[armeabi-v7a]
+> Task :ime:dictionaries:jnidictionaryv2:configureCMakeDebug[x86]
+> Task :ime:app:processDebugMainManifest FROM-CACHE
+> Task :ime:app:processDebugManifest FROM-CACHE
+> Task :ime:app:processDebugManifestForPackage FROM-CACHE
+> Task :ime:dictionaries:jnidictionaryv1:buildCMakeDebug[x86]
+> Task :ime:dictionaries:jnidictionaryv1:configureCMakeDebug[x86_64]
+> Task :ime:dictionaries:jnidictionaryv2:buildCMakeDebug[x86]
+> Task :ime:dictionaries:jnidictionaryv2:configureCMakeDebug[x86_64]
+> Task :ime:dictionaries:jnidictionaryv1:buildCMakeDebug[x86_64]
+> Task :ime:dictionaries:jnidictionaryv1:mergeDebugJniLibFolders
+> Task :ime:dictionaries:jnidictionaryv1:mergeDebugNativeLibs
+> Task :ime:dictionaries:jnidictionaryv2:buildCMakeDebug[x86_64]
+> Task :ime:dictionaries:jnidictionaryv2:mergeDebugJniLibFolders
+> Task :ime:dictionaries:jnidictionaryv2:mergeDebugNativeLibs
+> Task :ime:dictionaries:jnidictionaryv1:copyDebugJniLibsProjectOnly
+> Task :ime:dictionaries:jnidictionaryv2:copyDebugJniLibsProjectOnly
+> Task :ime:app:processDebugResources FROM-CACHE
+
+> Task :ime:app:compileDebugJavaWithJavac
+/home/pepper/AnySoftKeyboard/ime/app/src/main/java/com/anysoftkeyboard/keyboards/Keyboard.java:157: warning: [dangling-doc-comments] documentation comment is not attached to any declaration
+  /** Height of the screen */
+  ^
+/home/pepper/AnySoftKeyboard/ime/app/src/main/java/com/anysoftkeyboard/AnySoftKeyboard.java:422: error: cannot find symbol
+        getInputView().invalidateAllKeys();
+                      ^
+  symbol:   method invalidateAllKeys()
+  location: interface InputViewBinder
+/home/pepper/AnySoftKeyboard/ime/app/build/generated/source/buildConfig/debug/com/menny/android/anysoftkeyboard/BuildConfig.java:1: warning: [dangling-doc-comments] documentation comment is not attached to any declaration
+/**
+^
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+1 error
+2 warnings
+
+> Task :ime:app:compileDebugJavaWithJavac FAILED
+
+[Incubating] Problems report is available at: file:///home/pepper/AnySoftKeyboard/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':ime:app:compileDebugJavaWithJavac'.
+> Compilation failed; see the compiler output below.
+  Note: Recompile with -Xlint:deprecation for details.
+  /home/pepper/AnySoftKeyboard/ime/app/src/main/java/com/anysoftkeyboard/keyboards/Keyboard.java:157: warning: [dangling-doc-comments] documentation comment is not attached to any declaration
+    /** Height of the screen */
+    ^
+  /home/pepper/AnySoftKeyboard/ime/app/build/generated/source/buildConfig/debug/com/menny/android/anysoftkeyboard/BuildConfig.java:1: warning: [dangling-doc-comments] documentation comment is not attached to any declaration
+  /**
+  ^
+  Note: Some input files use or override a deprecated API.
+  /home/pepper/AnySoftKeyboard/ime/app/src/main/java/com/anysoftkeyboard/AnySoftKeyboard.java:422: error: cannot find symbol
+          getInputView().invalidateAllKeys();
+                        ^
+    symbol:   method invalidateAllKeys()
+    location: interface InputViewBinder
+  1 error
+  2 warnings
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to get full insights.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 11s
+425 actionable tasks: 110 executed, 39 from cache, 276 up-to-date
