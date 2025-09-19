@@ -417,9 +417,11 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
       boolean isRecording = mVoiceRecognitionTrigger.isRecording();
       boolean stateChanged = currentKeyboard.setVoice(isRecording, false);
       
-if (stateChanged && getInputView() != null) {
+if (stateChanged) {
         // Invalidate keyboard view to update voice key appearance
-        getInputView().invalidateAllKeys();
+        if (getInputView() instanceof android.view.View) {
+          ((android.view.View) getInputView()).invalidate();
+        }
       }
     }
   }
