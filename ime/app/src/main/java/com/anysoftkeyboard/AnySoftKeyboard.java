@@ -133,8 +133,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
   public void onCreate() {
     super.onCreate();
     
-    // Show version info when keyboard service is created
-    showVersionInfoOnCreate();
+    
     
     if (!BuildConfig.DEBUG && DeveloperUtils.hasTracingRequested(getApplicationContext())) {
       try {
@@ -281,34 +280,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
     mDevToolsAction = new DevStripActionProvider(this);
   }
   
-  private void showVersionInfoOnCreate() {
-    android.util.Log.d("AnySoftKeyboard", "showVersionInfoOnCreate() called");
-    try {
-      // Get the package info to find installation time
-      android.content.pm.PackageInfo packageInfo = getPackageManager().getPackageInfo(
-          getPackageName(), 
-          android.content.pm.PackageManager.GET_META_DATA
-      );
-      
-      long installTime = packageInfo.lastUpdateTime;
-      java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
-      String installTimeStr = sdf.format(new java.util.Date(installTime));
-      
-      // Build version info
-      String versionInfo = "Version: " + BuildConfig.VERSION_NAME + 
-                          " (Build: " + BuildConfig.VERSION_CODE + ")";
-      
-      String message = versionInfo + "\nLast Updated: " + installTimeStr;
-      android.util.Log.d("AnySoftKeyboard", "Version info: " + message);
-      
-      // Show a Toast immediately when service is created
-      android.widget.Toast.makeText(this, "ASK " + versionInfo + " loaded!", android.widget.Toast.LENGTH_LONG).show();
-      android.util.Log.d("AnySoftKeyboard", "Toast shown in onCreate");
-      
-    } catch (Exception e) {
-      android.util.Log.e("AnySoftKeyboard", "Error in showVersionInfoOnCreate", e);
-    }
-  }
+  
 
   @Override
   public void onDestroy() {
@@ -385,35 +357,10 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
       getInputViewContainer().addStripAction(mDevToolsAction, false);
     }
     
-    // Show installation time alert to verify version updates
-    showInstallationTimeAlert();
+    
   }
   
-  private void showInstallationTimeAlert() {
-    android.util.Log.d("AnySoftKeyboard", "showInstallationTimeAlert() called");
-    try {
-      // Get current time instead of installation time
-      long currentTime = System.currentTimeMillis();
-      java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault());
-      String currentTimeStr = sdf.format(new java.util.Date(currentTime));
-      
-      // Build version info
-      String versionInfo = "Version: " + BuildConfig.VERSION_NAME + 
-                          " (Build: " + BuildConfig.VERSION_CODE + ")";
-      
-      String message = versionInfo + "\nCurrent Time: " + currentTimeStr;
-      android.util.Log.d("AnySoftKeyboard", "Alert message: " + message);
-      
-      // Show a simple Toast with the full info
-      android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_LONG).show();
-      android.util.Log.d("AnySoftKeyboard", "Installation info Toast shown");
-      
-    } catch (Exception e) {
-      android.util.Log.e("AnySoftKeyboard", "Error in showInstallationTimeAlert", e);
-      // Fallback to simple version toast
-      android.widget.Toast.makeText(this, "ASK v" + BuildConfig.VERSION_NAME + " loaded!", android.widget.Toast.LENGTH_SHORT).show();
-    }
-  }
+  
 
   @Override
   public void onFinishInput() {
