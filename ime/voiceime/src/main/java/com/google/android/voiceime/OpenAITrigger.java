@@ -45,7 +45,19 @@ public class OpenAITrigger implements Trigger {
         void onRecordingStateChanged(boolean isRecording);
     }
     
+    /** Callback interface for transcription state changes */
+    public interface TranscriptionStateCallback {
+        void onTranscriptionStateChanged(boolean isTranscribing);
+    }
+    
+    /** Callback interface for transcription errors */
+    public interface TranscriptionErrorCallback {
+        void onTranscriptionError(String error);
+    }
+    
     private RecordingStateCallback mRecordingStateCallback;
+    private TranscriptionStateCallback mTranscriptionStateCallback;
+    private TranscriptionErrorCallback mTranscriptionErrorCallback;
     
     public OpenAITrigger(InputMethodService inputMethodService) {
         mInputMethodService = inputMethodService;
@@ -65,12 +77,48 @@ public class OpenAITrigger implements Trigger {
     }
     
     /**
+     * Sets the callback for transcription state changes.
+     * @param callback The callback to be notified when transcription state changes
+     */
+    public void setTranscriptionStateCallback(TranscriptionStateCallback callback) {
+        mTranscriptionStateCallback = callback;
+    }
+    
+    /**
+     * Sets the callback for transcription errors.
+     * @param callback The callback to be notified when transcription errors occur
+     */
+    public void setTranscriptionErrorCallback(TranscriptionErrorCallback callback) {
+        mTranscriptionErrorCallback = callback;
+    }
+    
+    /**
      * Notifies the callback about recording state changes.
      * @param isRecording The new recording state
      */
     private void notifyRecordingStateChanged(boolean isRecording) {
         if (mRecordingStateCallback != null) {
             mRecordingStateCallback.onRecordingStateChanged(isRecording);
+        }
+    }
+    
+    /**
+     * Notifies the callback about transcription state changes.
+     * @param isTranscribing The new transcription state
+     */
+    private void notifyTranscriptionStateChanged(boolean isTranscribing) {
+        if (mTranscriptionStateCallback != null) {
+            mTranscriptionStateCallback.onTranscriptionStateChanged(isTranscribing);
+        }
+    }
+    
+    /**
+     * Notifies the callback about transcription errors.
+     * @param error The error message
+     */
+    private void notifyTranscriptionError(String error) {
+        if (mTranscriptionErrorCallback != null) {
+            mTranscriptionErrorCallback.onTranscriptionError(error);
         }
     }
     
@@ -189,27 +237,65 @@ public class OpenAITrigger implements Trigger {
     private void startTranscription() {
         Log.d(TAG, "Starting transcription for file: " + mRecordedAudioFilename);
         
-        // Instead of calling OpenAI API, we'll show the file length
         File audioFile = new File(mRecordedAudioFilename);
-        if (audioFile.exists()) {
-            long fileSize = audioFile.length();
-            String fileSizeText = formatFileSize(fileSize);
-            
-            // Calculate expected duration (rough estimate)
-            long expectedDurationSeconds = estimateAudioDuration(fileSize);
-            String expectedDurationText = formatDuration(expectedDurationSeconds);
-            
-            // Show alert with file information
-            String message = String.format("OpenAI recording made with %d number of bytes.", fileSize);
-            
-            showAlert(message);
-            
-            // Clean up the audio file
-            cleanupAudioFile();
-        } else {
+        if (!audioFile.exists()) {
             Log.e(TAG, "Audio file does not exist: " + mRecordedAudioFilename);
             showError("Audio file not found: " + mRecordedAudioFilename);
+            return;
         }
+        
+        if (audioFile.length() == 0) {
+            Log.e(TAG, "Audio file is empty: " + mRecordedAudioFilename);
+            showError("Audio file is empty");
+            return;
+        }
+        
+        // Get OpenAI configuration from preferences
+        String apiKey = mSharedPreferences.getString(
+            mInputMethodService.getString(R.string.settings_key_openai_api_key), "");
+        String endpoint = mSharedPreferences.getString(
+            mInputMethodService.getString(R.string.settings_key_openai_endpoint), 
+            "https://api.openai.com/v1/audio/transcriptions");
+        String model = mSharedPreferences.getString(
+            mInputMethodService.getString(R.string.settings_key_openai_model), "whisper-1");
+        String language = mSharedPreferences.getString(
+            mInputMethodService.getString(R.string.settings_key_openai_language), "en");
+        boolean addTrailingSpace = mSharedPreferences.getBoolean(
+            mInputMethodService.getString(R.string.settings_key_openai_add_trailing_space), true);
+        
+        // Update status to "Transcribing"
+        updateTranscriptionStatus(true);
+        notifyTranscriptionStateChanged(true);
+        
+        // Start transcription
+        mOpenAITranscriber.startAsync(
+            mInputMethodService,
+            mRecordedAudioFilename,
+            mAudioMediaType,
+            apiKey,
+            endpoint,
+            model,
+            language,
+            addTrailingSpace,
+            new OpenAITranscriber.TranscriptionCallback() {
+                @Override
+                public void onResult(String result) {
+                    Log.d(TAG, "Transcription successful: " + result);
+                    updateTranscriptionStatus(false);
+                    notifyTranscriptionStateChanged(false);
+                    onTranscriptionResult(result);
+                }
+                
+                @Override
+                public void onError(String error) {
+                    Log.e(TAG, "Transcription failed: " + error);
+                    updateTranscriptionStatus(false);
+                    notifyTranscriptionStateChanged(false);
+                    notifyTranscriptionError(error);
+                    onTranscriptionError(error);
+                }
+            }
+        );
     }
     
     private String formatFileSize(long bytes) {
@@ -264,6 +350,7 @@ public class OpenAITrigger implements Trigger {
     
     private void onTranscriptionError(String error) {
         Log.e(TAG, "Transcription error: " + error);
+        notifyTranscriptionError(error);
         showError(error);
         cleanupAudioFile();
     }
@@ -322,6 +409,19 @@ public class OpenAITrigger implements Trigger {
         new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
             android.widget.Toast.makeText(mInputMethodService, fixedMessage, android.widget.Toast.LENGTH_LONG).show();
         });
+    }
+    
+    /**
+     * Updates the transcription status for UI feedback.
+     * @param isTranscribing true when transcription is in progress, false otherwise
+     */
+    private void updateTranscriptionStatus(boolean isTranscribing) {
+        // This will be used to update the space bar or other UI elements
+        // to show "Transcribing..." status
+        Log.d(TAG, "Transcription status: " + (isTranscribing ? "transcribing" : "idle"));
+        
+        // We can extend this to update UI elements if needed
+        // For now, we'll just log the status change
     }
     
     /**

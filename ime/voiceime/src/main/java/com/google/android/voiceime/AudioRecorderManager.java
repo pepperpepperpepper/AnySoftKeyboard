@@ -117,7 +117,7 @@ public class AudioRecorderManager {
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                    mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC_ELD);
+                    mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC); // Use standard AAC instead of AAC_ELD for OpenAI compatibility
                 } else {
                     mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
                     mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);

@@ -697,12 +697,17 @@ public boolean setVoice(boolean active, boolean locked) {
         mVoiceState = STICKY_KEY_OFF;
         android.util.Log.d("VoiceKeyDebug", "AnyKeyboard.setVoice - setting state to STICKY_KEY_OFF");
       }
-      boolean stateChanged = mVoiceState != initialState;
-      android.util.Log.d("VoiceKeyDebug", "AnyKeyboard.setVoice - new state: " + mVoiceState + ", changed: " + stateChanged);
-      android.util.Log.d("AnyKeyboard", "setVoice - new state: " + mVoiceState + ", changed: " + (mVoiceState != initialState));
+boolean stateChanged = mVoiceState != initialState;
+        android.util.Log.d("VoiceKeyDebug", "AnyKeyboard.setVoice - new state: " + mVoiceState + ", changed: " + stateChanged);
+        android.util.Log.d("AnyKeyboard", "setVoice - new state: " + mVoiceState + ", changed: " + (mVoiceState != initialState));
 
-      return stateChanged;
-    } else {
+        // Update the VoiceKey's internal state
+        if (mVoiceKey instanceof VoiceKey) {
+          ((VoiceKey) mVoiceKey).setVoiceActive(active);
+          android.util.Log.d("VoiceKeyDebug", "AnyKeyboard.setVoice - Updated VoiceKey internal state to: " + active);
+        }
+
+      return stateChanged;    } else {
       android.util.Log.d("VoiceKeyDebug", "AnyKeyboard.setVoice - mVoiceKey is null, searching for voice key in all keys...");
       android.util.Log.d("AnyKeyboard", "setVoice - mVoiceKey is null, searching for voice key");
       
@@ -738,6 +743,10 @@ public boolean setVoice(boolean active, boolean locked) {
         boolean stateChanged = mVoiceState != initialState;
         android.util.Log.d("VoiceKeyDebug", "AnyKeyboard.setVoice - new state: " + mVoiceState + ", changed: " + stateChanged);
         android.util.Log.d("AnyKeyboard", "setVoice - new state: " + mVoiceState + ", changed: " + (mVoiceState != initialState));
+
+        // Update the VoiceKey's internal state
+        foundVoiceKey.setVoiceActive(active);
+        android.util.Log.d("VoiceKeyDebug", "AnyKeyboard.setVoice - Updated VoiceKey internal state to: " + active);
 
         return stateChanged;
       } else {
@@ -1053,6 +1062,7 @@ public boolean setVoice(boolean active, boolean locked) {
   }
 
   private static class VoiceKey extends AnyKey {
+    private boolean mVoiceActive = false;
     
     public VoiceKey(
         @NonNull AddOn.AddOnResourceMapping resourceMapping,
@@ -1066,37 +1076,37 @@ public boolean setVoice(boolean active, boolean locked) {
       // Voice key should always be treated as a functional key
       // Note: mFunctionalKey is private in parent, so we'll handle this in getCurrentDrawableState
     }
+    
+    public void setVoiceActive(boolean active) {
+      android.util.Log.d("VoiceKeyDebug", "VoiceKey.setVoiceActive called - setting to: " + active);
+      mVoiceActive = active;
+    }
 
     @Override
     public int[] getCurrentDrawableState(KeyDrawableStateProvider provider) {
       android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState called - pressed: " + pressed);
-      // Check if this is the voice key and if voice recording is active
-      if (row != null && row.mParent instanceof AnyKeyboard) {
-        AnyKeyboard keyboard = (AnyKeyboard) row.mParent;
-        boolean voiceActive = keyboard.isVoiceActive();
-        android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - voiceActive: " + voiceActive + ", pressed: " + pressed);
-        android.util.Log.d("VoiceKey", "getCurrentDrawableState called - voiceActive: " + voiceActive + ", pressed: " + pressed);
-        if (voiceActive) {
-          android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - Voice is active, returning CHECKED state");
-          if (pressed) {
-            // Voice key is pressed while recording - combine locked and pressed states
-            int[] state = new int[] {android.R.attr.state_checked, android.R.attr.state_pressed};
-            android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - Returning CHECKED+PRESSED: " + java.util.Arrays.toString(state));
-            android.util.Log.d("VoiceKey", "Returning CHECKED+PRESSED state: " + java.util.Arrays.toString(state));
-            return state;
-          } else {
-            // Voice key is in recording state (locked) but not pressed
-            int[] state = new int[] {android.R.attr.state_checked};
-            android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - Returning CHECKED: " + java.util.Arrays.toString(state));
-            android.util.Log.d("VoiceKey", "Returning CHECKED state: " + java.util.Arrays.toString(state));
-            return state;
-          }
+      android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - mVoiceActive: " + mVoiceActive + ", pressed: " + pressed);
+      android.util.Log.d("VoiceKey", "getCurrentDrawableState called - mVoiceActive: " + mVoiceActive + ", pressed: " + pressed);
+      
+      if (mVoiceActive) {
+        android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - Voice is active, returning CHECKED state");
+        if (pressed) {
+          // Voice key is pressed while recording - combine locked and pressed states
+          int[] state = new int[] {android.R.attr.state_checked, android.R.attr.state_pressed};
+          android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - Returning CHECKED+PRESSED: " + java.util.Arrays.toString(state));
+          android.util.Log.d("VoiceKey", "Returning CHECKED+PRESSED state: " + java.util.Arrays.toString(state));
+          return state;
         } else {
-          android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - Voice is NOT active");
+          // Voice key is in recording state (locked) but not pressed
+          int[] state = new int[] {android.R.attr.state_checked};
+          android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - Returning CHECKED: " + java.util.Arrays.toString(state));
+          android.util.Log.d("VoiceKey", "Returning CHECKED state: " + java.util.Arrays.toString(state));
+          return state;
         }
       } else {
-        android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - row or row.mParent is null or not AnyKeyboard");
+        android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - Voice is NOT active");
       }
+      
       // Voice key is not in recording state - use normal functional key behavior
       // Since we can't access mFunctionalKey directly, we'll treat voice key as functional
       android.util.Log.d("VoiceKeyDebug", "VoiceKey.getCurrentDrawableState - Voice not active, using functional key behavior");

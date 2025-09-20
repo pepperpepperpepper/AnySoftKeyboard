@@ -54,8 +54,7 @@ public class OpenAITranscriber {
      * @param model Whisper model to use (e.g., "whisper-1")
      * @param language Language code for transcription (e.g., "en", "es")
      * @param addTrailingSpace Whether to add a trailing space to the result
-     * @param callback Callback for handling the transcription result
-     * @param errorCallback Callback for handling errors
+     * @param callback Callback for handling the transcription result and errors
      */
     public void startAsync(
             @NonNull Context context,
@@ -66,8 +65,7 @@ public class OpenAITranscriber {
             @NonNull String model,
             @NonNull String language,
             boolean addTrailingSpace,
-            @NonNull TranscriptionCallback callback,
-            @NonNull TranscriptionCallback errorCallback) {
+            @NonNull TranscriptionCallback callback) {
         
         // Validate inputs
         if (apiKey.isEmpty()) {
@@ -86,7 +84,7 @@ public class OpenAITranscriber {
                 String result = performTranscription(filename, mediaType, apiKey, endpoint, model, language);
                 
                 // Post result to main thread
-                postResultToMainThread(result, addTrailingSpace, callback, errorCallback);
+                postResultToMainThread(result, addTrailingSpace, callback);
                 
             } catch (Exception e) {
                 Log.e(TAG, "Transcription failed", e);
@@ -94,7 +92,7 @@ public class OpenAITranscriber {
                 if (errorMessage == null) {
                     errorMessage = context.getString(R.string.openai_error_transcription_failed);
                 }
-                postErrorToMainThread(errorMessage, errorCallback);
+                postErrorToMainThread(errorMessage, callback);
             }
         }).start();
     }
@@ -170,8 +168,7 @@ public class OpenAITranscriber {
     private void postResultToMainThread(
             String result,
             boolean addTrailingSpace,
-            TranscriptionCallback callback,
-            TranscriptionCallback errorCallback) {
+            TranscriptionCallback callback) {
         
         android.os.Handler mainHandler = new android.os.Handler(android.os.Looper.getMainLooper());
         mainHandler.post(() -> {
@@ -183,16 +180,16 @@ public class OpenAITranscriber {
                 callback.onResult(finalResult);
             } catch (Exception e) {
                 Log.e(TAG, "Error in callback", e);
-                errorCallback.onError("Callback error: " + e.getMessage());
+                callback.onError("Callback error: " + e.getMessage());
             }
         });
     }
     
-    private void postErrorToMainThread(String error, TranscriptionCallback errorCallback) {
+    private void postErrorToMainThread(String error, TranscriptionCallback callback) {
         android.os.Handler mainHandler = new android.os.Handler(android.os.Looper.getMainLooper());
         mainHandler.post(() -> {
             try {
-                errorCallback.onError(error);
+                callback.onError(error);
             } catch (Exception e) {
                 Log.e(TAG, "Error in error callback", e);
             }
