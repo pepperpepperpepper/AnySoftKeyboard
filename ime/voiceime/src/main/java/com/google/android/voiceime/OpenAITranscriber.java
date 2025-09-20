@@ -51,7 +51,7 @@ public class OpenAITranscriber {
      * @param mediaType MIME type of the audio file (e.g., "audio/mp4", "audio/ogg")
      * @param apiKey OpenAI API key for authentication
      * @param endpoint OpenAI API endpoint URL
-     * @param model Whisper model to use (e.g., "whisper-1")
+     * @param model OpenAI transcription model to use (e.g., "whisper-1", "gpt-4o-transcribe")
      * @param language Language code for transcription (e.g., "en", "es")
      * @param addTrailingSpace Whether to add a trailing space to the result
      * @param callback Callback for handling the transcription result and errors

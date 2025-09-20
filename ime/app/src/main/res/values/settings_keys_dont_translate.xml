@@ -362,9 +362,11 @@
     
     <string-array name="openai_model_values">
         <item>whisper-1</item>
+        <item>gpt-4o-transcribe</item>
     </string-array>
     <string-array name="openai_model_entries">
         <item>Whisper-1</item>
+        <item>GPT-4o Transcribe</item>
     </string-array>
     
     <string-array name="openai_audio_format_values">
