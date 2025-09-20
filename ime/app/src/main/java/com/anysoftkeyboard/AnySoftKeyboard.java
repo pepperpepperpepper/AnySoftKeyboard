@@ -364,12 +364,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
         attribute.inputType,
         restarting);
 
-    // Simple log to verify method is called
-    android.util.Log.d("AnySoftKeyboard", "onStartInputView called - showing version info");
     
-    // Show a simple Toast immediately with version info
-    String versionMessage = "ASK v" + BuildConfig.VERSION_NAME + " (Build " + BuildConfig.VERSION_CODE + ")";
-    android.widget.Toast.makeText(this, versionMessage, android.widget.Toast.LENGTH_LONG).show();
 
     super.onStartInputView(attribute, restarting);
 
