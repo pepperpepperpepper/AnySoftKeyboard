@@ -416,12 +416,12 @@ public class OpenAITrigger implements Trigger {
      * @param isTranscribing true when transcription is in progress, false otherwise
      */
     private void updateTranscriptionStatus(boolean isTranscribing) {
-        // This will be used to update the space bar or other UI elements
-        // to show "Transcribing..." status
+        // Update the space bar or other UI elements to show "Transcribing..." status
         Log.d(TAG, "Transcription status: " + (isTranscribing ? "transcribing" : "idle"));
         
-        // We can extend this to update UI elements if needed
-        // For now, we'll just log the status change
+        // Notify the main keyboard service about transcription state changes
+        // This will update the space bar to show "📝 TRANSCRIBING" or back to "English"
+        notifyTranscriptionStateChanged(isTranscribing);
     }
     
     /**
