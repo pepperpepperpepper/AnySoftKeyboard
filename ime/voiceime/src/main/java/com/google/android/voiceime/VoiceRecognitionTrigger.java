@@ -45,9 +45,21 @@ public class VoiceRecognitionTrigger {
     void onTranscriptionError(String error);
   }
   
+  /** Callback interface for when recording ends and audio is sent to OpenAI */
+  public interface RecordingEndedCallback {
+    void onRecordingEnded();
+  }
+  
+  /** Callback interface for when transcribed text has been written to input field */
+  public interface TextWrittenCallback {
+    void onTextWritten(String text);
+  }
+  
   private RecordingStateCallback mRecordingStateCallback;
   private TranscriptionStateCallback mTranscriptionStateCallback;
   private TranscriptionErrorCallback mTranscriptionErrorCallback;
+  private RecordingEndedCallback mRecordingEndedCallback;
+  private TextWrittenCallback mTextWrittenCallback;
 
   public VoiceRecognitionTrigger(InputMethodService inputMethodService) {
     mInputMethodService = inputMethodService;
@@ -200,6 +212,30 @@ public void setRecordingStateCallback(RecordingStateCallback callback) {
       ((OpenAITrigger) mTrigger).setTranscriptionErrorCallback(error -> {
         if (mTranscriptionErrorCallback != null) {
           mTranscriptionErrorCallback.onTranscriptionError(error);
+        }
+      });
+    }
+  }
+  
+  public void setRecordingEndedCallback(RecordingEndedCallback callback) {
+    mRecordingEndedCallback = callback;
+    // If the current trigger is OpenAI, set the callback
+    if (mTrigger instanceof OpenAITrigger) {
+      ((OpenAITrigger) mTrigger).setRecordingEndedCallback(() -> {
+        if (mRecordingEndedCallback != null) {
+          mRecordingEndedCallback.onRecordingEnded();
+        }
+      });
+    }
+  }
+  
+  public void setTextWrittenCallback(TextWrittenCallback callback) {
+    mTextWrittenCallback = callback;
+    // If the current trigger is OpenAI, set the callback
+    if (mTrigger instanceof OpenAITrigger) {
+      ((OpenAITrigger) mTrigger).setTextWrittenCallback(text -> {
+        if (mTextWrittenCallback != null) {
+          mTextWrittenCallback.onTextWritten(text);
         }
       });
     }

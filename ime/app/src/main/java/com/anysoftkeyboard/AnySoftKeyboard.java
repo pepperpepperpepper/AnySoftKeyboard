@@ -97,6 +97,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
   private enum VoiceInputState {
     IDLE,           // Shows "English" or current language
     RECORDING,      // Shows "🎤 RECORDING"
+    WAITING,        // Shows "⏳ WAITING" - when recording ended and waiting for OpenAI
     TRANSCRIBING,   // Shows "📝 TRANSCRIBING"
     ERROR           // Shows "❌ ERROR" (with flashing)
   }
@@ -283,6 +284,34 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
               android.widget.Toast.makeText(AnySoftKeyboard.this, 
                   "OpenAI Error: " + error, 
                   android.widget.Toast.LENGTH_LONG).show();
+            });
+          });
+          
+      // Set up recording ended callback - when recording ends and audio is sent to OpenAI
+      ((com.google.android.voiceime.VoiceRecognitionTrigger) mVoiceRecognitionTrigger)
+          .setRecordingEndedCallback(() -> {
+            android.util.Log.d("AnySoftKeyboard", "Voice recording ended - audio sent to OpenAI");
+            // This is the moment when recording ends and we're waiting for OpenAI's response
+            // Update the space bar to show "⏳ WAITING"
+            updateVoiceInputStatus(VoiceInputState.WAITING);
+            // You can add custom logic here for this specific state
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+              android.widget.Toast.makeText(AnySoftKeyboard.this, 
+                  "Recording sent to OpenAI...", 
+                  android.widget.Toast.LENGTH_SHORT).show();
+            });
+          });
+          
+      // Set up text written callback - when transcribed text has been written to input field
+      ((com.google.android.voiceime.VoiceRecognitionTrigger) mVoiceRecognitionTrigger)
+          .setTextWrittenCallback(text -> {
+            android.util.Log.d("AnySoftKeyboard", "Voice transcription text written: " + text);
+            // This is the moment after the text has actually been written out
+            // You can add custom logic here for when text is committed
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+              android.widget.Toast.makeText(AnySoftKeyboard.this, 
+                  "Text written: " + (text.length() > 20 ? text.substring(0, 20) + "..." : text), 
+                  android.widget.Toast.LENGTH_SHORT).show();
             });
           });
     }
@@ -541,6 +570,8 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
     switch (state) {
       case RECORDING:
         return "🎤 RECORDING";
+      case WAITING:
+        return "⏳ WAITING";
       case TRANSCRIBING:
         return "📝 TRANSCRIBING";
       case ERROR:

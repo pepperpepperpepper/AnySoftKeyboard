@@ -55,9 +55,21 @@ public class OpenAITrigger implements Trigger {
         void onTranscriptionError(String error);
     }
     
+    /** Callback interface for when recording ends and audio is sent to OpenAI */
+    public interface RecordingEndedCallback {
+        void onRecordingEnded();
+    }
+    
+    /** Callback interface for when transcribed text has been written to input field */
+    public interface TextWrittenCallback {
+        void onTextWritten(String text);
+    }
+    
     private RecordingStateCallback mRecordingStateCallback;
     private TranscriptionStateCallback mTranscriptionStateCallback;
     private TranscriptionErrorCallback mTranscriptionErrorCallback;
+    private RecordingEndedCallback mRecordingEndedCallback;
+    private TextWrittenCallback mTextWrittenCallback;
     
     public OpenAITrigger(InputMethodService inputMethodService) {
         mInputMethodService = inputMethodService;
@@ -93,6 +105,22 @@ public class OpenAITrigger implements Trigger {
     }
     
     /**
+     * Sets the callback for when recording ends and audio is sent to OpenAI.
+     * @param callback The callback to be notified when recording ends
+     */
+    public void setRecordingEndedCallback(RecordingEndedCallback callback) {
+        mRecordingEndedCallback = callback;
+    }
+    
+    /**
+     * Sets the callback for when transcribed text has been written to input field.
+     * @param callback The callback to be notified when text is written
+     */
+    public void setTextWrittenCallback(TextWrittenCallback callback) {
+        mTextWrittenCallback = callback;
+    }
+    
+    /**
      * Notifies the callback about recording state changes.
      * @param isRecording The new recording state
      */
@@ -122,11 +150,32 @@ public class OpenAITrigger implements Trigger {
         }
     }
     
+    /**
+     * Notifies the callback that recording has ended and audio is sent to OpenAI.
+     */
+    private void notifyRecordingEnded() {
+        if (mRecordingEndedCallback != null) {
+            mRecordingEndedCallback.onRecordingEnded();
+        }
+    }
+    
+    /**
+     * Notifies the callback that transcribed text has been written to input field.
+     * @param text The text that was written
+     */
+    private void notifyTextWritten(String text) {
+        if (mTextWrittenCallback != null) {
+            mTextWrittenCallback.onTextWritten(text);
+        }
+    }
+    
     private void setupAudioRecorderCallbacks() {
         mAudioRecorderManager.setOnRecordingStopped((success, errorMessage) -> {
             mIsRecording = false; // Always reset recording state when stopped
             notifyRecordingStateChanged(false); // Notify about state change
             if (success) {
+                // Notify that recording has ended and we're sending to OpenAI
+                notifyRecordingEnded();
                 startTranscription();
             } else {
                 Log.e(TAG, "Recording failed: " + errorMessage);
@@ -343,6 +392,9 @@ public class OpenAITrigger implements Trigger {
         
         // Commit the result to the input connection
         commitResult();
+        
+        // Notify that text has been written to the input field
+        notifyTextWritten(result);
         
         // Clean up audio file
         cleanupAudioFile();
