@@ -479,8 +479,10 @@ public abstract class AnyKeyboard extends Keyboard {
         case KeyCodes.DOMAIN:
         case KeyCodes.CANCEL:
         case KeyCodes.CTRL:
+          mControlKey = key;
+          break;
         case KeyCodes.SHIFT:
-          ((AnyKey) key).mFunctionalKey = true;
+          mShiftKey = key; // I want to reference used by than super.
           break;
         case KeyCodes.VOICE_INPUT:
           android.util.Log.d("VoiceKeyDebug", "AnyKeyboard.createKeyFromXml - Creating VoiceKey for VOICE_INPUT!");

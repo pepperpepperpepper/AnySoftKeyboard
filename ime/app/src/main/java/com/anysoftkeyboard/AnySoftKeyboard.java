@@ -93,6 +93,19 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
   private View mFullScreenExtractView;
   private EditText mFullScreenExtractTextView;
 
+  // Enum for different voice input states
+  private enum VoiceInputState {
+    IDLE,           // Shows "English" or current language
+    RECORDING,      // Shows "🎤 RECORDING"
+    TRANSCRIBING,   // Shows "📝 TRANSCRIBING"
+    ERROR           // Shows "❌ ERROR" (with flashing)
+  }
+  
+  private VoiceInputState mVoiceInputState = VoiceInputState.IDLE;
+  private boolean mErrorFlashState = false;
+  private android.os.Handler mErrorFlashHandler = new android.os.Handler();
+  private Runnable mErrorFlashRunnable = null;
+
   private boolean mAutoCap;
   private boolean mKeyboardAutoCap;
 
@@ -132,9 +145,6 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
   @Override
   public void onCreate() {
     super.onCreate();
-    
-    
-    
     if (!BuildConfig.DEBUG && DeveloperUtils.hasTracingRequested(getApplicationContext())) {
       try {
         DeveloperUtils.startTracing();
@@ -279,8 +289,6 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
 
     mDevToolsAction = new DevStripActionProvider(this);
   }
-  
-  
 
   @Override
   public void onDestroy() {
@@ -336,8 +344,6 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
         attribute.inputType,
         restarting);
 
-    
-
     super.onStartInputView(attribute, restarting);
 
     if (mVoiceRecognitionTrigger != null) {
@@ -356,11 +362,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
     if (BuildConfig.DEBUG) {
       getInputViewContainer().addStripAction(mDevToolsAction, false);
     }
-    
-    
   }
-  
-  
 
   @Override
   public void onFinishInput() {
@@ -487,19 +489,6 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
    * Updates the space bar text to show recording status.
    * This provides clear visual feedback when voice recording is active.
    */
-  // Enum for different voice input states
-  private enum VoiceInputState {
-    IDLE,           // Shows "English" or current language
-    RECORDING,      // Shows "🎤 RECORDING"
-    TRANSCRIBING,   // Shows "📝 TRANSCRIBING"
-    ERROR           // Shows "❌ ERROR" (with flashing)
-  }
-  
-  private VoiceInputState mVoiceInputState = VoiceInputState.IDLE;
-  private boolean mErrorFlashState = false;
-  private android.os.Handler mErrorFlashHandler = new android.os.Handler();
-  private Runnable mErrorFlashRunnable = null;
-  
   private void updateSpaceBarRecordingStatus(boolean isRecording) {
     updateVoiceInputStatus(isRecording ? VoiceInputState.RECORDING : VoiceInputState.IDLE);
   }
@@ -1377,16 +1366,39 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
   }
 
   @Override
-  public void onRelease(int primaryCode) {
-    super.onRelease(primaryCode);
+  public void onPress(int primaryCode) {
+    super.onPress(primaryCode);
     InputConnection ic = getCurrentInputConnection();
 
     if (primaryCode == KeyCodes.SHIFT) {
+      mShiftKeyState.onPress();
       // Toggle case on selected characters
       toggleCaseOfSelectedCharacters();
       handleShift();
     } else {
-      mShiftKeyState.onOtherKeyReleased();
+      mShiftKeyState.onOtherKeyPressed();
+    }
+
+    if (primaryCode == KeyCodes.CTRL) {
+      mControlKeyState.onPress();
+      handleControl();
+      sendKeyDown(ic, 113); // KeyEvent.KEYCODE_CTRL_LEFT (API 11 and up)
+    } else {
+      mControlKeyState.onOtherKeyPressed();
+    }
+  }
+
+  @Override
+  public void onRelease(int primaryCode) {
+    super.onRelease(primaryCode);
+    InputConnection ic = getCurrentInputConnection();
+    if (primaryCode == KeyCodes.SHIFT) {
+      mShiftKeyState.onRelease(mMultiTapTimeout, mLongPressTimeout);
+      handleShift();
+    } else {
+      if (mShiftKeyState.onOtherKeyReleased()) {
+        updateShiftStateNow();
+      }
     }
 
     if (primaryCode == KeyCodes.CTRL) {
