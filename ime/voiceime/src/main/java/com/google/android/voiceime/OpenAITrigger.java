@@ -210,6 +210,7 @@ public class OpenAITrigger implements Trigger {
             
             if (apiKey.isEmpty()) {
                 // OpenAI is enabled but no API key - show error
+                android.util.Log.d("LongPressDebug", "OpenAI enabled but API key empty - showing configuration error toast");
                 showConfigurationError(context);
                 return false;
             }
@@ -223,7 +224,9 @@ public class OpenAITrigger implements Trigger {
     
     private static void showConfigurationError(Context context) {
         // Show error as toast - ensure it's shown on UI thread
+        android.util.Log.d("LongPressDebug", "showConfigurationError called - posting toast to main thread");
         new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+            android.util.Log.d("LongPressDebug", "showConfigurationError: Showing API key unset toast");
             android.widget.Toast.makeText(
                 context, 
                 context.getString(R.string.openai_error_api_key_unset), 
@@ -235,6 +238,7 @@ public class OpenAITrigger implements Trigger {
     @Override
     public void startVoiceRecognition(String language) {
         Log.d(TAG, "OpenAI voice recognition triggered for language: " + language);
+        android.util.Log.d("LongPressDebug", "OpenAI startVoiceRecognition called - this might interfere with long press");
         
         // Check if OpenAI speech-to-text is enabled and configured
         if (!isConfigured()) {

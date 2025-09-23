@@ -19,6 +19,7 @@ package com.anysoftkeyboard.ui.settings;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -78,6 +79,14 @@ public class MainSettingsActivity extends AppCompatActivity {
 
   private void handlePermissionRequest(Intent intent) {
     if (intent == null) return;
+    
+    // Handle navigation to OpenAI settings
+    if (intent.hasExtra("navigate_to_openai_settings")) {
+      intent.removeExtra("navigate_to_openai_settings");
+      navigateToOpenAISettings();
+      return;
+    }
+    
     if (ACTION_REQUEST_PERMISSION_ACTIVITY.equals(intent.getAction())
         && intent.hasExtra(EXTRA_KEY_ACTION_REQUEST_PERMISSION_ACTIVITY)) {
       final String permission = intent.getStringExtra(EXTRA_KEY_ACTION_REQUEST_PERMISSION_ACTIVITY);
@@ -110,6 +119,43 @@ public class MainSettingsActivity extends AppCompatActivity {
   public void startContactsPermissionRequest() {
     AnyApplication.notifier(this).cancel(NotificationIds.RequestContactsPermission);
     PermissionRequestHelper.check(this, PermissionRequestHelper.CONTACTS_PERMISSION_REQUEST_CODE);
+  }
+
+private void navigateToOpenAISettings() {
+    // Navigate to OpenAI settings fragment
+    final NavController navController =
+        ((NavHostFragment)
+                Objects.requireNonNull(
+                    getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment)))
+            .getNavController();
+    
+    // Set intent extra to open prompt dialog
+    getIntent().putExtra("open_prompt_dialog", true);
+    
+    // Check if we're already at OpenAI settings fragment
+    if (navController.getCurrentDestination() != null && 
+        navController.getCurrentDestination().getId() == R.id.openAISpeechSettingsFragment) {
+      // We're already at OpenAI settings, just trigger the prompt dialog
+      OpenAISpeechSettingsFragment currentFragment = (OpenAISpeechSettingsFragment) 
+          ((NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment))
+              .getChildFragmentManager().getFragments().get(0);
+      if (currentFragment != null) {
+        currentFragment.showPromptDialog();
+      }
+    } else {
+      // Navigate: Language Settings -> Additional Language Settings -> OpenAI Settings
+      // First, select Language Settings tab in bottom navigation
+      BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+      bottomNavigationView.setSelectedItemId(R.id.languageSettingsFragment);
+      
+      // Then navigate with delays to ensure proper navigation flow
+      new Handler().postDelayed(() -> {
+        navController.navigate(R.id.action_languageSettingsFragment_to_additionalLanguageSettingsFragment);
+        new Handler().postDelayed(() -> {
+          navController.navigate(R.id.action_additionalLanguageSettingsFragment_to_openAISpeechSettingsFragment);
+        }, 200);
+      }, 200);
+    }
   }
 
   @Override

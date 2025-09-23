@@ -710,8 +710,10 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
         break;
       case KeyCodes.VOICE_INPUT:
         android.util.Log.d("VoiceKeyDebug", "onFunctionKey: VOICE_INPUT key handled!");
+        android.util.Log.d("LongPressDebug", "VOICE_INPUT key code received - checking if this interferes with long press");
         if (mVoiceRecognitionTrigger.isInstalled()) {
           android.util.Log.d("VoiceKeyDebug", "onFunctionKey: Voice recognition is installed, starting recognition...");
+          android.util.Log.d("LongPressDebug", "Voice recognition is installed - this might be causing interference");
           mVoiceRecognitionTrigger.startVoiceRecognition(
               getCurrentAlphabetKeyboard().getDefaultDictionaryLocale());
           
@@ -720,6 +722,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
           updateVoiceKeyState();
         } else {
           android.util.Log.d("VoiceKeyDebug", "onFunctionKey: Voice recognition is NOT installed!");
+          android.util.Log.d("LongPressDebug", "Voice recognition is NOT installed - no interference expected");
           Intent voiceInputNotInstalledIntent =
               new Intent(getApplicationContext(), VoiceInputNotInstalledActivity.class);
           voiceInputNotInstalledIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -727,7 +730,9 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
         }
         break;
       case KeyCodes.MICROPHONE_LONG_PRESS:
-        Toast.makeText(this, "You long-pressed the microphone button.", Toast.LENGTH_SHORT).show();
+        android.util.Log.d("LongPressDebug", "MICROPHONE_LONG_PRESS key code received!");
+        android.util.Log.d("LongPressDebug", "Launching OpenAI settings...");
+        launchOpenAISettings();
         break;
       case KeyCodes.CANCEL:
         if (!handleCloseRequest()) {
@@ -1475,6 +1480,16 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
     Intent intent = new Intent();
     intent.setClass(AnySoftKeyboard.this, MainSettingsActivity.class);
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    startActivity(intent);
+  }
+
+  private void launchOpenAISettings() {
+    hideWindow();
+    Intent intent = new Intent();
+    intent.setClass(AnySoftKeyboard.this, MainSettingsActivity.class);
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    // Add extra to navigate directly to OpenAI settings
+    intent.putExtra("navigate_to_openai_settings", true);
     startActivity(intent);
   }
 

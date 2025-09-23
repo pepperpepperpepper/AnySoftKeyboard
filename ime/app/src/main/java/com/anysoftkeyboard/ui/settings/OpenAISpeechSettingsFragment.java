@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.menny.android.anysoftkeyboard.R;
 import net.evendanan.pixel.UiUtils;
@@ -34,11 +35,32 @@ public class OpenAISpeechSettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        
+        // Check if we should open prompt dialog
+        if (getActivity() != null && getActivity().getIntent() != null) {
+            boolean shouldOpenPrompt = getActivity().getIntent().getBooleanExtra("open_prompt_dialog", false);
+            if (shouldOpenPrompt) {
+                // Post to ensure preferences are fully loaded
+                view.post(() -> {
+                    Preference promptPreference = findPreference(getString(R.string.settings_key_openai_prompt));
+                    if (promptPreference != null) {
+                        promptPreference.performClick();
+                    }
+                });
+            }
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
         UiUtils.setActivityTitle(this, R.string.openai_speech_settings_title);
+    }
+
+    public void showPromptDialog() {
+        Preference promptPreference = findPreference(getString(R.string.settings_key_openai_prompt));
+        if (promptPreference != null) {
+            promptPreference.performClick();
+        }
     }
 }
