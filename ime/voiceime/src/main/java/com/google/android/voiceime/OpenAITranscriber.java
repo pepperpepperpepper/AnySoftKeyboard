@@ -56,6 +56,7 @@ public class OpenAITranscriber {
      * @param temperature Controls randomness in transcription (0.0 = more accurate, 1.0 = more creative)
      * @param responseFormat Output format for the transcription (json, text, srt, vtt, verbose_json)
      * @param chunkingStrategy How to handle long audio files (auto, none)
+     * @param prompt Optional prompt to guide transcription style and spelling (max 224 tokens)
      * @param addTrailingSpace Whether to add a trailing space to the result
      * @param callback Callback for handling the transcription result and errors
      */
@@ -70,6 +71,7 @@ public class OpenAITranscriber {
             @NonNull String temperature,
             @NonNull String responseFormat,
             @NonNull String chunkingStrategy,
+            @NonNull String prompt,
             boolean addTrailingSpace,
             @NonNull TranscriptionCallback callback) {
         
@@ -87,7 +89,7 @@ public class OpenAITranscriber {
         // Run transcription in a background thread
         new Thread(() -> {
             try {
-                String result = performTranscription(filename, mediaType, apiKey, endpoint, model, language, temperature, responseFormat, chunkingStrategy);
+                String result = performTranscription(filename, mediaType, apiKey, endpoint, model, language, temperature, responseFormat, chunkingStrategy, prompt);
                 
                 // Post result to main thread
                 postResultToMainThread(result, addTrailingSpace, callback);
@@ -112,7 +114,8 @@ public class OpenAITranscriber {
             String language,
             String temperature,
             String responseFormat,
-            String chunkingStrategy) throws IOException {
+            String chunkingStrategy,
+            String prompt) throws IOException {
         
         File audioFile = new File(filename);
         if (!audioFile.exists()) {
@@ -152,6 +155,11 @@ public class OpenAITranscriber {
         // Add chunking strategy if not "none"
         if (!"none".equals(chunkingStrategy)) {
             requestBodyBuilder.addFormDataPart("chunking_strategy", chunkingStrategy);
+        }
+        
+        // Add prompt parameter if not empty
+        if (!prompt.isEmpty()) {
+            requestBodyBuilder.addFormDataPart("prompt", prompt);
         }
         
         RequestBody requestBody = requestBodyBuilder.build();

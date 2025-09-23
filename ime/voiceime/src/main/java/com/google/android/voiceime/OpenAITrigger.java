@@ -361,6 +361,8 @@ public class OpenAITrigger implements Trigger {
             mInputMethodService.getString(R.string.settings_key_openai_response_format), "text");
         String chunkingStrategy = mSharedPreferences.getString(
             mInputMethodService.getString(R.string.settings_key_openai_chunking_strategy), "auto");
+        String prompt = mSharedPreferences.getString(
+            mInputMethodService.getString(R.string.settings_key_openai_prompt), "");
         
         // Validate temperature value
         try {
@@ -404,6 +406,7 @@ public class OpenAITrigger implements Trigger {
             temperature,
             responseFormat,
             chunkingStrategy,
+            prompt,
             addTrailingSpace,
             new OpenAITranscriber.TranscriptionCallback() {
                 @Override

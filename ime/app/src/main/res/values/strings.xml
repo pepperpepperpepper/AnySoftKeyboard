@@ -991,6 +991,10 @@
     <string name="openai_timestamps_title">Include Timestamps</string>
     <string name="openai_timestamps_summary">Include word-level timestamps in response</string>
     
+    <string name="openai_prompt_title">Prompt</string>
+    <string name="openai_prompt_summary">Optional prompt to guide transcription style and spelling (max 224 tokens)</string>
+    <string name="openai_prompt_dialog_title">Enter Transcription Prompt</string>
+    
     <string name="openai_behavior_settings_group">Behavior Settings</string>
     <string name="openai_enabled_title">Enable OpenAI Speech-to-Text</string>
     <string name="openai_enabled_summary">Use OpenAI API instead of Google speech recognition</string>

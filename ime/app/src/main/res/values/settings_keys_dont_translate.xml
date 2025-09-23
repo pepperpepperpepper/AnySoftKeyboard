@@ -360,6 +360,7 @@
     <string name="settings_key_openai_speech_settings">settings_key_openai_speech_settings</string>
     <string name="settings_key_openai_auto_punctuation">settings_key_openai_auto_punctuation</string>
     <string name="settings_key_openai_timestamps">settings_key_openai_timestamps</string>
+    <string name="settings_key_openai_prompt">settings_key_openai_prompt</string>
     
     <string-array name="openai_audio_format_values">
         <item>m4a</item>
