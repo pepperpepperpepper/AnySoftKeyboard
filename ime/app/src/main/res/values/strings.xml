@@ -1022,4 +1022,27 @@
     <!-- OpenAI Settings Menu -->
     <string name="speech_recognition_group">Speech Recognition</string>
 <string name="openai_speech_settings_summary">Configure OpenAI API for voice input</string>
+    
+    <!-- OpenAI Saved Prompts -->
+    <string name="openai_saved_prompts_title">Saved Prompts</string>
+    <string name="openai_saved_prompts_summary">Manage your library of saved transcription prompts</string>
+    <string name="openai_saved_prompts_manage_title">Manage Saved Prompts</string>
+    <string name="openai_saved_prompts_empty">No saved prompts yet</string>
+    <string name="openai_saved_prompts_add">Add New Prompt</string>
+    <string name="openai_saved_prompts_edit">Edit Prompt</string>
+    <string name="openai_saved_prompts_delete">Delete Prompt</string>
+    <string name="openai_saved_prompts_delete_confirm">Are you sure you want to delete this prompt?</string>
+    <string name="openai_saved_prompts_delete_yes">Yes, Delete</string>
+    <string name="openai_saved_prompts_delete_no">Cancel</string>
+    <string name="openai_saved_prompts_name_hint">Prompt name (optional)</string>
+    <string name="openai_saved_prompts_text_hint">Prompt text</string>
+    <string name="openai_saved_prompts_save">Save</string>
+    <string name="openai_saved_prompts_cancel">Cancel</string>
+    <string name="openai_saved_prompts_insert">Insert</string>
+    <string name="openai_saved_prompts_insert_success">Prompt inserted into main prompt field</string>
+    <string name="openai_saved_prompts_save_success">Prompt saved successfully</string>
+    <string name="openai_saved_prompts_delete_success">Prompt deleted successfully</string>
+    <string name="openai_saved_prompts_error_name_required">Please enter a prompt name</string>
+    <string name="openai_saved_prompts_error_text_required">Please enter prompt text</string>
+    <string name="openai_saved_prompts_error_save_failed">Failed to save prompt</string>
     </resources>

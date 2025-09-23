@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.menny.android.anysoftkeyboard.R;
@@ -36,6 +37,23 @@ public class OpenAISpeechSettingsFragment extends PreferenceFragmentCompat {
         if (promptPreference != null) {
             promptPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 // Let the preference handle the value change
+                return true;
+            });
+        }
+        
+        // Set up the saved prompts preference
+        Preference savedPromptsPreference = findPreference(getString(R.string.settings_key_openai_saved_prompts));
+        if (savedPromptsPreference != null) {
+            savedPromptsPreference.setOnPreferenceClickListener(preference -> {
+                // Open the saved prompts management fragment
+                Fragment savedPromptsFragment = new OpenAISavedPromptsFragment();
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(android.R.id.content, savedPromptsFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
                 return true;
             });
         }

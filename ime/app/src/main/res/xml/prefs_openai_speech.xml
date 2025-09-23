@@ -50,6 +50,12 @@
             android:dialogTitle="@string/openai_prompt_dialog_title"
             android:persistent="true" />
 
+        <androidx.preference.Preference
+            android:key="@string/settings_key_openai_saved_prompts"
+            android:title="@string/openai_saved_prompts_title"
+            android:summary="@string/openai_saved_prompts_summary"
+            android:persistent="false" />
+
         <androidx.preference.EditTextPreference
             android:key="@string/settings_key_openai_temperature"
             android:title="@string/openai_temperature_title"
