@@ -125,7 +125,7 @@ public class VoiceRecordingForegroundService extends Service {
             if (powerManager != null) {
                 mWakeLock = powerManager.newWakeLock(
                         PowerManager.PARTIAL_WAKE_LOCK,
-                        "AnySoftKeyboard:VoiceRecordingWakeLock"
+                        "AnySoftKeyboard:VoiceRecordingServiceWakeLock"
                 );
                 mWakeLock.setReferenceCounted(false);
                 mWakeLock.acquire();
