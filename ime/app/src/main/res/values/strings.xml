@@ -1013,6 +1013,12 @@
     <string name="openai_status_processing">Processing audio...</string>
     <string name="openai_status_transcribing">Transcribing with OpenAI...</string>
     
+    <!-- OpenAI Foreground Service Notification -->
+    <string name="openai_notification_channel_name">Voice Recording</string>
+    <string name="openai_notification_channel_description">Shows when voice recording is active</string>
+    <string name="openai_notification_title">Voice Recording</string>
+    <string name="openai_notification_text">Listening...</string>
+    
     <!-- OpenAI Settings Menu -->
     <string name="speech_recognition_group">Speech Recognition</string>
 <string name="openai_speech_settings_summary">Configure OpenAI API for voice input</string>
