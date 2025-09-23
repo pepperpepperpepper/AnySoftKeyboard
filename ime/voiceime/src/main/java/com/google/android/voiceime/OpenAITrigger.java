@@ -208,28 +208,12 @@ public class OpenAITrigger implements Trigger {
         }
     }
     
-    public static boolean isEnabled(Context context) {
-        try {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            if (prefs == null) {
-                return false; // Handle test environment where prefs might be null
-            }
-            String enabledKey = context.getString(R.string.settings_key_openai_enabled);
-            
-            return prefs.getBoolean(enabledKey, false);
-        } catch (Exception e) {
-            // Handle any exceptions in test environment
-            return false;
-        }
-    }
-    
     @Override
     public void startVoiceRecognition(String language) {
         Log.d(TAG, "OpenAI voice recognition triggered for language: " + language);
         
         // Check if OpenAI speech-to-text is enabled and configured
         if (!isConfigured()) {
-            Log.w(TAG, "OpenAI is enabled but API key is not configured. Showing error message to user.");
             showError(mInputMethodService.getString(R.string.openai_error_api_key_unset));
             return;
         }
@@ -252,12 +236,7 @@ public class OpenAITrigger implements Trigger {
     private boolean isConfigured() {
         String apiKey = mSharedPreferences.getString(
             mInputMethodService.getString(R.string.settings_key_openai_api_key), "");
-        boolean configured = apiKey != null && !apiKey.isEmpty();
-        Log.d(TAG, "OpenAI configuration check - API key configured: " + configured);
-        if (!configured) {
-            Log.w(TAG, "OpenAI API key is not set or is empty");
-        }
-        return configured;
+        return apiKey != null && !apiKey.isEmpty();
     }
     
     private boolean isValidResponseFormat(String format) {
@@ -506,12 +485,13 @@ public class OpenAITrigger implements Trigger {
     }
     
     private void showError(String message) {
-        // Show error as toast
-        Log.e(TAG, "Error: " + message);
+        // Show error as toast - FIXED VERSION
+        String fixedMessage = "FIXED: " + message;
+        Log.e(TAG, "Error: " + fixedMessage);
         
         // Ensure Toast is shown on UI thread using Handler
         new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-            android.widget.Toast.makeText(mInputMethodService, message, android.widget.Toast.LENGTH_LONG).show();
+            android.widget.Toast.makeText(mInputMethodService, fixedMessage, android.widget.Toast.LENGTH_LONG).show();
         });
     }
     

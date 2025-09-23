@@ -67,20 +67,15 @@ public class VoiceRecognitionTrigger {
   }
 
   private Trigger getTrigger() {
-    // Check if OpenAI speech-to-text is enabled (even if not configured)
-    // This ensures that when OpenAI is enabled but API key is missing, 
-    // the user still gets the appropriate error message when clicking the microphone button
-    if (OpenAITrigger.isEnabled(mInputMethodService)) {
-      android.util.Log.d("VoiceRecognitionTrigger", "OpenAI enabled, selecting OpenAI trigger");
+    // Check if OpenAI speech-to-text is enabled and configured
+    if (OpenAITrigger.isAvailable(mInputMethodService)) {
       return getOpenAITrigger();
     } else if (ImeTrigger.isInstalled(mInputMethodService)) {
       // Prioritize IME as it's usually a better experience
       return getImeTrigger();
     } else if (IntentApiTrigger.isInstalled(mInputMethodService)) {
-      android.util.Log.d("VoiceRecognitionTrigger", "IME not available, selecting Intent API trigger");
       return getIntentTrigger();
     } else {
-      android.util.Log.d("VoiceRecognitionTrigger", "No voice recognition trigger available");
       return null;
     }
   }
@@ -144,12 +139,8 @@ public class VoiceRecognitionTrigger {
    * @see InputMethodSubtype
    */
   public void startVoiceRecognition(String language) {
-    android.util.Log.d("VoiceRecognitionTrigger", "startVoiceRecognition called with language: " + language);
     if (mTrigger != null) {
-      android.util.Log.d("VoiceRecognitionTrigger", "Starting voice recognition with trigger: " + mTrigger.getClass().getSimpleName());
       mTrigger.startVoiceRecognition(language);
-    } else {
-      android.util.Log.w("VoiceRecognitionTrigger", "No trigger available for voice recognition");
     }
   }
 
