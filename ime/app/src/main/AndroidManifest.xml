@@ -19,12 +19,6 @@
     <!-- REQUIRED FOR OPENAI SPEECH-TO-TEXT -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- REQUIRED FOR VOICE RECORDING WAKE LOCK -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!-- REQUIRED FOR FOREGROUND SERVICE -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <!-- REQUIRED FOR MICROPHONE FOREGROUND SERVICE (ANDROID 14+) -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <!-- currently, only support touch and fake-touch devices -->
     <uses-feature android:name="android.hardware.faketouch" />
     <uses-feature
