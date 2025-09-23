@@ -526,13 +526,12 @@ public class OpenAITrigger implements Trigger {
     }
     
     private void showError(String message) {
-        // Show error as toast - FIXED VERSION
-        String fixedMessage = "FIXED: " + message;
-        Log.e(TAG, "Error: " + fixedMessage);
+        // Show error as toast
+        Log.e(TAG, "Error: " + message);
         
         // Ensure Toast is shown on UI thread using Handler
         new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-            android.widget.Toast.makeText(mInputMethodService, fixedMessage, android.widget.Toast.LENGTH_LONG).show();
+            android.widget.Toast.makeText(mInputMethodService, message, android.widget.Toast.LENGTH_LONG).show();
         });
     }
     
