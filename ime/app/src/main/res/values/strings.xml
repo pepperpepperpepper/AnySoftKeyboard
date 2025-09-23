@@ -973,9 +973,17 @@
     <string name="openai_language_dialog_title">Enter Language Code</string>
     
     <string name="openai_audio_settings_group">Audio Settings</string>
-    <string name="openai_audio_format_title">Audio Format</string>
-    <string name="openai_audio_format_summary">Audio format for recording</string>
-    <string name="openai_audio_format_dialog_title">Select Audio Format</string>
+    <string name="openai_temperature_title">Temperature</string>
+    <string name="openai_temperature_summary">Controls randomness in transcription (0.0 = more accurate, 1.0 = more creative)</string>
+    <string name="openai_temperature_dialog_title">Set Temperature (0.0 - 1.0)</string>
+    
+    <string name="openai_response_format_title">Response Format</string>
+    <string name="openai_response_format_summary">Output format for the transcription</string>
+    <string name="openai_response_format_dialog_title">Select Response Format</string>
+    
+    <string name="openai_chunking_strategy_title">Chunking Strategy</string>
+    <string name="openai_chunking_strategy_summary">How to handle long audio files (auto = split automatically, none = no splitting)</string>
+    <string name="openai_chunking_strategy_dialog_title">Select Chunking Strategy</string>
     
     <string name="openai_auto_punctuation_title">Auto Punctuation</string>
     <string name="openai_auto_punctuation_summary">Automatically add punctuation to transcribed text</string>
@@ -987,8 +995,7 @@
     <string name="openai_enabled_title">Enable OpenAI Speech-to-Text</string>
     <string name="openai_enabled_summary">Use OpenAI API instead of Google speech recognition</string>
     
-    <string name="openai_auto_switch_back_title">Auto Switch Back</string>
-    <string name="openai_auto_switch_back_summary">Switch to previous keyboard after transcription</string>
+    
     
     <string name="openai_add_trailing_space_title">Add Trailing Space</string>
     <string name="openai_add_trailing_space_summary">Add space after transcribed text</string>

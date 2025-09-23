@@ -37,7 +37,7 @@ public class OpenAITrigger implements Trigger {
     private String mLastRecognitionResult;
     private String mRecordedAudioFilename;
     private String mAudioMediaType;
-    private boolean mUseOggFormat;
+    
     private boolean mIsRecording = false;
     
     /** Callback interface for recording state changes */
@@ -239,20 +239,25 @@ public class OpenAITrigger implements Trigger {
         return apiKey != null && !apiKey.isEmpty();
     }
     
+    private boolean isValidResponseFormat(String format) {
+        return "json".equals(format) || "text".equals(format) || 
+               "srt".equals(format) || "vtt".equals(format) || 
+               "verbose_json".equals(format);
+    }
+    
+    private boolean isValidChunkingStrategy(String strategy) {
+        return "auto".equals(strategy) || "none".equals(strategy);
+    }
+    
     private void setupAudioFormat() {
-        String audioFormat = mSharedPreferences.getString(
-            mInputMethodService.getString(R.string.settings_key_openai_audio_format), "m4a");
-        
-        mUseOggFormat = "ogg".equals(audioFormat);
+        // Audio format is now fixed to M4A since OGG option was removed
         
         File cacheDir = mInputMethodService.getExternalCacheDir();
         if (cacheDir != null) {
-            String filename = mUseOggFormat ? "recorded.ogg" : "recorded.m4a";
-            mRecordedAudioFilename = new File(cacheDir, filename).getAbsolutePath();
-            mAudioMediaType = mUseOggFormat ? "audio/ogg" : "audio/mp4";
+            mRecordedAudioFilename = new File(cacheDir, "recorded.m4a").getAbsolutePath();
+            mAudioMediaType = "audio/mp4";
         } else {
             // Use defaults
-            mUseOggFormat = false;
             mAudioMediaType = "audio/mp4";
         }
     }
@@ -265,7 +270,7 @@ public class OpenAITrigger implements Trigger {
         }
         
         try {
-            mAudioRecorderManager.startRecording(mRecordedAudioFilename, mUseOggFormat);
+            mAudioRecorderManager.startRecording(mRecordedAudioFilename, false); // Always use M4A format
             mIsRecording = true;
             notifyRecordingStateChanged(true); // Notify about state change
             Log.d(TAG, "Started recording to: " + mRecordedAudioFilename);
@@ -309,6 +314,36 @@ public class OpenAITrigger implements Trigger {
             mInputMethodService.getString(R.string.settings_key_openai_model), "whisper-1");
         String language = mSharedPreferences.getString(
             mInputMethodService.getString(R.string.settings_key_openai_language), "en");
+        String temperature = mSharedPreferences.getString(
+            mInputMethodService.getString(R.string.settings_key_openai_temperature), "0.0");
+        String responseFormat = mSharedPreferences.getString(
+            mInputMethodService.getString(R.string.settings_key_openai_response_format), "text");
+        String chunkingStrategy = mSharedPreferences.getString(
+            mInputMethodService.getString(R.string.settings_key_openai_chunking_strategy), "auto");
+        
+        // Validate temperature value
+        try {
+            float tempValue = Float.parseFloat(temperature);
+            if (tempValue < 0.0f || tempValue > 1.0f) {
+                Log.w(TAG, "Temperature value out of range (0.0-1.0): " + temperature + ", using default 0.0");
+                temperature = "0.0";
+            }
+        } catch (NumberFormatException e) {
+            Log.w(TAG, "Invalid temperature value: " + temperature + ", using default 0.0");
+            temperature = "0.0";
+        }
+        
+        // Validate response format
+        if (!isValidResponseFormat(responseFormat)) {
+            Log.w(TAG, "Invalid response format: " + responseFormat + ", using default json");
+            responseFormat = "json";
+        }
+        
+        // Validate chunking strategy
+        if (!isValidChunkingStrategy(chunkingStrategy)) {
+            Log.w(TAG, "Invalid chunking strategy: " + chunkingStrategy + ", using default auto");
+            chunkingStrategy = "auto";
+        }
         boolean addTrailingSpace = mSharedPreferences.getBoolean(
             mInputMethodService.getString(R.string.settings_key_openai_add_trailing_space), true);
         
@@ -325,6 +360,9 @@ public class OpenAITrigger implements Trigger {
             endpoint,
             model,
             language,
+            temperature,
+            responseFormat,
+            chunkingStrategy,
             addTrailingSpace,
             new OpenAITranscriber.TranscriptionCallback() {
                 @Override
@@ -358,14 +396,8 @@ public class OpenAITrigger implements Trigger {
     }
     
     private long estimateAudioDuration(long fileSize) {
-        // Rough estimate based on audio format
-        if (mUseOggFormat) {
-            // OGG Vorbis: roughly 32-64 kbps for voice
-            return fileSize / (16 * 1024); // Assuming ~16KB per second (128 kbps)
-        } else {
-            // M4A/AAC: roughly 32-64 kbps for voice
-            return fileSize / (16 * 1024); // Assuming ~16KB per second (128 kbps)
-        }
+        // M4A/AAC: roughly 32-64 kbps for voice
+        return fileSize / (16 * 1024); // Assuming ~16KB per second (128 kbps)
     }
     
     private String formatDuration(long seconds) {

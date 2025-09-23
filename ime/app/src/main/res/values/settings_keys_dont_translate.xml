@@ -353,12 +353,44 @@
     <string name="settings_key_openai_endpoint">settings_key_openai_endpoint</string>
     <string name="settings_key_openai_model">settings_key_openai_model</string>
     <string name="settings_key_openai_language">settings_key_openai_language</string>
-    <string name="settings_key_openai_audio_format">settings_key_openai_audio_format</string>
-    <string name="settings_key_openai_auto_punctuation">settings_key_openai_auto_punctuation</string>
-    <string name="settings_key_openai_timestamps">settings_key_openai_timestamps</string>
-    <string name="settings_key_openai_auto_switch_back">settings_key_openai_auto_switch_back</string>
+<string name="settings_key_openai_temperature">settings_key_openai_temperature</string>
+    <string name="settings_key_openai_response_format">settings_key_openai_response_format</string>
+    <string name="settings_key_openai_chunking_strategy">settings_key_openai_chunking_strategy</string>
     <string name="settings_key_openai_add_trailing_space">settings_key_openai_add_trailing_space</string>
     <string name="settings_key_openai_speech_settings">settings_key_openai_speech_settings</string>
+    <string name="settings_key_openai_auto_punctuation">settings_key_openai_auto_punctuation</string>
+    <string name="settings_key_openai_timestamps">settings_key_openai_timestamps</string>
+    
+    <string-array name="openai_audio_format_values">
+        <item>m4a</item>
+    </string-array>
+    <string-array name="openai_audio_format_entries">
+        <item>M4A (MP4)</item>
+    </string-array>
+    
+    <string-array name="openai_response_format_values">
+        <item>json</item>
+        <item>text</item>
+        <item>srt</item>
+        <item>vtt</item>
+        <item>verbose_json</item>
+    </string-array>
+    <string-array name="openai_response_format_entries">
+        <item>JSON</item>
+        <item>Plain Text</item>
+        <item>SubRip Subtitle (SRT)</item>
+        <item>WebVTT Subtitle (VTT)</item>
+        <item>Verbose JSON</item>
+    </string-array>
+    
+    <string-array name="openai_chunking_strategy_values">
+        <item>auto</item>
+        <item>none</item>
+    </string-array>
+    <string-array name="openai_chunking_strategy_entries">
+        <item>Auto (split long files)</item>
+        <item>None (no splitting)</item>
+    </string-array>
     
     <string-array name="openai_model_values">
         <item>whisper-1</item>
@@ -367,14 +399,5 @@
     <string-array name="openai_model_entries">
         <item>Whisper-1</item>
         <item>GPT-4o Transcribe</item>
-    </string-array>
-    
-    <string-array name="openai_audio_format_values">
-        <item>m4a</item>
-        <item>ogg</item>
-    </string-array>
-    <string-array name="openai_audio_format_entries">
-        <item>M4A (MP4)</item>
-        <item>OGG</item>
     </string-array>
 </resources>

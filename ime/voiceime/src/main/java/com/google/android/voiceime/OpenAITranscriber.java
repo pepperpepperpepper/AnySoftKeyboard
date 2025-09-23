@@ -48,11 +48,14 @@ public class OpenAITranscriber {
      * 
      * @param context Android context for accessing resources
      * @param filename Path to the audio file to transcribe
-     * @param mediaType MIME type of the audio file (e.g., "audio/mp4", "audio/ogg")
+     * @param mediaType MIME type of the audio file (e.g., "audio/mp4")
      * @param apiKey OpenAI API key for authentication
      * @param endpoint OpenAI API endpoint URL
      * @param model OpenAI transcription model to use (e.g., "whisper-1", "gpt-4o-transcribe")
      * @param language Language code for transcription (e.g., "en", "es")
+     * @param temperature Controls randomness in transcription (0.0 = more accurate, 1.0 = more creative)
+     * @param responseFormat Output format for the transcription (json, text, srt, vtt, verbose_json)
+     * @param chunkingStrategy How to handle long audio files (auto, none)
      * @param addTrailingSpace Whether to add a trailing space to the result
      * @param callback Callback for handling the transcription result and errors
      */
@@ -64,6 +67,9 @@ public class OpenAITranscriber {
             @NonNull String endpoint,
             @NonNull String model,
             @NonNull String language,
+            @NonNull String temperature,
+            @NonNull String responseFormat,
+            @NonNull String chunkingStrategy,
             boolean addTrailingSpace,
             @NonNull TranscriptionCallback callback) {
         
@@ -81,7 +87,7 @@ public class OpenAITranscriber {
         // Run transcription in a background thread
         new Thread(() -> {
             try {
-                String result = performTranscription(filename, mediaType, apiKey, endpoint, model, language);
+                String result = performTranscription(filename, mediaType, apiKey, endpoint, model, language, temperature, responseFormat, chunkingStrategy);
                 
                 // Post result to main thread
                 postResultToMainThread(result, addTrailingSpace, callback);
@@ -103,7 +109,10 @@ public class OpenAITranscriber {
             String apiKey,
             String endpoint,
             String model,
-            String language) throws IOException {
+            String language,
+            String temperature,
+            String responseFormat,
+            String chunkingStrategy) throws IOException {
         
         File audioFile = new File(filename);
         if (!audioFile.exists()) {
@@ -123,11 +132,26 @@ public class OpenAITranscriber {
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", audioFile.getName(), fileBody)
                 .addFormDataPart("model", model)
-                .addFormDataPart("response_format", "text");
+                .addFormDataPart("response_format", responseFormat);
         
         // Add language parameter if not empty
         if (!language.isEmpty()) {
             requestBodyBuilder.addFormDataPart("language", language);
+        }
+        
+        // Add temperature parameter if valid
+        try {
+            float tempValue = Float.parseFloat(temperature);
+            if (tempValue >= 0.0f && tempValue <= 1.0f) {
+                requestBodyBuilder.addFormDataPart("temperature", temperature);
+            }
+        } catch (NumberFormatException e) {
+            Log.w(TAG, "Invalid temperature value: " + temperature + ", using default");
+        }
+        
+        // Add chunking strategy if not "none"
+        if (!"none".equals(chunkingStrategy)) {
+            requestBodyBuilder.addFormDataPart("chunking_strategy", chunkingStrategy);
         }
         
         RequestBody requestBody = requestBodyBuilder.build();
