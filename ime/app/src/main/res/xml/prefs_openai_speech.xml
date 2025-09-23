@@ -43,7 +43,7 @@
             android:defaultValue="en"
             android:persistent="true" />
 
-        <androidx.preference.EditTextPreference
+        <com.anysoftkeyboard.ui.settings.OpenAIPromptEditTextPreference
             android:key="@string/settings_key_openai_prompt"
             android:title="@string/openai_prompt_title"
             android:summary="@string/openai_prompt_summary"

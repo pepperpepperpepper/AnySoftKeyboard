@@ -30,6 +30,15 @@ public class OpenAISpeechSettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.prefs_openai_speech);
+        
+        // Set up the prompt preference with clear functionality
+        OpenAIPromptEditTextPreference promptPreference = findPreference(getString(R.string.settings_key_openai_prompt));
+        if (promptPreference != null) {
+            promptPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                // Let the preference handle the value change
+                return true;
+            });
+        }
     }
 
     @Override
