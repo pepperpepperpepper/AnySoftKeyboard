@@ -20,8 +20,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.preference.PreferenceManager;
-import android.view.View;
-import android.view.WindowManager;
 import android.util.Log;
 
 import java.io.File;
@@ -41,7 +39,6 @@ public class OpenAITrigger implements Trigger {
     private String mAudioMediaType;
     
     private boolean mIsRecording = false;
-    private boolean mKeepScreenOn = false;
     
     /** Callback interface for recording state changes */
     public interface RecordingStateCallback {
@@ -172,35 +169,6 @@ public class OpenAITrigger implements Trigger {
         }
     }
     
-    /**
-     * Keeps the screen on while recording to prevent display timeout.
-     * This ensures the user can see the recording interface.
-     */
-    private void keepScreenOn(boolean keepOn) {
-        if (mKeepScreenOn == keepOn) {
-            return; // No change needed
-        }
-        
-        try {
-            // Use InputMethodService's window to set keep screen on flag
-            android.view.Window window = mInputMethodService.getWindow().getWindow();
-            if (window != null) {
-                if (keepOn) {
-                    window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    Log.d(TAG, "Screen keep-on enabled for recording");
-                } else {
-                    window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    Log.d(TAG, "Screen keep-on disabled after recording");
-                }
-                mKeepScreenOn = keepOn;
-            } else {
-                Log.w(TAG, "Window is null, cannot set keep screen on");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error setting keep screen on", e);
-        }
-    }
-    
     private void setupAudioRecorderCallbacks() {
         mAudioRecorderManager.setOnRecordingStopped((success, errorMessage) -> {
             mIsRecording = false; // Always reset recording state when stopped
@@ -231,13 +199,37 @@ public class OpenAITrigger implements Trigger {
             String apiKeyKey = context.getString(R.string.settings_key_openai_api_key);
             
             boolean enabled = prefs.getBoolean(enabledKey, false);
+            
+            // If OpenAI is not enabled, just return false silently
+            if (!enabled) {
+                return false;
+            }
+            
+            // OpenAI is enabled, now check if it's configured
             String apiKey = prefs.getString(apiKeyKey, "");
             
-            return enabled && !apiKey.isEmpty();
+            if (apiKey.isEmpty()) {
+                // OpenAI is enabled but no API key - show error
+                showConfigurationError(context);
+                return false;
+            }
+            
+            return true; // OpenAI is enabled and configured
         } catch (Exception e) {
             // Handle any exceptions in test environment
             return false;
         }
+    }
+    
+    private static void showConfigurationError(Context context) {
+        // Show error as toast - ensure it's shown on UI thread
+        new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+            android.widget.Toast.makeText(
+                context, 
+                context.getString(R.string.openai_error_api_key_unset), 
+                android.widget.Toast.LENGTH_LONG
+            ).show();
+        });
     }
     
     @Override
@@ -297,18 +289,14 @@ public class OpenAITrigger implements Trigger {
     private void startRecording() {
         // Check permissions
         if (!mAudioRecorderManager.hasPermissions()) {
-            showError("Audio recording permission not granted");
+            showError(mInputMethodService.getString(R.string.openai_error_microphone_permission));
             return;
         }
         
         try {
-            // Start foreground service to keep CPU awake and show notification
-            VoiceRecordingForegroundService.startService(mInputMethodService);
-            
             mAudioRecorderManager.startRecording(mRecordedAudioFilename, false); // Always use M4A format
             mIsRecording = true;
             notifyRecordingStateChanged(true); // Notify about state change
-            keepScreenOn(true); // Keep screen on while recording
             Log.d(TAG, "Started recording to: " + mRecordedAudioFilename);
         } catch (Exception e) {
             Log.e(TAG, "Error starting recording", e);
@@ -321,11 +309,6 @@ public class OpenAITrigger implements Trigger {
             mAudioRecorderManager.stopRecording();
         }
         mIsRecording = false;
-        keepScreenOn(false); // Release screen keep-on
-        
-        // Stop foreground service
-        VoiceRecordingForegroundService.stopService(mInputMethodService);
-        
         notifyRecordingStateChanged(false); // Notify about state change
     }
     
@@ -565,13 +548,6 @@ public class OpenAITrigger implements Trigger {
         // Reset any pending state
         mLastRecognitionResult = null;
         mIsRecording = false;
-        keepScreenOn(false); // Ensure screen keep-on is reset
-        
-        // Stop foreground service if running
-        if (VoiceRecordingForegroundService.isRunning()) {
-            VoiceRecordingForegroundService.stopService(mInputMethodService);
-        }
-        
         notifyRecordingStateChanged(false); // Notify about state change
         
         // Stop any ongoing recording

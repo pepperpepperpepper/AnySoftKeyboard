@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Build;
-import android.os.PowerManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -33,7 +32,7 @@ import java.io.IOException;
 public class AudioRecorderManager {
 
     private static final String TAG = "AudioRecorderManager";
-    private static final int MAX_RECORDING_DURATION_MS = 300 * 1000; // 5 minutes max
+    private static final int MAX_RECORDING_DURATION_MS = 30 * 1000; // 30 seconds max
     
     public interface RecordingCallback {
         void onRecordingStopped(boolean success, String errorMessage);
@@ -49,11 +48,9 @@ public class AudioRecorderManager {
     private AmplitudeUpdateCallback mAmplitudeCallback;
     private boolean mIsRecording = false;
     private Thread mAmplitudeUpdateThread;
-    private PowerManager.WakeLock mWakeLock;
     
     public AudioRecorderManager(@NonNull Context context) {
         mContext = context.getApplicationContext();
-        initializeWakeLock();
     }
     
     /**
@@ -68,40 +65,6 @@ public class AudioRecorderManager {
      */
     public void setOnUpdateMicrophoneAmplitude(@NonNull AmplitudeUpdateCallback callback) {
         mAmplitudeCallback = callback;
-    }
-    
-    /**
-     * Initializes the wake lock for keeping CPU awake during recording.
-     */
-    private void initializeWakeLock() {
-        PowerManager powerManager = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-        if (powerManager != null) {
-            mWakeLock = powerManager.newWakeLock(
-                    PowerManager.PARTIAL_WAKE_LOCK,
-                    "AnySoftKeyboard:VoiceRecordingWakeLock"
-            );
-            mWakeLock.setReferenceCounted(false);
-        }
-    }
-    
-    /**
-     * Acquires the wake lock to keep CPU awake during recording.
-     */
-    private void acquireWakeLock() {
-        if (mWakeLock != null && !mWakeLock.isHeld()) {
-            mWakeLock.acquire();
-            Log.d(TAG, "Wake lock acquired for recording");
-        }
-    }
-    
-    /**
-     * Releases the wake lock when recording is finished.
-     */
-    private void releaseWakeLock() {
-        if (mWakeLock != null && mWakeLock.isHeld()) {
-            mWakeLock.release();
-            Log.d(TAG, "Wake lock released after recording");
-        }
     }
     
     /**
@@ -176,14 +139,8 @@ public class AudioRecorderManager {
             mIsRecording = true;
             Log.d(TAG, "Recording started to: " + outputFilePath);
             
-            // Acquire wake lock to keep CPU awake
-            acquireWakeLock();
-            
             // Start amplitude updates
             startAmplitudeUpdates();
-            
-            // Setup auto-stop after maximum duration
-            setupAutoStop();
             
         } catch (IOException e) {
             Log.e(TAG, "Failed to start recording", e);
@@ -215,9 +172,6 @@ public class AudioRecorderManager {
             mMediaRecorder.stop();
             mIsRecording = false;
             
-            // Release wake lock
-            releaseWakeLock();
-            
             // Notify callback of success
             if (mRecordingCallback != null) {
                 mRecordingCallback.onRecordingStopped(true, null);
@@ -226,9 +180,6 @@ public class AudioRecorderManager {
         } catch (Exception e) {
             Log.e(TAG, "Error stopping recording", e);
             mIsRecording = false;
-            
-            // Release wake lock in case of error
-            releaseWakeLock();
             
             // Notify callback of failure
             if (mRecordingCallback != null) {
@@ -293,9 +244,6 @@ public class AudioRecorderManager {
             mMediaRecorder = null;
         }
         
-        // Ensure wake lock is released
-        releaseWakeLock();
-        
         stopAmplitudeUpdates();
         mIsRecording = false;
     }
@@ -305,19 +253,14 @@ public class AudioRecorderManager {
      * This should be called when starting recording to set up auto-stop.
      */
     public void setupAutoStop() {
-        Log.d(TAG, "Setting up auto-stop for " + (MAX_RECORDING_DURATION_MS/1000) + " seconds");
         new Thread(() -> {
             try {
-                Log.d(TAG, "Auto-stop thread started, waiting " + (MAX_RECORDING_DURATION_MS/1000) + " seconds");
                 Thread.sleep(MAX_RECORDING_DURATION_MS);
                 if (mIsRecording) {
-                    Log.d(TAG, "Auto-stopping recording after maximum duration of " + (MAX_RECORDING_DURATION_MS/1000) + " seconds");
+                    Log.d(TAG, "Auto-stopping recording after maximum duration");
                     stopRecording();
-                } else {
-                    Log.d(TAG, "Recording already stopped, no auto-stop needed");
                 }
             } catch (InterruptedException e) {
-                Log.d(TAG, "Auto-stop thread interrupted");
                 Thread.currentThread().interrupt();
             }
         }).start();

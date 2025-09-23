@@ -3,12 +3,6 @@
     <application>
         <!-- for voice -->
         <service android:name="com.google.android.voiceime.ServiceHelper" />
-        <!-- for voice recording foreground service -->
-        <service
-            android:name="com.google.android.voiceime.VoiceRecordingForegroundService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="microphone" />
 
         <activity
             android:name="com.google.android.voiceime.ActivityHelper"

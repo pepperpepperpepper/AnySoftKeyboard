@@ -20,18 +20,18 @@
     </string-array>
     
     <string-array name="openai_response_format_values">
-        <item>json</item>
         <item>text</item>
+        <item>json</item>
+        <item>verbose_json</item>
         <item>srt</item>
         <item>vtt</item>
-        <item>verbose_json</item>
     </string-array>
     <string-array name="openai_response_format_entries">
-        <item>JSON</item>
         <item>Plain Text</item>
+        <item>JSON</item>
+        <item>Verbose JSON</item>
         <item>SubRip Subtitle (SRT)</item>
         <item>WebVTT Subtitle (VTT)</item>
-        <item>Verbose JSON</item>
     </string-array>
     
     <string-array name="openai_chunking_strategy_values">
