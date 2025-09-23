@@ -106,6 +106,15 @@ public class OpenAISavedPromptsFragment extends Fragment {
         if (isEdit) {
             nameEdit.setText(prompt.getName());
             textEdit.setText(prompt.getText());
+        } else {
+            // Check if we have pre-filled text from arguments
+            Bundle args = getArguments();
+            if (args != null && args.containsKey("pre_filled_prompt_text")) {
+                String preFilledText = args.getString("pre_filled_prompt_text");
+                textEdit.setText(preFilledText);
+                // Focus on name field since text is already filled
+                nameEdit.requestFocus();
+            }
         }
 
         // Enable/disable save button based on input

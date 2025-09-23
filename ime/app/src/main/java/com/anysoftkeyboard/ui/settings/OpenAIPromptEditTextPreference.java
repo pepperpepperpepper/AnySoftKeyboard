@@ -17,11 +17,13 @@
 package com.anysoftkeyboard.ui.settings;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -46,22 +48,25 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
         super(context);
     }
 
-    @Override
+@Override
     protected void onClick() {
-        // Create a custom dialog with three buttons: Clear, Cancel, OK
+        // Create a custom dialog with Save and Clear buttons in layout, plus OK and Cancel
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(getDialogTitle());
         
-        // Inflate the custom layout
+        // Inflate custom layout
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View dialogView = inflater.inflate(R.layout.openai_prompt_dialog, null);
         
         EditText editText = dialogView.findViewById(R.id.editText);
+        Button saveButton = dialogView.findViewById(R.id.save_button);
+        Button clearButton = dialogView.findViewById(R.id.clear_button);
+        
         editText.setText(getText());
         
         builder.setView(dialogView);
         
-        // Set up the buttons
+        // Set up AlertDialog buttons (OK and Cancel)
         builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
             String newValue = editText.getText().toString();
             if (callChangeListener(newValue)) {
@@ -71,18 +76,30 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
         
         builder.setNegativeButton(android.R.string.cancel, null);
         
-        builder.setNeutralButton(R.string.openai_prompt_clear_button, (dialog, which) -> {
-            // Clear the text
-            editText.setText("");
-        });
-        
         AlertDialog dialog = builder.create();
         dialog.show();
         
-        // Enable/disable the OK button based on text input
+        // Set up Save button click handler
+        saveButton.setOnClickListener(v -> {
+            String currentText = editText.getText().toString().trim();
+            if (!currentText.isEmpty()) {
+                // Open saved prompts fragment with pre-filled text
+                openSavedPromptsFragmentWithText(currentText);
+                dialog.dismiss();
+            } else {
+                Toast.makeText(getContext(), "Please enter prompt text to save", Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        // Set up Clear button click handler
+        clearButton.setOnClickListener(v -> {
+            editText.setText("");
+        });
+        
+        // Enable/disable OK button based on text input
         Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         if (okButton != null) {
-            okButton.setEnabled(false);
+            okButton.setEnabled(editText.getText().length() > 0);
             editText.addTextChangedListener(new android.text.TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -95,6 +112,34 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
                 @Override
                 public void afterTextChanged(android.text.Editable s) {}
             });
+        }
+    }
+    
+    private void openSavedPromptsFragmentWithText(String promptText) {
+        try {
+            // Get the current fragment manager from the context
+            Context context = getContext();
+            if (context instanceof androidx.fragment.app.FragmentActivity) {
+                androidx.fragment.app.FragmentActivity activity = (androidx.fragment.app.FragmentActivity) context;
+                
+                // Create saved prompts fragment
+                OpenAISavedPromptsFragment fragment = new OpenAISavedPromptsFragment();
+                
+                // Pass the prompt text as argument
+                Bundle args = new Bundle();
+                args.putString("pre_filled_prompt_text", promptText);
+                fragment.setArguments(args);
+                
+                // Navigate to the fragment
+                activity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(android.R.id.content, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+Toast.makeText(getContext(), "Unable to open saved prompts", Toast.LENGTH_SHORT).show();
         }
     }
 }
