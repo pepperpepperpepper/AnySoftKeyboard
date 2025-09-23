@@ -199,13 +199,37 @@ public class OpenAITrigger implements Trigger {
             String apiKeyKey = context.getString(R.string.settings_key_openai_api_key);
             
             boolean enabled = prefs.getBoolean(enabledKey, false);
+            
+            // If OpenAI is not enabled, just return false silently
+            if (!enabled) {
+                return false;
+            }
+            
+            // OpenAI is enabled, now check if it's configured
             String apiKey = prefs.getString(apiKeyKey, "");
             
-            return enabled && !apiKey.isEmpty();
+            if (apiKey.isEmpty()) {
+                // OpenAI is enabled but no API key - show error
+                showConfigurationError(context);
+                return false;
+            }
+            
+            return true; // OpenAI is enabled and configured
         } catch (Exception e) {
             // Handle any exceptions in test environment
             return false;
         }
+    }
+    
+    private static void showConfigurationError(Context context) {
+        // Show error as toast - ensure it's shown on UI thread
+        new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+            android.widget.Toast.makeText(
+                context, 
+                context.getString(R.string.openai_error_api_key_unset), 
+                android.widget.Toast.LENGTH_LONG
+            ).show();
+        });
     }
     
     @Override
@@ -265,7 +289,7 @@ public class OpenAITrigger implements Trigger {
     private void startRecording() {
         // Check permissions
         if (!mAudioRecorderManager.hasPermissions()) {
-            showError("Audio recording permission not granted");
+            showError(mInputMethodService.getString(R.string.openai_error_microphone_permission));
             return;
         }
         

@@ -1002,6 +1002,7 @@
     
     <!-- OpenAI Error Messages -->
     <string name="openai_error_api_key_unset">OpenAI API key is not set. Please configure it in settings.</string>
+    <string name="openai_error_microphone_permission">Microphone permission not granted. Please add permission for microphone in app settings.</string>
     <string name="openai_error_endpoint_unset">OpenAI API endpoint is not set. Please configure it in settings.</string>
     <string name="openai_error_network">Network error occurred while contacting OpenAI API.</string>
     <string name="openai_error_api_error">OpenAI API error: %s</string>
