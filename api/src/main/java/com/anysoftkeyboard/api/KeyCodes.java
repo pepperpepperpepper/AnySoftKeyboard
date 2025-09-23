@@ -68,6 +68,7 @@ public class KeyCodes {
   public static final int PRE_PREPARED_EMAILS_POPUP = -152;
 
   public static final int EXTERNAL_INTEGRATION = -200;
+  public static final int MICROPHONE_LONG_PRESS = -201;
 
   public static boolean isOutputKeyCode(final int code) {
     if (code > 0) {

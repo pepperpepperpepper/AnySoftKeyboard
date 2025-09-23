@@ -44,7 +44,7 @@
     </Row>
 
     <Row android:rowEdgeFlags="bottom">
-        <Key ask:isFunctional="true" android:keyWidth="15%p" android:codes="@integer/key_code_voice_input" android:keyEdgeFlags="left"/>
+        <Key ask:isFunctional="true" android:keyWidth="15%p" android:codes="@integer/key_code_voice_input" ask:longPressCode="@integer/key_code_microphone_long_press" android:keyEdgeFlags="left"/>
         <Key ask:isFunctional="true" android:codes="@integer/key_code_quick_text" ask:longPressCode="@integer/key_code_quick_text_popup"/>
         <Key android:codes="44" ask:longPressCode="@integer/key_code_settings"/>
         <Key android:codes="@integer/key_code_space" android:keyWidth="30%p"/>

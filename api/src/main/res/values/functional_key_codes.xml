@@ -19,6 +19,7 @@
     <integer name="key_code_pre_prepared_text_popup">-151</integer>
     <integer name="key_code_pre_prepared_emails_popup">-152</integer>
     <integer name="key_code_external_integration">-200</integer>
+    <integer name="key_code_microphone_long_press">-201</integer>
     <integer name="key_code_domain">-9</integer>
 
     <integer name="key_code_shift">-1</integer>

@@ -726,6 +726,9 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
           startActivity(voiceInputNotInstalledIntent);
         }
         break;
+      case KeyCodes.MICROPHONE_LONG_PRESS:
+        Toast.makeText(this, "You long-pressed the microphone button.", Toast.LENGTH_SHORT).show();
+        break;
       case KeyCodes.CANCEL:
         if (!handleCloseRequest()) {
           hideWindow();

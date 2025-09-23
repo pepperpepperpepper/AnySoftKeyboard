@@ -39,7 +39,7 @@
         <Key android:keyWidth="10%p" android:codes="@integer/key_code_undo" android:keyEdgeFlags="left"/>
         <Key android:keyWidth="10%p" android:codes="@integer/key_code_redo"/>
 
-        <Key android:keyWidth="10%p" android:codes="@integer/key_code_voice_input"/>
+        <Key android:keyWidth="10%p" android:codes="@integer/key_code_voice_input" ask:longPressCode="@integer/key_code_microphone_long_press"/>
         <Key android:keyWidth="10%p" android:codes="@integer/key_code_quick_text" ask:longPressCode="@integer/key_code_quick_text_popup"/>
 
         <Key android:codes="@integer/key_code_move_home" android:horizontalGap="15%p"/>
