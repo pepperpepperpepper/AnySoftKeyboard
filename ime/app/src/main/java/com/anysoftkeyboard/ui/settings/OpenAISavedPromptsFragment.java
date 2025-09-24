@@ -98,13 +98,11 @@ public class OpenAISavedPromptsFragment extends Fragment {
         boolean isEdit = prompt != null;
         
         View dialogView = getLayoutInflater().inflate(R.layout.openai_saved_prompt_dialog, null);
-        EditText nameEdit = dialogView.findViewById(R.id.prompt_name_edit);
         EditText textEdit = dialogView.findViewById(R.id.prompt_text_edit);
         Button saveButton = dialogView.findViewById(R.id.save_button);
         Button cancelButton = dialogView.findViewById(R.id.cancel_button);
 
         if (isEdit) {
-            nameEdit.setText(prompt.getName());
             textEdit.setText(prompt.getText());
         } else {
             // Check if we have pre-filled text from arguments
@@ -112,8 +110,6 @@ public class OpenAISavedPromptsFragment extends Fragment {
             if (args != null && args.containsKey("pre_filled_prompt_text")) {
                 String preFilledText = args.getString("pre_filled_prompt_text");
                 textEdit.setText(preFilledText);
-                // Focus on name field since text is already filled
-                nameEdit.requestFocus();
             }
         }
 
@@ -127,17 +123,14 @@ public class OpenAISavedPromptsFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                saveButton.setEnabled(!TextUtils.isEmpty(nameEdit.getText().toString().trim()) && 
-                                     !TextUtils.isEmpty(textEdit.getText().toString().trim()));
+                saveButton.setEnabled(!TextUtils.isEmpty(textEdit.getText().toString().trim()));
             }
         };
         
-        nameEdit.addTextChangedListener(textWatcher);
         textEdit.addTextChangedListener(textWatcher);
         
         // Initial state
-        saveButton.setEnabled(!TextUtils.isEmpty(nameEdit.getText().toString().trim()) && 
-                            !TextUtils.isEmpty(textEdit.getText().toString().trim()));
+        saveButton.setEnabled(!TextUtils.isEmpty(textEdit.getText().toString().trim()));
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setTitle(isEdit ? R.string.openai_saved_prompts_edit : R.string.openai_saved_prompts_add)
@@ -145,13 +138,7 @@ public class OpenAISavedPromptsFragment extends Fragment {
                 .create();
 
         saveButton.setOnClickListener(v -> {
-            String name = nameEdit.getText().toString().trim();
             String text = textEdit.getText().toString().trim();
-            
-            if (TextUtils.isEmpty(name)) {
-                Toast.makeText(getContext(), R.string.openai_saved_prompts_error_name_required, Toast.LENGTH_SHORT).show();
-                return;
-            }
             
             if (TextUtils.isEmpty(text)) {
                 Toast.makeText(getContext(), R.string.openai_saved_prompts_error_text_required, Toast.LENGTH_SHORT).show();
@@ -159,7 +146,6 @@ public class OpenAISavedPromptsFragment extends Fragment {
             }
             
             if (isEdit) {
-                prompt.setName(name);
                 prompt.setText(text);
                 if (promptsManager.updatePrompt(prompt)) {
                     Toast.makeText(getContext(), R.string.openai_saved_prompts_save_success, Toast.LENGTH_SHORT).show();
@@ -169,7 +155,7 @@ public class OpenAISavedPromptsFragment extends Fragment {
                     Toast.makeText(getContext(), R.string.openai_saved_prompts_error_save_failed, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                OpenAISavedPrompt newPrompt = new OpenAISavedPrompt(name, text);
+                OpenAISavedPrompt newPrompt = new OpenAISavedPrompt(text);
                 if (promptsManager.savePrompt(newPrompt)) {
                     Toast.makeText(getContext(), R.string.openai_saved_prompts_save_success, Toast.LENGTH_SHORT).show();
                     loadPrompts();
@@ -239,7 +225,6 @@ public class OpenAISavedPromptsFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull PromptViewHolder holder, int position) {
             OpenAISavedPrompt prompt = prompts.get(position);
-            holder.nameText.setText(prompt.getName());
             holder.previewText.setText(prompt.getText());
             
             holder.itemView.setOnClickListener(v -> insertPromptIntoMainField(prompt));
@@ -258,14 +243,12 @@ public class OpenAISavedPromptsFragment extends Fragment {
         }
 
         class PromptViewHolder extends RecyclerView.ViewHolder {
-            TextView nameText;
             TextView previewText;
             TextView editButton;
             TextView deleteButton;
 
             PromptViewHolder(@NonNull View itemView) {
                 super(itemView);
-                nameText = itemView.findViewById(R.id.prompt_name);
                 previewText = itemView.findViewById(R.id.prompt_preview);
                 editButton = itemView.findViewById(R.id.edit_button);
                 deleteButton = itemView.findViewById(R.id.delete_button);

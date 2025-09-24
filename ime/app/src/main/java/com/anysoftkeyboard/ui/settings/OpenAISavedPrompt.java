@@ -22,8 +22,7 @@ import java.util.Objects;
  * Data model for a saved OpenAI prompt.
  */
 public class OpenAISavedPrompt {
-    private String id;
-    private String name;
+    private long id;
     private String text;
     private long timestamp;
 
@@ -31,34 +30,24 @@ public class OpenAISavedPrompt {
         // Default constructor for JSON deserialization
     }
 
-    public OpenAISavedPrompt(String name, String text) {
-        this.id = java.util.UUID.randomUUID().toString();
-        this.name = name;
+    public OpenAISavedPrompt(String text) {
+        this.id = -1; // Will be set by manager
         this.text = text;
         this.timestamp = System.currentTimeMillis();
     }
 
-    public OpenAISavedPrompt(String id, String name, String text, long timestamp) {
+    public OpenAISavedPrompt(long id, String text, long timestamp) {
         this.id = id;
-        this.name = name;
         this.text = text;
         this.timestamp = timestamp;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getText() {
@@ -82,7 +71,7 @@ public class OpenAISavedPrompt {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OpenAISavedPrompt that = (OpenAISavedPrompt) o;
-        return Objects.equals(id, that.id);
+        return id == that.id;
     }
 
     @Override
@@ -93,8 +82,7 @@ public class OpenAISavedPrompt {
     @Override
     public String toString() {
         return "OpenAISavedPrompt{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
+                "id=" + id +
                 ", text='" + text + '\'' +
                 ", timestamp=" + timestamp +
                 '}';

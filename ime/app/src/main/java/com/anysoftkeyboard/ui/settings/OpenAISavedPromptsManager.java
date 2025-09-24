@@ -56,8 +56,7 @@ public class OpenAISavedPromptsManager {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 OpenAISavedPrompt prompt = new OpenAISavedPrompt(
-                    jsonObject.getString("id"),
-                    jsonObject.getString("name"),
+                    jsonObject.getLong("id"),
                     jsonObject.getString("text"),
                     jsonObject.getLong("timestamp")
                 );
@@ -76,6 +75,16 @@ public class OpenAISavedPromptsManager {
      */
     public boolean savePrompt(@NonNull OpenAISavedPrompt prompt) {
         List<OpenAISavedPrompt> prompts = getAllPrompts();
+        
+        // Generate auto-incrementing ID
+        long newId = 1;
+        for (OpenAISavedPrompt existingPrompt : prompts) {
+            if (existingPrompt.getId() >= newId) {
+                newId = existingPrompt.getId() + 1;
+            }
+        }
+        prompt.setId(newId);
+        
         prompts.add(prompt);
         return savePromptsList(prompts);
     }
@@ -86,7 +95,7 @@ public class OpenAISavedPromptsManager {
     public boolean updatePrompt(@NonNull OpenAISavedPrompt prompt) {
         List<OpenAISavedPrompt> prompts = getAllPrompts();
         for (int i = 0; i < prompts.size(); i++) {
-            if (prompts.get(i).getId().equals(prompt.getId())) {
+            if (prompts.get(i).getId() == prompt.getId()) {
                 prompts.set(i, prompt);
                 return savePromptsList(prompts);
             }
@@ -97,10 +106,10 @@ public class OpenAISavedPromptsManager {
     /**
      * Delete a prompt by ID.
      */
-    public boolean deletePrompt(@NonNull String promptId) {
+    public boolean deletePrompt(long promptId) {
         List<OpenAISavedPrompt> prompts = getAllPrompts();
         for (int i = 0; i < prompts.size(); i++) {
-            if (prompts.get(i).getId().equals(promptId)) {
+            if (prompts.get(i).getId() == promptId) {
                 prompts.remove(i);
                 return savePromptsList(prompts);
             }
@@ -112,27 +121,14 @@ public class OpenAISavedPromptsManager {
      * Get a prompt by ID.
      */
     @Nullable
-    public OpenAISavedPrompt getPromptById(@NonNull String promptId) {
+    public OpenAISavedPrompt getPromptById(long promptId) {
         List<OpenAISavedPrompt> prompts = getAllPrompts();
         for (OpenAISavedPrompt prompt : prompts) {
-            if (prompt.getId().equals(promptId)) {
+            if (prompt.getId() == promptId) {
                 return prompt;
             }
         }
         return null;
-    }
-
-    /**
-     * Check if a prompt with the given name exists.
-     */
-    public boolean promptNameExists(@NonNull String name) {
-        List<OpenAISavedPrompt> prompts = getAllPrompts();
-        for (OpenAISavedPrompt prompt : prompts) {
-            if (prompt.getName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -159,7 +155,6 @@ public class OpenAISavedPromptsManager {
             for (OpenAISavedPrompt prompt : prompts) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("id", prompt.getId());
-                jsonObject.put("name", prompt.getName());
                 jsonObject.put("text", prompt.getText());
                 jsonObject.put("timestamp", prompt.getTimestamp());
                 jsonArray.put(jsonObject);

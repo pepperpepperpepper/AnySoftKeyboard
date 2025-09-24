@@ -8,23 +8,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/openai_saved_prompts_name_hint"
-        android:textSize="14sp"
-        android:textColor="?android:attr/textColorSecondary"
-        android:layout_marginBottom="8dp" />
-
-    <EditText
-        android:id="@+id/prompt_name_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/openai_saved_prompts_name_hint"
-        android:inputType="textCapSentences"
-        android:maxLines="1"
-        android:layout_marginBottom="16dp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:text="@string/openai_saved_prompts_text_hint"
         android:textSize="14sp"
         android:textColor="?android:attr/textColorSecondary"
