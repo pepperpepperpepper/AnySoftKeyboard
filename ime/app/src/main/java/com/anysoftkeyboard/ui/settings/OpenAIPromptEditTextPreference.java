@@ -67,7 +67,7 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
         builder.setView(dialogView);
         
         // Set up AlertDialog buttons (OK and Cancel)
-        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+        builder.setPositiveButton("USE", (dialog, which) -> {
             String newValue = editText.getText().toString();
             if (callChangeListener(newValue)) {
                 setText(newValue);
@@ -94,6 +94,12 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
         // Set up Clear button click handler
         clearButton.setOnClickListener(v -> {
             editText.setText("");
+            // Automatically save the empty string as the prompt value
+            String newValue = "";
+            if (callChangeListener(newValue)) {
+                setText(newValue);
+            }
+            // Note: dialog stays open so user can continue editing if needed
         });
         
         // Enable/disable OK button based on text input
@@ -122,21 +128,16 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
             if (context instanceof androidx.fragment.app.FragmentActivity) {
                 androidx.fragment.app.FragmentActivity activity = (androidx.fragment.app.FragmentActivity) context;
                 
-                // Create saved prompts fragment
-                OpenAISavedPromptsFragment fragment = new OpenAISavedPromptsFragment();
-                
-                // Pass the prompt text as argument
-                Bundle args = new Bundle();
-                args.putString("pre_filled_prompt_text", promptText);
-                fragment.setArguments(args);
-                
-                // Navigate to the fragment
-                activity.getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(android.R.id.content, fragment)
-                        .addToBackStack(null)
-                        .commit();
-            }
+// Create saved prompts dialog fragment
+            OpenAISavedPromptsDialogFragment dialogFragment = new OpenAISavedPromptsDialogFragment();
+            
+            // Pass the prompt text as argument
+            Bundle args = new Bundle();
+            args.putString("pre_filled_prompt_text", promptText);
+            dialogFragment.setArguments(args);
+            
+            // Show the dialog
+            dialogFragment.show(activity.getSupportFragmentManager(), "OpenAISavedPromptsDialog");            }
         } catch (Exception e) {
             e.printStackTrace();
 Toast.makeText(getContext(), "Unable to open saved prompts", Toast.LENGTH_SHORT).show();

@@ -45,14 +45,10 @@ public class OpenAISpeechSettingsFragment extends PreferenceFragmentCompat {
         Preference savedPromptsPreference = findPreference(getString(R.string.settings_key_openai_saved_prompts));
         if (savedPromptsPreference != null) {
             savedPromptsPreference.setOnPreferenceClickListener(preference -> {
-                // Open the saved prompts management fragment
-                Fragment savedPromptsFragment = new OpenAISavedPromptsFragment();
+                // Open the saved prompts management dialog
+                OpenAISavedPromptsDialogFragment dialogFragment = new OpenAISavedPromptsDialogFragment();
                 if (getActivity() != null) {
-                    getActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(android.R.id.content, savedPromptsFragment)
-                            .addToBackStack(null)
-                            .commit();
+                    dialogFragment.show(getActivity().getSupportFragmentManager(), "OpenAISavedPromptsDialog");
                 }
                 return true;
             });

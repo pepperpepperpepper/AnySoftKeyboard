@@ -217,8 +217,10 @@ public class OpenAISavedPromptsFragment extends Fragment {
         
         Toast.makeText(getContext(), R.string.openai_saved_prompts_insert_success, Toast.LENGTH_SHORT).show();
         
-        // Go back to the main settings
-        if (getActivity() != null) {
+        // Dismiss the dialog if we're in one
+        if (getActivity() != null && getActivity().getSupportFragmentManager().findFragmentByTag("OpenAISavedPromptsDialog") != null) {
+            getActivity().getSupportFragmentManager().popBackStack();
+        } else if (getActivity() != null) {
             getActivity().onBackPressed();
         }
     }
