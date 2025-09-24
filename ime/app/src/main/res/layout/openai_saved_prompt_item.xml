@@ -34,25 +34,25 @@
             android:orientation="vertical"
             android:gravity="center">
 
-            <TextView
+            <ImageView
                 android:id="@+id/edit_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/openai_saved_prompts_edit"
-                android:text="✏️"
-                android:textSize="20sp"
-                android:gravity="center" />
+                android:src="@android:drawable/ic_menu_edit"
+                android:scaleType="center"
+                android:padding="12dp" />
 
-            <TextView
+            <ImageView
                 android:id="@+id/delete_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/openai_saved_prompts_delete"
-                android:text="🗑️"
-                android:textSize="20sp"
-                android:gravity="center" />
+                android:src="@drawable/ic_delete_forever"
+                android:scaleType="center"
+                android:padding="12dp" />
 
         </LinearLayout>
 
