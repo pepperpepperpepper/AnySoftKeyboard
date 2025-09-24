@@ -23,6 +23,9 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -135,7 +138,7 @@ public class OpenAITranscriber {
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", audioFile.getName(), fileBody)
                 .addFormDataPart("model", model)
-                .addFormDataPart("response_format", responseFormat);
+                .addFormDataPart("response_format", "text"); // Always use text for actual API call
         
         // Add language parameter if not empty
         if (!language.isEmpty()) {
@@ -184,20 +187,117 @@ public class OpenAITranscriber {
         // Execute request
         try (Response response = httpClient.newCall(request).execute()) {
             
+            String responseBody = response.body() != null ? response.body().string() : "No response body";
+            
             if (!response.isSuccessful()) {
-                String errorBody = response.body() != null ? response.body().string() : "No error body";
-                throw new IOException("HTTP " + response.code() + ": " + errorBody);
+                if ("debug".equals(responseFormat)) {
+                    return createDebugOutput(request, response, responseBody, null);
+                } else {
+                    throw new IOException("HTTP " + response.code() + ": " + responseBody);
+                }
             }
             
             if (response.body() == null) {
-                throw new IOException("Empty response body");
+                if ("debug".equals(responseFormat)) {
+                    return createDebugOutput(request, response, "Empty response body", null);
+                } else {
+                    throw new IOException("Empty response body");
+                }
             }
             
-            String result = response.body().string().trim();
+            String result = responseBody.trim();
             Log.d(TAG, "Transcription result: " + result);
+            
+            // If debug format, return debug information
+            if ("debug".equals(responseFormat)) {
+                return createDebugOutput(request, response, result, null);
+            }
             
             return result;
         }
+    }
+    
+    private String createDebugOutput(Request request, Response response, String responseBody, Exception error) {
+        StringBuilder debugOutput = new StringBuilder();
+        debugOutput.append("=== OPENAI API DEBUG INFORMATION ===\n\n");
+        
+        // Request information
+        debugOutput.append("=== REQUEST ===\n");
+        debugOutput.append("URL: ").append(request.url()).append("\n");
+        debugOutput.append("Method: ").append(request.method()).append("\n");
+        
+        // Headers
+        debugOutput.append("Headers:\n");
+        for (String name : request.headers().names()) {
+            // Mask Authorization header for security
+            String value = request.headers().get(name);
+            if ("Authorization".equalsIgnoreCase(name) && value != null && value.startsWith("Bearer ")) {
+                value = "Bearer ***MASKED***";
+            }
+            debugOutput.append("  ").append(name).append(": ").append(value).append("\n");
+        }
+        
+        // Request body (form data)
+        debugOutput.append("Form Data:\n");
+        try {
+            if (request.body() instanceof MultipartBody) {
+                MultipartBody multipartBody = (MultipartBody) request.body();
+                for (MultipartBody.Part part : multipartBody.parts()) {
+                    okhttp3.Headers partHeaders = part.headers();
+                    String contentDisposition = partHeaders != null ? partHeaders.get("Content-Disposition") : null;
+                    if (contentDisposition != null) {
+                        debugOutput.append("  ").append(contentDisposition);
+                        if (contentDisposition.contains("name=\"file\"")) {
+                            debugOutput.append(" (").append(part.body().contentLength()).append(" bytes)");
+                        } else if (!contentDisposition.contains("filename=")) {
+                            // For form fields, try to get the content
+                            try {
+                                okhttp3.MediaType mediaType = part.body().contentType();
+                                if (mediaType != null && "text/plain".equals(mediaType.subtype())) {
+                                    // This is a rough approximation - in practice, reading form field values is complex
+                                    debugOutput.append(": [form field value]");
+                                }
+                            } catch (Exception e) {
+                                // Ignore errors when trying to read form data
+                            }
+                        }
+                        debugOutput.append("\n");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            debugOutput.append("  [Error reading form data: ").append(e.getMessage()).append("]\n");
+        }
+        
+        debugOutput.append("\n");
+        
+        // Response information
+        debugOutput.append("=== RESPONSE ===\n");
+        debugOutput.append("Status Code: ").append(response.code()).append("\n");
+        debugOutput.append("Message: ").append(response.message()).append("\n");
+        
+        // Response headers
+        debugOutput.append("Headers:\n");
+        for (String name : response.headers().names()) {
+            debugOutput.append("  ").append(name).append(": ").append(response.headers().get(name)).append("\n");
+        }
+        
+        debugOutput.append("\n");
+        
+        // Response body
+        debugOutput.append("=== RESPONSE BODY ===\n");
+        debugOutput.append(responseBody).append("\n");
+        
+        // Error information if present
+        if (error != null) {
+            debugOutput.append("\n=== ERROR ===\n");
+            debugOutput.append("Exception: ").append(error.getClass().getSimpleName()).append("\n");
+            debugOutput.append("Message: ").append(error.getMessage()).append("\n");
+        }
+        
+        debugOutput.append("\n=== END DEBUG INFORMATION ===");
+        
+        return debugOutput.toString();
     }
     
     private void postResultToMainThread(

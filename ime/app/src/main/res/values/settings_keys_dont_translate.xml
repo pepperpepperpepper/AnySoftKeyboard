@@ -375,12 +375,14 @@
         <item>json</item>
         <item>srt</item>
         <item>vtt</item>
+        <item>debug</item>
     </string-array>
     <string-array name="openai_response_format_entries">
         <item>Plain Text</item>
         <item>JSON</item>
         <item>SubRip Subtitle (SRT)</item>
         <item>WebVTT Subtitle (VTT)</item>
+        <item>Debug</item>
     </string-array>
     
     <string-array name="openai_chunking_strategy_values">
