@@ -66,18 +66,49 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
         
         builder.setView(dialogView);
         
-        // Set up AlertDialog buttons (OK and Cancel)
+        // Set up AlertDialog buttons (USE and Cancel)
         builder.setPositiveButton("USE", (dialog, which) -> {
-            String newValue = editText.getText().toString();
-            if (callChangeListener(newValue)) {
-                setText(newValue);
-            }
+            // This will be overridden below to prevent automatic dismissal
         });
         
         builder.setNegativeButton(android.R.string.cancel, null);
         
         AlertDialog dialog = builder.create();
         dialog.show();
+        
+        // Override the USE button click to prevent automatic dismissal
+        dialog.getWindow().getDecorView().post(() -> {
+            Button useButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            if (useButton != null) {
+                useButton.setEnabled(true);
+                
+                // Set up custom click handler for USE button
+                useButton.setOnClickListener(v -> {
+                    String newValue = editText.getText().toString();
+                    if (callChangeListener(newValue)) {
+                        setText(newValue);
+                        // Show feedback that text was saved
+                        Toast.makeText(getContext(), "Prompt In Use", Toast.LENGTH_SHORT).show();
+                    }
+                    // Note: dialog stays open for further editing
+                });
+                
+                // Set up text change listener to enable/disable USE button
+                editText.addTextChangedListener(new android.text.TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        // Always keep USE button enabled to allow setting empty prompt
+                        useButton.setEnabled(true);
+                    }
+
+                    @Override
+                    public void afterTextChanged(android.text.Editable s) {}
+                });
+            }
+        });
         
         // Set up Save button click handler
         saveButton.setOnClickListener(v -> {
@@ -101,24 +132,6 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
             }
             // Note: dialog stays open so user can continue editing if needed
         });
-        
-        // Enable/disable OK button based on text input
-        Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        if (okButton != null) {
-            okButton.setEnabled(editText.getText().length() > 0);
-            editText.addTextChangedListener(new android.text.TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    okButton.setEnabled(s.length() > 0);
-                }
-
-                @Override
-                public void afterTextChanged(android.text.Editable s) {}
-            });
-        }
     }
     
     private void openSavedPromptsFragmentWithText(String promptText) {

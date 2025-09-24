@@ -54,7 +54,7 @@ public class OpenAITranscriber {
      * @param model OpenAI transcription model to use (e.g., "whisper-1", "gpt-4o-transcribe")
      * @param language Language code for transcription (e.g., "en", "es")
      * @param temperature Controls randomness in transcription (0.0 = more accurate, 1.0 = more creative)
-     * @param responseFormat Output format for the transcription (json, text, srt, vtt, verbose_json)
+     * @param responseFormat Output format for the transcription (json, text, srt, vtt)
      * @param chunkingStrategy How to handle long audio files (auto, none)
      * @param prompt Optional prompt to guide transcription style and spelling (max 224 tokens)
      * @param addTrailingSpace Whether to add a trailing space to the result
@@ -159,7 +159,10 @@ public class OpenAITranscriber {
         
         // Add prompt parameter if not empty
         if (!prompt.isEmpty()) {
+            Log.d(TAG, "Adding prompt to request: " + prompt);
             requestBodyBuilder.addFormDataPart("prompt", prompt);
+        } else {
+            Log.d(TAG, "Prompt is empty, not adding to request");
         }
         
         RequestBody requestBody = requestBodyBuilder.build();

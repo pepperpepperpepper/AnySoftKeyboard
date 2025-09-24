@@ -269,8 +269,7 @@ public class OpenAITrigger implements Trigger {
     
     private boolean isValidResponseFormat(String format) {
         return "json".equals(format) || "text".equals(format) || 
-               "srt".equals(format) || "vtt".equals(format) || 
-               "verbose_json".equals(format);
+               "srt".equals(format) || "vtt".equals(format);
     }
     
     private boolean isValidChunkingStrategy(String strategy) {
@@ -350,6 +349,7 @@ public class OpenAITrigger implements Trigger {
             mInputMethodService.getString(R.string.settings_key_openai_chunking_strategy), "auto");
         String prompt = mSharedPreferences.getString(
             mInputMethodService.getString(R.string.settings_key_openai_prompt), "");
+        Log.d(TAG, "Prompt from settings: '" + prompt + "' (length: " + prompt.length() + ")");
         
         // Validate temperature value
         try {

@@ -14,7 +14,7 @@
         android:maxLines="8"
         android:scrollbars="vertical"
         android:gravity="top"
-        android:hint="@string/openai_prompt_summary"
+        
         android:textColor="?android:attr/textColorPrimary" />
 
     <LinearLayout

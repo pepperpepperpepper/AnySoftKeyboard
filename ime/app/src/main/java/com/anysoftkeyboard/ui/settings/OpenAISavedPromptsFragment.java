@@ -47,7 +47,6 @@ public class OpenAISavedPromptsFragment extends Fragment {
     private RecyclerView recyclerView;
     private TextView emptyView;
     private PromptAdapter adapter;
-    private View addButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,10 +61,8 @@ public class OpenAISavedPromptsFragment extends Fragment {
         
         recyclerView = view.findViewById(R.id.prompts_recycler_view);
         emptyView = view.findViewById(R.id.empty_view);
-        addButton = view.findViewById(R.id.add_button);
         
         setupRecyclerView();
-        setupAddButton();
         loadPrompts();
         
         return view;
@@ -77,9 +74,7 @@ public class OpenAISavedPromptsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
-    private void setupAddButton() {
-        addButton.setOnClickListener(v -> showAddEditDialog(null));
-    }
+    
 
     private void loadPrompts() {
         List<OpenAISavedPrompt> prompts = promptsManager.getAllPrompts();
@@ -203,11 +198,22 @@ public class OpenAISavedPromptsFragment extends Fragment {
         
         Toast.makeText(getContext(), R.string.openai_saved_prompts_insert_success, Toast.LENGTH_SHORT).show();
         
-        // Dismiss the dialog if we're in one
-        if (getActivity() != null && getActivity().getSupportFragmentManager().findFragmentByTag("OpenAISavedPromptsDialog") != null) {
-            getActivity().getSupportFragmentManager().popBackStack();
-        } else if (getActivity() != null) {
-            getActivity().onBackPressed();
+        // Dismiss the saved prompts dialog
+        if (getActivity() != null) {
+            if (getActivity().getSupportFragmentManager().findFragmentByTag("OpenAISavedPromptsDialog") != null) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            } else {
+                getActivity().onBackPressed();
+            }
+            
+            // Reopen the main prompt dialog after a short delay
+            getActivity().runOnUiThread(() -> {
+                // Find the parent settings fragment and show the prompt dialog
+                if (getParentFragment() != null && getParentFragment().getParentFragment() instanceof OpenAISpeechSettingsFragment) {
+                    OpenAISpeechSettingsFragment settingsFragment = (OpenAISpeechSettingsFragment) getParentFragment().getParentFragment();
+                    settingsFragment.showPromptDialog();
+                }
+            });
         }
     }
 
