@@ -62,7 +62,10 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
         Button saveButton = dialogView.findViewById(R.id.save_button);
         Button clearButton = dialogView.findViewById(R.id.clear_button);
         
-        editText.setText(getText());
+        // Get the current text and store it as the original state
+        // Use array to make it effectively final for lambda expressions
+        final String[] originalText = {getText()};
+        editText.setText(originalText[0]);
         
         builder.setView(dialogView);
         
@@ -80,28 +83,35 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
         dialog.getWindow().getDecorView().post(() -> {
             Button useButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             if (useButton != null) {
-                useButton.setEnabled(true);
+                // Initially disable USE button since no changes have been made yet
+                useButton.setEnabled(false);
                 
                 // Set up custom click handler for USE button
                 useButton.setOnClickListener(v -> {
                     String newValue = editText.getText().toString();
                     if (callChangeListener(newValue)) {
                         setText(newValue);
+                        // Update original text to current text after saving
+                        originalText[0] = newValue;
+                        // Disable USE button since state is now in sync
+                        useButton.setEnabled(false);
                         // Show feedback that text was saved
                         Toast.makeText(getContext(), "Prompt In Use", Toast.LENGTH_SHORT).show();
                     }
                     // Note: dialog stays open for further editing
                 });
                 
-                // Set up text change listener to enable/disable USE button
+                // Set up text change listener to enable/disable USE button based on state changes
                 editText.addTextChangedListener(new android.text.TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        // Always keep USE button enabled to allow setting empty prompt
-                        useButton.setEnabled(true);
+                        // Enable USE button only if text has changed from original state
+                        String currentText = editText.getText().toString();
+                        boolean hasChanged = !currentText.equals(originalText[0]);
+                        useButton.setEnabled(hasChanged);
                     }
 
                     @Override
@@ -125,12 +135,8 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
         // Set up Clear button click handler
         clearButton.setOnClickListener(v -> {
             editText.setText("");
-            // Automatically save the empty string as the prompt value
-            String newValue = "";
-            if (callChangeListener(newValue)) {
-                setText(newValue);
-            }
-            // Note: dialog stays open so user can continue editing if needed
+            // The text change listener will handle enabling/disabling the USE button
+            // No automatic save - user must click USE to apply the empty state
         });
     }
     
