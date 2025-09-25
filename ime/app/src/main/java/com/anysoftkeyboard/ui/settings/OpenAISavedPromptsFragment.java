@@ -199,20 +199,41 @@ public class OpenAISavedPromptsFragment extends Fragment {
         
         Toast.makeText(getContext(), R.string.openai_saved_prompts_insert_success, Toast.LENGTH_SHORT).show();
         
-        // Dismiss the saved prompts dialog
+        // Dismiss the saved prompts dialog and reopen prompt dialog
         if (getActivity() != null) {
+            // First, dismiss the current dialog
             if (getActivity().getSupportFragmentManager().findFragmentByTag("OpenAISavedPromptsDialog") != null) {
                 getActivity().getSupportFragmentManager().popBackStack();
             } else {
                 getActivity().onBackPressed();
             }
             
-            // Reopen the main prompt dialog after a short delay
+            // Use a more reliable approach to reopen the prompt dialog
             getActivity().runOnUiThread(() -> {
-                // Find the parent settings fragment and show the prompt dialog
+                // Try multiple approaches to find and show the prompt dialog
+                boolean dialogShown = false;
+                
+                // Approach 1: Try through parent fragment hierarchy
                 if (getParentFragment() != null && getParentFragment().getParentFragment() instanceof OpenAISpeechSettingsFragment) {
                     OpenAISpeechSettingsFragment settingsFragment = (OpenAISpeechSettingsFragment) getParentFragment().getParentFragment();
                     settingsFragment.showPromptDialog();
+                    dialogShown = true;
+                }
+                
+                // Approach 2: Try to find the settings fragment directly
+                if (!dialogShown) {
+                    Fragment settingsFragment = getActivity().getSupportFragmentManager().findFragmentById(android.R.id.content);
+                    if (settingsFragment instanceof OpenAISpeechSettingsFragment) {
+                        ((OpenAISpeechSettingsFragment) settingsFragment).showPromptDialog();
+                        dialogShown = true;
+                    }
+                }
+                
+                // Approach 3: Use intent to trigger prompt dialog
+                if (!dialogShown) {
+                    getActivity().getIntent().putExtra("open_prompt_dialog", true);
+                    // Restart the activity to trigger the prompt dialog
+                    getActivity().recreate();
                 }
             });
         }
