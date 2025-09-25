@@ -130,9 +130,15 @@ public class OpenAITranscriber {
         }
         
         Log.d(TAG, "Transcribing file: " + filename + " (" + audioFile.length() + " bytes)");
+        Log.d(TAG, "Response format parameter: " + responseFormat);
         
         // Create multipart request body
         RequestBody fileBody = RequestBody.create(audioFile, MediaType.parse(mediaType));
+        
+        // Capture form field values for debug output
+        Map<String, String> formFieldValues = new HashMap<>();
+        formFieldValues.put("model", model);
+        formFieldValues.put("response_format", "text"); // Always use text for actual API call
         
         MultipartBody.Builder requestBodyBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -143,6 +149,7 @@ public class OpenAITranscriber {
         // Add language parameter if not empty
         if (!language.isEmpty()) {
             requestBodyBuilder.addFormDataPart("language", language);
+            formFieldValues.put("language", language);
         }
         
         // Add temperature parameter if valid
@@ -150,6 +157,7 @@ public class OpenAITranscriber {
             float tempValue = Float.parseFloat(temperature);
             if (tempValue >= 0.0f && tempValue <= 1.0f) {
                 requestBodyBuilder.addFormDataPart("temperature", temperature);
+                formFieldValues.put("temperature", temperature);
             }
         } catch (NumberFormatException e) {
             Log.w(TAG, "Invalid temperature value: " + temperature + ", using default");
@@ -158,12 +166,14 @@ public class OpenAITranscriber {
         // Add chunking strategy if not "none"
         if (!"none".equals(chunkingStrategy)) {
             requestBodyBuilder.addFormDataPart("chunking_strategy", chunkingStrategy);
+            formFieldValues.put("chunking_strategy", chunkingStrategy);
         }
         
         // Add prompt parameter if not empty
         if (!prompt.isEmpty()) {
             Log.d(TAG, "Adding prompt to request: " + prompt);
             requestBodyBuilder.addFormDataPart("prompt", prompt);
+            formFieldValues.put("prompt", prompt);
         } else {
             Log.d(TAG, "Prompt is empty, not adding to request");
         }
@@ -191,7 +201,7 @@ public class OpenAITranscriber {
             
             if (!response.isSuccessful()) {
                 if ("debug".equals(responseFormat)) {
-                    return createDebugOutput(request, response, responseBody, null);
+                    return createDebugOutput(request, response, responseBody, null, formFieldValues);
                 } else {
                     throw new IOException("HTTP " + response.code() + ": " + responseBody);
                 }
@@ -199,7 +209,7 @@ public class OpenAITranscriber {
             
             if (response.body() == null) {
                 if ("debug".equals(responseFormat)) {
-                    return createDebugOutput(request, response, "Empty response body", null);
+                    return createDebugOutput(request, response, "Empty response body", null, formFieldValues);
                 } else {
                     throw new IOException("Empty response body");
                 }
@@ -207,17 +217,19 @@ public class OpenAITranscriber {
             
             String result = responseBody.trim();
             Log.d(TAG, "Transcription result: " + result);
+            Log.d(TAG, "Checking if debug format - responseFormat: '" + responseFormat + "', equals debug: " + "debug".equals(responseFormat));
             
             // If debug format, return debug information
             if ("debug".equals(responseFormat)) {
-                return createDebugOutput(request, response, result, null);
+                Log.d(TAG, "Creating debug output");
+                return createDebugOutput(request, response, result, null, formFieldValues);
             }
             
             return result;
         }
     }
     
-    private String createDebugOutput(Request request, Response response, String responseBody, Exception error) {
+    private String createDebugOutput(Request request, Response response, String responseBody, Exception error, Map<String, String> formFieldValues) {
         StringBuilder debugOutput = new StringBuilder();
         debugOutput.append("=== OPENAI API DEBUG INFORMATION ===\n\n");
         
@@ -237,7 +249,7 @@ public class OpenAITranscriber {
             debugOutput.append("  ").append(name).append(": ").append(value).append("\n");
         }
         
-        // Request body (form data)
+// Request body (form data)
         debugOutput.append("Form Data:\n");
         try {
             if (request.body() instanceof MultipartBody) {
@@ -245,20 +257,23 @@ public class OpenAITranscriber {
                 for (MultipartBody.Part part : multipartBody.parts()) {
                     okhttp3.Headers partHeaders = part.headers();
                     String contentDisposition = partHeaders != null ? partHeaders.get("Content-Disposition") : null;
+                    
                     if (contentDisposition != null) {
                         debugOutput.append("  ").append(contentDisposition);
                         if (contentDisposition.contains("name=\"file\"")) {
                             debugOutput.append(" (").append(part.body().contentLength()).append(" bytes)");
                         } else if (!contentDisposition.contains("filename=")) {
-                            // For form fields, try to get the content
+                            // For form fields, extract the field name and use captured value
                             try {
-                                okhttp3.MediaType mediaType = part.body().contentType();
-                                if (mediaType != null && "text/plain".equals(mediaType.subtype())) {
-                                    // This is a rough approximation - in practice, reading form field values is complex
-                                    debugOutput.append(": [form field value]");
+                                // Extract field name from Content-Disposition
+                                String fieldName = extractFieldNameFromContentDisposition(contentDisposition);
+                                if (fieldName != null && formFieldValues.containsKey(fieldName)) {
+                                    debugOutput.append(": ").append(formFieldValues.get(fieldName));
+                                } else {
+                                    debugOutput.append(": [value not captured]");
                                 }
                             } catch (Exception e) {
-                                // Ignore errors when trying to read form data
+                                debugOutput.append(": [Error getting value: ").append(e.getMessage()).append("]");
                             }
                         }
                         debugOutput.append("\n");
@@ -298,6 +313,23 @@ public class OpenAITranscriber {
         debugOutput.append("\n=== END DEBUG INFORMATION ===");
         
         return debugOutput.toString();
+    }
+    
+    private String extractFieldNameFromContentDisposition(String contentDisposition) {
+        try {
+            // Extract name="fieldname" from Content-Disposition header
+            int nameIndex = contentDisposition.indexOf("name=\"");
+            if (nameIndex != -1) {
+                int startIndex = nameIndex + 6; // 6 is length of "name=\""
+                int endIndex = contentDisposition.indexOf("\"", startIndex);
+                if (endIndex != -1) {
+                    return contentDisposition.substring(startIndex, endIndex);
+                }
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Error extracting field name from Content-Disposition: " + contentDisposition, e);
+        }
+        return null;
     }
     
     private void postResultToMainThread(
