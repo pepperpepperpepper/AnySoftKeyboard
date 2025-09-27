@@ -48,6 +48,7 @@ public class AudioRecorderManager {
     private AmplitudeUpdateCallback mAmplitudeCallback;
     private boolean mIsRecording = false;
     private Thread mAmplitudeUpdateThread;
+    private int mAudioSessionId;
     
     public AudioRecorderManager(@NonNull Context context) {
         mContext = context.getApplicationContext();
@@ -107,8 +108,8 @@ public class AudioRecorderManager {
             // Initialize MediaRecorder
             mMediaRecorder = new MediaRecorder();
             
-            // Set audio source
-            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            // Set audio source - using VOICE_RECOGNITION for better speech recognition quality
+            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
             
             // Set output format based on preference
             if (useOggFormat) {
