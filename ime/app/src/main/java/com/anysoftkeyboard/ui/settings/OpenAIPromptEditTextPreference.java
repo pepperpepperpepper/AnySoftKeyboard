@@ -17,7 +17,6 @@
 package com.anysoftkeyboard.ui.settings;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +64,10 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
         // Get the current text and store it as the original state
         // Use array to make it effectively final for lambda expressions
         final String[] originalText = {getText()};
+        
+        // Log the current text for debugging
+        android.util.Log.d("OpenAIPromptEditTextPreference", "Current prompt text: " + originalText[0]);
+        
         editText.setText(originalText[0]);
         
         builder.setView(dialogView);
@@ -124,8 +127,8 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
         saveButton.setOnClickListener(v -> {
             String currentText = editText.getText().toString().trim();
             if (!currentText.isEmpty()) {
-                // Open saved prompts fragment with pre-filled text
-                openSavedPromptsFragmentWithText(currentText);
+                // Save the current prompt to the saved prompts list
+                saveCurrentPromptAndOpenDialog(currentText);
                 dialog.dismiss();
             } else {
                 Toast.makeText(getContext(), "Please enter prompt text to save", Toast.LENGTH_SHORT).show();
@@ -140,26 +143,44 @@ public class OpenAIPromptEditTextPreference extends EditTextPreference {
         });
     }
     
-    private void openSavedPromptsFragmentWithText(String promptText) {
+    private void saveCurrentPromptAndOpenDialog(String promptText) {
+        try {
+            // Create the prompts manager and save the current prompt
+            OpenAISavedPromptsManager promptsManager = new OpenAISavedPromptsManager(getContext());
+            OpenAISavedPrompt newPrompt = new OpenAISavedPrompt(promptText);
+            
+            if (promptsManager.savePrompt(newPrompt)) {
+                android.util.Log.d("OpenAIPromptEditTextPreference", "Prompt saved successfully: " + promptText);
+                Toast.makeText(getContext(), "Prompt saved successfully", Toast.LENGTH_SHORT).show();
+                
+                // Now open the saved prompts dialog to show the newly saved prompt
+                openSavedPromptsDialog();
+            } else {
+                android.util.Log.e("OpenAIPromptEditTextPreference", "Failed to save prompt: " + promptText);
+                Toast.makeText(getContext(), "Failed to save prompt", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            android.util.Log.e("OpenAIPromptEditTextPreference", "Error saving prompt", e);
+            Toast.makeText(getContext(), "Error saving prompt", Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    private void openSavedPromptsDialog() {
         try {
             // Get the current fragment manager from the context
             Context context = getContext();
             if (context instanceof androidx.fragment.app.FragmentActivity) {
                 androidx.fragment.app.FragmentActivity activity = (androidx.fragment.app.FragmentActivity) context;
                 
-// Create saved prompts dialog fragment
-            OpenAISavedPromptsDialogFragment dialogFragment = new OpenAISavedPromptsDialogFragment();
-            
-            // Pass the prompt text as argument
-            Bundle args = new Bundle();
-            args.putString("pre_filled_prompt_text", promptText);
-            dialogFragment.setArguments(args);
-            
-            // Show the dialog
-            dialogFragment.show(activity.getSupportFragmentManager(), "OpenAISavedPromptsDialog");            }
+                // Create saved prompts dialog fragment
+                OpenAISavedPromptsDialogFragment dialogFragment = new OpenAISavedPromptsDialogFragment();
+                
+                // Show the dialog
+                dialogFragment.show(activity.getSupportFragmentManager(), "OpenAISavedPromptsDialog");
+            }
         } catch (Exception e) {
             e.printStackTrace();
-Toast.makeText(getContext(), "Unable to open saved prompts", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Unable to open saved prompts", Toast.LENGTH_SHORT).show();
         }
     }
 }

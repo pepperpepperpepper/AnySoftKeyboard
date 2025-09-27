@@ -72,16 +72,9 @@ public class OpenAISavedPromptsFragment extends Fragment {
         
         recyclerView = view.findViewById(R.id.prompts_recycler_view);
         emptyView = view.findViewById(R.id.empty_view);
-        Button addPromptButton = view.findViewById(R.id.add_prompt_button);
         
         setupRecyclerView();
         loadPrompts();
-        
-        // Set up add button click listener
-        addPromptButton.setOnClickListener(v -> {
-            android.util.Log.d("OpenAISavedPrompts", "Add button clicked");
-            showAddEditDialog(null);
-        });
         
         return view;
     }
