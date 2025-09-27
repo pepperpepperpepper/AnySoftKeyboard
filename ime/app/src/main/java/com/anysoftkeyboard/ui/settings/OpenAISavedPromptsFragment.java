@@ -198,7 +198,7 @@ public class OpenAISavedPromptsFragment extends Fragment {
         
         Toast.makeText(getContext(), "Prompt In Use", Toast.LENGTH_SHORT).show();
         
-        // Dismiss the saved prompts dialog and reopen prompt dialog
+        // Dismiss the saved prompts dialog and redirect to Prompt dialog
         if (getActivity() != null) {
             // First, dismiss the current dialog
             if (getActivity().getSupportFragmentManager().findFragmentByTag("OpenAISavedPromptsDialog") != null) {
@@ -207,33 +207,45 @@ public class OpenAISavedPromptsFragment extends Fragment {
                 getActivity().onBackPressed();
             }
             
-            // Use a more reliable approach to reopen the prompt dialog
+            // Redirect to the Prompt dialog after a short delay to ensure proper dismissal
             getActivity().runOnUiThread(() -> {
-                // Try multiple approaches to find and show the prompt dialog
-                boolean dialogShown = false;
-                
-                // Approach 1: Try through parent fragment hierarchy
-                if (getParentFragment() != null && getParentFragment().getParentFragment() instanceof OpenAISpeechSettingsFragment) {
-                    OpenAISpeechSettingsFragment settingsFragment = (OpenAISpeechSettingsFragment) getParentFragment().getParentFragment();
-                    settingsFragment.showPromptDialog();
-                    dialogShown = true;
-                }
-                
-                // Approach 2: Try to find the settings fragment directly
-                if (!dialogShown) {
-                    Fragment settingsFragment = getActivity().getSupportFragmentManager().findFragmentById(android.R.id.content);
-                    if (settingsFragment instanceof OpenAISpeechSettingsFragment) {
-                        ((OpenAISpeechSettingsFragment) settingsFragment).showPromptDialog();
+                new android.os.Handler().postDelayed(() -> {
+                    boolean dialogShown = false;
+                    
+                    // Approach 1: Try through parent fragment hierarchy (most reliable)
+                    if (getParentFragment() != null && getParentFragment().getParentFragment() instanceof OpenAISpeechSettingsFragment) {
+                        OpenAISpeechSettingsFragment settingsFragment = (OpenAISpeechSettingsFragment) getParentFragment().getParentFragment();
+                        settingsFragment.showPromptDialog();
                         dialogShown = true;
                     }
-                }
-                
-                // Approach 3: Use intent to trigger prompt dialog
-                if (!dialogShown) {
-                    getActivity().getIntent().putExtra("open_prompt_dialog", true);
-                    // Restart the activity to trigger the prompt dialog
-                    getActivity().recreate();
-                }
+                    
+                    // Approach 2: Try to find the settings fragment in the fragment manager
+                    if (!dialogShown) {
+                        androidx.fragment.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        for (androidx.fragment.app.Fragment fragment : fragmentManager.getFragments()) {
+                            if (fragment instanceof OpenAISpeechSettingsFragment) {
+                                ((OpenAISpeechSettingsFragment) fragment).showPromptDialog();
+                                dialogShown = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Approach 3: Try to find the settings fragment by navigating back to it
+                    if (!dialogShown) {
+                        // Use intent to trigger prompt dialog as fallback
+                        getActivity().getIntent().putExtra("open_prompt_dialog", true);
+                        // Navigate back to settings and trigger prompt dialog
+                        getActivity().onBackPressed();
+                        // Post again to show dialog after back navigation
+                        new android.os.Handler().postDelayed(() -> {
+                            Fragment settingsFragment = getActivity().getSupportFragmentManager().findFragmentById(android.R.id.content);
+                            if (settingsFragment instanceof OpenAISpeechSettingsFragment) {
+                                ((OpenAISpeechSettingsFragment) settingsFragment).showPromptDialog();
+                            }
+                        }, 300);
+                    }
+                }, 200); // Small delay to ensure dialog dismissal completes
             });
         }
     }
