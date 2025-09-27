@@ -45,7 +45,9 @@ public class OpenAISavedPromptsManager {
     @NonNull
     public List<OpenAISavedPrompt> getAllPrompts() {
         String json = sharedPreferences.getString(KEY_SAVED_PROMPTS, null);
+        android.util.Log.d("OpenAISavedPromptsManager", "Getting prompts, JSON: " + (json != null ? "found" : "null"));
         if (json == null) {
+            android.util.Log.d("OpenAISavedPromptsManager", "No saved prompts found, returning empty list");
             return new ArrayList<>();
         }
         
@@ -61,10 +63,13 @@ public class OpenAISavedPromptsManager {
                     jsonObject.getLong("timestamp")
                 );
                 prompts.add(prompt);
+                android.util.Log.d("OpenAISavedPromptsManager", "Loaded prompt: " + prompt.getText());
             }
             
+            android.util.Log.d("OpenAISavedPromptsManager", "Successfully loaded " + prompts.size() + " prompts");
             return prompts;
         } catch (JSONException e) {
+            android.util.Log.e("OpenAISavedPromptsManager", "Error parsing prompts JSON", e);
             // If there's an error parsing, return empty list
             return new ArrayList<>();
         }
@@ -74,6 +79,7 @@ public class OpenAISavedPromptsManager {
      * Save a new prompt.
      */
     public boolean savePrompt(@NonNull OpenAISavedPrompt prompt) {
+        android.util.Log.d("OpenAISavedPromptsManager", "Saving prompt: " + prompt.getText());
         List<OpenAISavedPrompt> prompts = getAllPrompts();
         
         // Generate auto-incrementing ID
@@ -84,9 +90,12 @@ public class OpenAISavedPromptsManager {
             }
         }
         prompt.setId(newId);
+        android.util.Log.d("OpenAISavedPromptsManager", "Generated ID: " + newId);
         
         prompts.add(prompt);
-        return savePromptsList(prompts);
+        boolean result = savePromptsList(prompts);
+        android.util.Log.d("OpenAISavedPromptsManager", "Save result: " + result);
+        return result;
     }
 
     /**
@@ -150,6 +159,7 @@ public class OpenAISavedPromptsManager {
      */
     private boolean savePromptsList(@NonNull List<OpenAISavedPrompt> prompts) {
         try {
+            android.util.Log.d("OpenAISavedPromptsManager", "Saving " + prompts.size() + " prompts to JSON");
             JSONArray jsonArray = new JSONArray();
             
             for (OpenAISavedPrompt prompt : prompts) {
@@ -158,13 +168,18 @@ public class OpenAISavedPromptsManager {
                 jsonObject.put("text", prompt.getText());
                 jsonObject.put("timestamp", prompt.getTimestamp());
                 jsonArray.put(jsonObject);
+                android.util.Log.d("OpenAISavedPromptsManager", "Added to JSON: " + prompt.getText());
             }
             
             String json = jsonArray.toString();
+            android.util.Log.d("OpenAISavedPromptsManager", "JSON length: " + json.length());
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(KEY_SAVED_PROMPTS, json);
-            return editor.commit();
+            boolean result = editor.commit();
+            android.util.Log.d("OpenAISavedPromptsManager", "SharedPreferences commit result: " + result);
+            return result;
         } catch (JSONException e) {
+            android.util.Log.e("OpenAISavedPromptsManager", "JSON error while saving", e);
             return false;
         }
     }

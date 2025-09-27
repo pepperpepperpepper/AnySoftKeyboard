@@ -50,15 +50,13 @@ public class OpenAISavedPromptsDialogFragment extends DialogFragment implements 
                     .beginTransaction()
                     .replace(R.id.prompts_fragment_container, promptsFragment)
                     .commit();
-            
-            // Set up the listener after the fragment is created
-            promptsFragment.setListener(this);
         } else {
             // If fragment already exists, set up the listener
             promptsFragment = (OpenAISavedPromptsFragment) getChildFragmentManager()
                     .findFragmentById(R.id.prompts_fragment_container);
-            promptsFragment.setListener(this);
         }
+        
+        // Listener will be set in onResume to ensure fragment is ready
         
         return view;
     }
@@ -94,62 +92,158 @@ public class OpenAISavedPromptsDialogFragment extends DialogFragment implements 
             window.getDecorView().setPadding(32, 32, 32, 32);
         }
     }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        // Set up the listener when fragment is resumed
+        if (promptsFragment == null) {
+            promptsFragment = (OpenAISavedPromptsFragment) getChildFragmentManager()
+                    .findFragmentById(R.id.prompts_fragment_container);
+        }
+        
+        if (promptsFragment != null) {
+            android.util.Log.d("OpenAISavedPromptsDialog", "Setting listener on prompts fragment in onResume");
+            promptsFragment.setListener(this);
+        } else {
+            android.util.Log.e("OpenAISavedPromptsDialog", "Prompts fragment is null in onResume!");
+        }
+    }
 
     @Override
     public void onPromptSelected(String promptText) {
+        android.util.Log.d("OpenAISavedPromptsDialog", "onPromptSelected called with: " + promptText);
+        
+        // First, update the preference directly
+        updatePromptPreference(promptText);
+        
         // Dismiss this dialog
         dismiss();
         
         // Show the prompt dialog with the selected text
         if (getActivity() != null) {
+            android.util.Log.d("OpenAISavedPromptsDialog", "Activity available, attempting to show prompt dialog");
             // Post to ensure dialog is dismissed before showing the next one
             getActivity().runOnUiThread(() -> {
                 new android.os.Handler().postDelayed(() -> {
-                    showPromptDialogInSettings();
+                    showPromptDialogWithText(promptText);
                 }, 100);
             });
+        } else {
+            android.util.Log.e("OpenAISavedPromptsDialog", "Activity is null!");
         }
     }
     
-    private void showPromptDialogInSettings() {
+    private void updatePromptPreference(String promptText) {
         if (getActivity() == null) return;
         
-        // Try to find the OpenAISpeechSettingsFragment and show the prompt dialog
-        androidx.fragment.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        android.util.Log.d("OpenAISavedPromptsDialog", "Updating prompt preference with: " + promptText);
         
-        // Look for the settings fragment in the current fragments
-        for (androidx.fragment.app.Fragment fragment : fragmentManager.getFragments()) {
-            if (fragment instanceof OpenAISpeechSettingsFragment) {
-                ((OpenAISpeechSettingsFragment) fragment).showPromptDialog();
-                return;
+        // Update SharedPreferences directly
+        android.content.SharedPreferences prefs = getActivity().getSharedPreferences(
+                "com.menny.android.anysoftkeyboard_preferences", android.content.Context.MODE_PRIVATE);
+        android.content.SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(getActivity().getString(R.string.settings_key_openai_prompt), promptText);
+        editor.apply();
+        
+        // Try to find the OpenAISpeechSettingsFragment and update the preference directly
+        try {
+            androidx.fragment.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            
+            // First, look for OpenAISpeechSettingsFragment in current fragments (direct case)
+            for (androidx.fragment.app.Fragment fragment : fragmentManager.getFragments()) {
+                if (fragment instanceof com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment) {
+                    android.util.Log.d("OpenAISavedPromptsDialog", "Found OpenAISpeechSettingsFragment directly, updating preference");
+                    com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment settingsFragment = (com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment) fragment;
+                    settingsFragment.updatePromptPreference(promptText);
+                    return;
+                }
             }
+            
+            // If not found directly, look inside NavHostFragment (navigation case)
+            for (androidx.fragment.app.Fragment fragment : fragmentManager.getFragments()) {
+                if (fragment instanceof androidx.navigation.fragment.NavHostFragment) {
+                    android.util.Log.d("OpenAISavedPromptsDialog", "Found NavHostFragment, looking inside for OpenAISpeechSettingsFragment");
+                    androidx.navigation.fragment.NavHostFragment navHostFragment = (androidx.navigation.fragment.NavHostFragment) fragment;
+                    androidx.fragment.app.FragmentManager childFragmentManager = navHostFragment.getChildFragmentManager();
+                    
+                    for (androidx.fragment.app.Fragment childFragment : childFragmentManager.getFragments()) {
+                        if (childFragment instanceof com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment) {
+                            android.util.Log.d("OpenAISavedPromptsDialog", "Found OpenAISpeechSettingsFragment inside NavHostFragment, updating preference");
+                            com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment settingsFragment = (com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment) childFragment;
+                            settingsFragment.updatePromptPreference(promptText);
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            android.util.Log.w("OpenAISavedPromptsDialog", "OpenAISpeechSettingsFragment not found, preference only updated in SharedPreferences");
+        } catch (Exception e) {
+            android.util.Log.e("OpenAISavedPromptsDialog", "Error updating prompt preference", e);
         }
+    }
+    
+    private void showPromptDialogWithText(String promptText) {
+        if (getActivity() == null) return;
         
-        // If not found in current fragments, try to find it in the back stack
-        if (fragmentManager.getBackStackEntryCount() > 0) {
-            // Try to find the fragment by going through back stack entries
-            androidx.fragment.app.FragmentManager.BackStackEntry entry = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1);
-            String tag = entry.getName();
+        android.util.Log.d("OpenAISavedPromptsDialog", "Attempting to show prompt dialog with text: " + promptText);
+        
+        // Try to find the OpenAISpeechSettingsFragment directly and show the prompt dialog
+        try {
+            androidx.fragment.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             
-            // Try to find the fragment with the back stack tag
-            androidx.fragment.app.Fragment fragment = fragmentManager.findFragmentByTag(tag);
-            if (fragment instanceof OpenAISpeechSettingsFragment) {
-                ((OpenAISpeechSettingsFragment) fragment).showPromptDialog();
-                return;
+            // First, look for OpenAISpeechSettingsFragment in current fragments (direct case)
+            for (androidx.fragment.app.Fragment fragment : fragmentManager.getFragments()) {
+                if (fragment instanceof com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment) {
+                    android.util.Log.d("OpenAISavedPromptsDialog", "Found OpenAISpeechSettingsFragment directly, showing dialog");
+                    com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment settingsFragment = (com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment) fragment;
+                    settingsFragment.showPromptDialog();
+                    return;
+                }
             }
             
-            // If still not found, pop the back stack and try again
-            fragmentManager.popBackStack();
-            new android.os.Handler().postDelayed(() -> {
-                showPromptDialogInSettings();
-            }, 300);
-        } else {
-            // Last resort: use intent extra to trigger prompt dialog when settings are shown
-            if (getActivity() != null) {
-                getActivity().getIntent().putExtra("open_prompt_dialog", true);
-                // Show a toast to inform user
-                android.widget.Toast.makeText(getActivity(), "Prompt saved. Please reopen settings to see it.", android.widget.Toast.LENGTH_SHORT).show();
+            // If not found directly, look inside NavHostFragment (navigation case)
+            for (androidx.fragment.app.Fragment fragment : fragmentManager.getFragments()) {
+                if (fragment instanceof androidx.navigation.fragment.NavHostFragment) {
+                    android.util.Log.d("OpenAISavedPromptsDialog", "Found NavHostFragment, looking inside for OpenAISpeechSettingsFragment");
+                    androidx.navigation.fragment.NavHostFragment navHostFragment = (androidx.navigation.fragment.NavHostFragment) fragment;
+                    androidx.fragment.app.FragmentManager childFragmentManager = navHostFragment.getChildFragmentManager();
+                    
+                    for (androidx.fragment.app.Fragment childFragment : childFragmentManager.getFragments()) {
+                        if (childFragment instanceof com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment) {
+                            android.util.Log.d("OpenAISavedPromptsDialog", "Found OpenAISpeechSettingsFragment inside NavHostFragment, showing dialog");
+                            com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment settingsFragment = (com.anysoftkeyboard.ui.settings.OpenAISpeechSettingsFragment) childFragment;
+                            settingsFragment.showPromptDialog();
+                            return;
+                        }
+                    }
+                }
             }
+            
+            // If not found in current fragments, check if we can use MainSettingsActivity navigation
+            if (getActivity() instanceof com.anysoftkeyboard.ui.settings.MainSettingsActivity) {
+                android.util.Log.d("OpenAISavedPromptsDialog", "Fragment not found, using MainSettingsActivity navigation");
+                com.anysoftkeyboard.ui.settings.MainSettingsActivity activity = (com.anysoftkeyboard.ui.settings.MainSettingsActivity) getActivity();
+                activity.navigateToOpenAISettings(promptText);
+            } else {
+                // Fallback for other activity types (like direct launch)
+                android.util.Log.d("OpenAISavedPromptsDialog", "Activity is not MainSettingsActivity, using intent fallback");
+                useIntentFallback(promptText);
+            }
+        } catch (Exception e) {
+            android.util.Log.e("OpenAISavedPromptsDialog", "Error showing prompt dialog", e);
+            useIntentFallback(promptText);
+        }
+    }
+    
+    private void useIntentFallback(String promptText) {
+        if (getActivity() != null) {
+            // Fallback: set intent extra and show toast
+            getActivity().getIntent().putExtra("open_prompt_dialog", true);
+            getActivity().getIntent().putExtra("prompt_text_to_load", promptText);
+            android.widget.Toast.makeText(getActivity(), "Prompt applied. Reopen settings to edit.", android.widget.Toast.LENGTH_SHORT).show();
         }
     }
 }

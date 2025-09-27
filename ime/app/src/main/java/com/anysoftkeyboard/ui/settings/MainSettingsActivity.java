@@ -21,9 +21,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import com.anysoftkeyboard.notification.NotificationIds;
@@ -69,23 +71,30 @@ public class MainSettingsActivity extends AppCompatActivity {
     // applying my very own Edge-Effect color
     EdgeEffectHacker.brandGlowEffect(this, ContextCompat.getColor(this, R.color.app_accent));
     handlePermissionRequest(getIntent());
+    handleOpenAISettingsNavigation(getIntent());
   }
 
   @Override
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     handlePermissionRequest(intent);
+    handleOpenAISettingsNavigation(intent);
   }
 
-  private void handlePermissionRequest(Intent intent) {
+  private void handleOpenAISettingsNavigation(Intent intent) {
     if (intent == null) return;
     
     // Handle navigation to OpenAI settings
     if (intent.hasExtra("navigate_to_openai_settings")) {
+      android.util.Log.d("MainSettingsActivity", "Found navigate_to_openai_settings extra, calling navigateToOpenAISettings");
       intent.removeExtra("navigate_to_openai_settings");
       navigateToOpenAISettings();
       return;
     }
+  }
+  
+  private void handlePermissionRequest(Intent intent) {
+    if (intent == null) return;
     
     if (ACTION_REQUEST_PERMISSION_ACTIVITY.equals(intent.getAction())
         && intent.hasExtra(EXTRA_KEY_ACTION_REQUEST_PERMISSION_ACTIVITY)) {
@@ -121,7 +130,13 @@ public class MainSettingsActivity extends AppCompatActivity {
     PermissionRequestHelper.check(this, PermissionRequestHelper.CONTACTS_PERMISSION_REQUEST_CODE);
   }
 
-private void navigateToOpenAISettings() {
+public void navigateToOpenAISettings() {
+    navigateToOpenAISettings(null);
+  }
+  
+  public void navigateToOpenAISettings(String promptText) {
+    android.util.Log.d("MainSettingsActivity", "navigateToOpenAISettings called with prompt: " + promptText);
+    
     // Navigate to OpenAI settings fragment
     final NavController navController =
         ((NavHostFragment)
@@ -132,29 +147,68 @@ private void navigateToOpenAISettings() {
     // Set intent extra to open prompt dialog
     getIntent().putExtra("open_prompt_dialog", true);
     
+    // If we have prompt text, store it for later use
+    if (promptText != null) {
+        getIntent().putExtra("prompt_text_to_load", promptText);
+    }
+    
     // Check if we're already at OpenAI settings fragment
     if (navController.getCurrentDestination() != null && 
         navController.getCurrentDestination().getId() == R.id.openAISpeechSettingsFragment) {
+      android.util.Log.d("MainSettingsActivity", "Already at OpenAI settings, showing prompt dialog");
       // We're already at OpenAI settings, just trigger the prompt dialog
       OpenAISpeechSettingsFragment currentFragment = (OpenAISpeechSettingsFragment) 
           ((NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment))
               .getChildFragmentManager().getFragments().get(0);
       if (currentFragment != null) {
+        if (promptText != null) {
+            currentFragment.updatePromptPreference(promptText);
+        }
         currentFragment.showPromptDialog();
       }
     } else {
+      android.util.Log.d("MainSettingsActivity", "Navigating to OpenAI settings through navigation flow");
+      android.util.Log.d("MainSettingsActivity", "Current destination: " + (navController.getCurrentDestination() != null ? navController.getCurrentDestination().getId() : "null"));
+      
       // Navigate: Language Settings -> Additional Language Settings -> OpenAI Settings
       // First, select Language Settings tab in bottom navigation
       BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-      bottomNavigationView.setSelectedItemId(R.id.languageSettingsFragment);
-      
-      // Then navigate with delays to ensure proper navigation flow
+      if (bottomNavigationView != null) {
+        android.util.Log.d("MainSettingsActivity", "Setting selected item to languageSettingsFragment");
+        bottomNavigationView.setSelectedItemId(R.id.languageSettingsFragment);
+        
+// Then navigate with proper navigation flow using NavController.OnDestinationChangedListener
       new Handler().postDelayed(() -> {
-        navController.navigate(R.id.action_languageSettingsFragment_to_additionalLanguageSettingsFragment);
-        new Handler().postDelayed(() -> {
-          navController.navigate(R.id.action_additionalLanguageSettingsFragment_to_openAISpeechSettingsFragment);
-        }, 200);
-      }, 200);
+        try {
+            android.util.Log.d("MainSettingsActivity", "Navigating to additional language settings");
+            navController.navigate(R.id.action_languageSettingsFragment_to_additionalLanguageSettingsFragment);
+            
+            // Add listener to wait for navigation to complete
+            navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+                @Override
+                public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+                    if (destination.getId() == R.id.additionalLanguageSettingsFragment) {
+                        android.util.Log.d("MainSettingsActivity", "Reached additional language settings, navigating to OpenAI settings");
+                        // Remove the listener to avoid multiple calls
+                        controller.removeOnDestinationChangedListener(this);
+                        
+                        // Navigate to OpenAI settings after a short delay
+                        new Handler().postDelayed(() -> {
+                            try {
+                                navController.navigate(R.id.action_additionalLanguageSettingsFragment_to_openAISpeechSettingsFragment);
+                            } catch (Exception e) {
+                                android.util.Log.e("MainSettingsActivity", "Error navigating to OpenAI settings", e);
+                            }
+                        }, 300);
+                    }
+                }
+            });
+          } catch (Exception e) {
+            android.util.Log.e("MainSettingsActivity", "Error navigating to additional language settings", e);
+          }
+        }, 200);      } else {
+        android.util.Log.e("MainSettingsActivity", "BottomNavigationView is null!");
+      }
     }
   }
 

@@ -50,9 +50,9 @@ public class LauncherSettingsActivity extends Activity {
       finish();
     } else {
       if (SetupSupport.isThisKeyboardEnabled(getApplication())) {
-        startActivity(new Intent(this, MainSettingsActivity.class));
+        startActivity(new Intent(this, MainSettingsActivity.class).putExtras(getIntent()));
       } else {
-        startActivity(new Intent(this, SetupWizardActivity.class));
+        startActivity(new Intent(this, SetupWizardActivity.class).putExtras(getIntent()));
       }
     }
 

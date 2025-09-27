@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.menny.android.anysoftkeyboard.R;
@@ -62,9 +61,18 @@ public class OpenAISpeechSettingsFragment extends PreferenceFragmentCompat {
         // Check if we should open prompt dialog
         if (getActivity() != null && getActivity().getIntent() != null) {
             boolean shouldOpenPrompt = getActivity().getIntent().getBooleanExtra("open_prompt_dialog", false);
+            String promptTextToLoad = getActivity().getIntent().getStringExtra("prompt_text_to_load");
+            
             if (shouldOpenPrompt) {
                 // Post to ensure preferences are fully loaded
                 view.post(() -> {
+                    // If we have prompt text to load, update the preference first
+                    if (promptTextToLoad != null) {
+                        updatePromptPreference(promptTextToLoad);
+                        // Clear the extra so it doesn't reload again
+                        getActivity().getIntent().removeExtra("prompt_text_to_load");
+                    }
+                    
                     Preference promptPreference = findPreference(getString(R.string.settings_key_openai_prompt));
                     if (promptPreference != null) {
                         promptPreference.performClick();
@@ -83,7 +91,23 @@ public class OpenAISpeechSettingsFragment extends PreferenceFragmentCompat {
     public void showPromptDialog() {
         Preference promptPreference = findPreference(getString(R.string.settings_key_openai_prompt));
         if (promptPreference != null) {
+            android.util.Log.d("OpenAISpeechSettings", "Showing prompt dialog");
             promptPreference.performClick();
+        }
+    }
+    
+    public void updatePromptPreference(String promptText) {
+        OpenAIPromptEditTextPreference promptPreference = findPreference(getString(R.string.settings_key_openai_prompt));
+        if (promptPreference != null) {
+            android.util.Log.d("OpenAISpeechSettings", "Updating prompt preference with: " + promptText);
+            promptPreference.setText(promptText);
+            // Also ensure the SharedPreferences is updated
+            android.content.SharedPreferences prefs = requireContext().getSharedPreferences(
+                    "com.menny.android.anysoftkeyboard_preferences", android.content.Context.MODE_PRIVATE);
+            android.content.SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(getString(R.string.settings_key_openai_prompt), promptText);
+            editor.apply();
+            android.util.Log.d("OpenAISpeechSettings", "Also updated SharedPreferences with prompt: " + promptText);
         }
     }
 }

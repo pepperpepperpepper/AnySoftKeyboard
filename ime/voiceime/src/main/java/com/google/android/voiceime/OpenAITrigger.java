@@ -284,7 +284,8 @@ public class OpenAITrigger implements Trigger {
             mRecordedAudioFilename = new File(cacheDir, "recorded.m4a").getAbsolutePath();
             mAudioMediaType = "audio/mp4";
         } else {
-            // Use defaults
+            // Use defaults - also set a default filename to prevent NullPointerException
+            mRecordedAudioFilename = new File(mInputMethodService.getCacheDir(), "recorded.m4a").getAbsolutePath();
             mAudioMediaType = "audio/mp4";
         }
     }
