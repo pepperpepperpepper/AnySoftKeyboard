@@ -183,21 +183,20 @@ public class OpenAISavedPromptsFragment extends Fragment {
                 .show();
     }
 
-    private void insertPromptIntoMainField(@NonNull OpenAISavedPrompt prompt) {
+    private void usePromptInMainField(@NonNull OpenAISavedPrompt prompt) {
         // Get the current prompt from SharedPreferences
         android.content.SharedPreferences prefs = requireContext().getSharedPreferences(
                 "com.menny.android.anysoftkeyboard_preferences", Context.MODE_PRIVATE);
-        String currentPrompt = prefs.getString(getString(R.string.settings_key_openai_prompt), "");
         
-        // Append the selected prompt text
-        String newPrompt = currentPrompt + (TextUtils.isEmpty(currentPrompt) ? "" : " ") + prompt.getText();
+        // REPLACE the current prompt with the selected prompt text (equivalent to USE)
+        String newPrompt = prompt.getText();
         
         // Save the updated prompt
         android.content.SharedPreferences.Editor editor = prefs.edit();
         editor.putString(getString(R.string.settings_key_openai_prompt), newPrompt);
         editor.apply();
         
-        Toast.makeText(getContext(), R.string.openai_saved_prompts_insert_success, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Prompt In Use", Toast.LENGTH_SHORT).show();
         
         // Dismiss the saved prompts dialog and reopen prompt dialog
         if (getActivity() != null) {
@@ -255,7 +254,7 @@ public class OpenAISavedPromptsFragment extends Fragment {
             OpenAISavedPrompt prompt = prompts.get(position);
             holder.previewText.setText(prompt.getText());
             
-            holder.itemView.setOnClickListener(v -> insertPromptIntoMainField(prompt));
+            holder.itemView.setOnClickListener(v -> usePromptInMainField(prompt));
             holder.deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog(prompt));
         }
 
