@@ -17,7 +17,6 @@
 package com.anysoftkeyboard.ui.settings;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -73,9 +72,16 @@ public class OpenAISavedPromptsFragment extends Fragment {
         
         recyclerView = view.findViewById(R.id.prompts_recycler_view);
         emptyView = view.findViewById(R.id.empty_view);
+        Button addPromptButton = view.findViewById(R.id.add_prompt_button);
         
         setupRecyclerView();
         loadPrompts();
+        
+        // Set up add button click listener
+        addPromptButton.setOnClickListener(v -> {
+            android.util.Log.d("OpenAISavedPrompts", "Add button clicked");
+            showAddEditDialog(null);
+        });
         
         return view;
     }
@@ -90,14 +96,17 @@ public class OpenAISavedPromptsFragment extends Fragment {
 
     private void loadPrompts() {
         List<OpenAISavedPrompt> prompts = promptsManager.getAllPrompts();
+        android.util.Log.d("OpenAISavedPrompts", "Loaded " + prompts.size() + " prompts");
         adapter.setPrompts(prompts);
         
         if (prompts.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
+            android.util.Log.d("OpenAISavedPrompts", "Showing empty view");
         } else {
             recyclerView.setVisibility(View.VISIBLE);
             emptyView.setVisibility(View.GONE);
+            android.util.Log.d("OpenAISavedPrompts", "Showing recycler view with " + prompts.size() + " items");
         }
     }
 
@@ -146,28 +155,36 @@ public class OpenAISavedPromptsFragment extends Fragment {
 
         saveButton.setOnClickListener(v -> {
             String text = textEdit.getText().toString().trim();
+            android.util.Log.d("OpenAISavedPrompts", "Save button clicked, text: " + text);
             
             if (TextUtils.isEmpty(text)) {
+                android.util.Log.d("OpenAISavedPrompts", "Text is empty, showing error");
                 Toast.makeText(getContext(), R.string.openai_saved_prompts_error_text_required, Toast.LENGTH_SHORT).show();
                 return;
             }
             
             if (isEdit) {
+                android.util.Log.d("OpenAISavedPrompts", "Editing existing prompt");
                 prompt.setText(text);
                 if (promptsManager.updatePrompt(prompt)) {
+                    android.util.Log.d("OpenAISavedPrompts", "Update successful");
                     Toast.makeText(getContext(), R.string.openai_saved_prompts_save_success, Toast.LENGTH_SHORT).show();
                     loadPrompts();
                     dialog.dismiss();
                 } else {
+                    android.util.Log.e("OpenAISavedPrompts", "Update failed");
                     Toast.makeText(getContext(), R.string.openai_saved_prompts_error_save_failed, Toast.LENGTH_SHORT).show();
                 }
             } else {
+                android.util.Log.d("OpenAISavedPrompts", "Creating new prompt");
                 OpenAISavedPrompt newPrompt = new OpenAISavedPrompt(text);
                 if (promptsManager.savePrompt(newPrompt)) {
+                    android.util.Log.d("OpenAISavedPrompts", "Save successful");
                     Toast.makeText(getContext(), R.string.openai_saved_prompts_save_success, Toast.LENGTH_SHORT).show();
                     loadPrompts();
                     dialog.dismiss();
                 } else {
+                    android.util.Log.e("OpenAISavedPrompts", "Save failed");
                     Toast.makeText(getContext(), R.string.openai_saved_prompts_error_save_failed, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -195,96 +212,20 @@ public class OpenAISavedPromptsFragment extends Fragment {
     }
 
     private void usePromptInMainField(@NonNull OpenAISavedPrompt prompt) {
-        // Get the current prompt from SharedPreferences
-        android.content.SharedPreferences prefs = requireContext().getSharedPreferences(
-                "com.menny.android.anysoftkeyboard_preferences", Context.MODE_PRIVATE);
-        
-        // REPLACE the current prompt with the selected prompt text (equivalent to USE)
         String newPrompt = prompt.getText();
+        android.util.Log.d("OpenAISavedPrompts", "usePromptInMainField called with: " + newPrompt);
         
-        // Save the updated prompt
-        android.content.SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(getString(R.string.settings_key_openai_prompt), newPrompt);
-        editor.apply();
-        
-        Toast.makeText(getContext(), "Prompt In Use", Toast.LENGTH_SHORT).show();
-        
-        // Notify listener about prompt selection and dismiss dialog
+        // Simply notify the listener and let the dialog handle the rest
         if (listener != null) {
+            android.util.Log.d("OpenAISavedPrompts", "Calling listener.onPromptSelected with: " + newPrompt);
             listener.onPromptSelected(newPrompt);
         } else {
-            // Fallback: dismiss dialog and try to show prompt dialog
-            dismissDialogAndShowPrompt();
+            android.util.Log.e("OpenAISavedPrompts", "Listener is null! Cannot handle prompt selection.");
+            Toast.makeText(getContext(), "Error: Could not load prompt", Toast.LENGTH_SHORT).show();
         }
     }
     
-    private void dismissDialogAndShowPrompt() {
-        if (getActivity() != null) {
-            // Dismiss the current dialog
-            if (getActivity().getSupportFragmentManager().findFragmentByTag("OpenAISavedPromptsDialog") != null) {
-                getActivity().getSupportFragmentManager().popBackStack();
-            } else {
-                getActivity().onBackPressed();
-            }
-            
-            // Try to show prompt dialog after dismissal
-            getActivity().runOnUiThread(() -> {
-                new android.os.Handler().postDelayed(() -> {
-                    showPromptDialogDirectly();
-                }, 200);
-            });
-        }
-    }
     
-    private void showPromptDialogDirectly() {
-        if (getActivity() == null) return;
-        
-        // Try to find and click the prompt preference directly
-        try {
-            // Try to find the settings fragment and trigger the prompt dialog
-            androidx.fragment.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            
-            // Look for OpenAISpeechSettingsFragment in current fragments
-            for (androidx.fragment.app.Fragment fragment : fragmentManager.getFragments()) {
-                if (fragment instanceof OpenAISpeechSettingsFragment) {
-                    OpenAISpeechSettingsFragment settingsFragment = (OpenAISpeechSettingsFragment) fragment;
-                    settingsFragment.showPromptDialog();
-                    return;
-                }
-            }
-            
-            // If not found, try to find it in the back stack
-            if (fragmentManager.getBackStackEntryCount() > 0) {
-                // Try to find the fragment by going through back stack entries
-                androidx.fragment.app.FragmentManager.BackStackEntry entry = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1);
-                String tag = entry.getName();
-                
-                // Try to find the fragment with the back stack tag
-                androidx.fragment.app.Fragment fragment = fragmentManager.findFragmentByTag(tag);
-                if (fragment instanceof OpenAISpeechSettingsFragment) {
-                    ((OpenAISpeechSettingsFragment) fragment).showPromptDialog();
-                    return;
-                }
-                
-                // If still not found, pop the back stack and try again
-                getActivity().onBackPressed();
-                new android.os.Handler().postDelayed(() -> {
-                    showPromptDialogDirectly();
-                }, 300);
-            } else {
-                // Last resort: use intent extra to trigger prompt dialog when settings are shown
-                getActivity().getIntent().putExtra("open_prompt_dialog", true);
-                android.widget.Toast.makeText(getActivity(), "Prompt saved. Please reopen settings to see it.", android.widget.Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Last resort: use intent extra
-            if (getActivity() != null) {
-                getActivity().getIntent().putExtra("open_prompt_dialog", true);
-                android.widget.Toast.makeText(getActivity(), "Prompt saved. Please reopen settings to see it.", android.widget.Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     private class PromptAdapter extends RecyclerView.Adapter<PromptAdapter.PromptViewHolder> {
         private List<OpenAISavedPrompt> prompts = new ArrayList<>();
