@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -256,8 +255,6 @@ public class OpenAISavedPromptsFragment extends Fragment {
             holder.previewText.setText(prompt.getText());
             
             holder.itemView.setOnClickListener(v -> insertPromptIntoMainField(prompt));
-            holder.editButton.setOnClickListener(v -> showAddEditDialog(prompt));
-            holder.deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog(prompt));
         }
 
         @Override
@@ -272,14 +269,10 @@ public class OpenAISavedPromptsFragment extends Fragment {
 
         class PromptViewHolder extends RecyclerView.ViewHolder {
             TextView previewText;
-            ImageView editButton;
-            ImageView deleteButton;
 
             PromptViewHolder(@NonNull View itemView) {
                 super(itemView);
                 previewText = itemView.findViewById(R.id.prompt_preview);
-                editButton = itemView.findViewById(R.id.edit_button);
-                deleteButton = itemView.findViewById(R.id.delete_button);
             }
         }
     }
