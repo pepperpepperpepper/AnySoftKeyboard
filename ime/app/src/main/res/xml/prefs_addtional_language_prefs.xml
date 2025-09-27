@@ -54,11 +54,6 @@
             android:summaryOn="@string/persistent_layout_per_package_id_on_summary"
             android:title="@string/persistent_layout_per_package_id_title"/>
 
-        <Preference
-            android:key="@string/settings_key_openai_speech_settings"
-            android:title="@string/openai_speech_settings_title"
-            android:summary="@string/openai_speech_settings_summary"/>
-
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
