@@ -30,6 +30,17 @@
 
 
 
+    <ImageView
+            android:id="@+id/delete_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/openai_saved_prompts_delete"
+            android:src="@android:drawable/ic_menu_delete"
+            android:scaleType="center"
+            android:padding="12dp" />
+
     </LinearLayout>
 
     <View
