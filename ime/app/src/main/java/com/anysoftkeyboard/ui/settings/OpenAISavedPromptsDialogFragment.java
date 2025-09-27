@@ -126,9 +126,7 @@ public class OpenAISavedPromptsDialogFragment extends DialogFragment implements 
             android.util.Log.d("OpenAISavedPromptsDialog", "Activity available, attempting to show prompt dialog");
             // Post to ensure dialog is dismissed before showing the next one
             getActivity().runOnUiThread(() -> {
-                new android.os.Handler().postDelayed(() -> {
-                    showPromptDialogAfterSelection();
-                }, 100);
+                showPromptDialogAfterSelection();
             });
         } else {
             android.util.Log.e("OpenAISavedPromptsDialog", "Activity is null!");
@@ -246,20 +244,18 @@ public class OpenAISavedPromptsDialogFragment extends DialogFragment implements 
         try {
             android.util.Log.d("OpenAISavedPromptsDialog", "Attempting to show prompt dialog with delay");
             
-            // Use a Handler to delay the dialog display to ensure the saved prompts dialog is fully dismissed
-            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                try {
-                    if (getActivity() != null && !settingsFragment.isDetached()) {
-                        android.util.Log.d("OpenAISavedPromptsDialog", "Handler triggered, showing prompt dialog now");
-                        // Use the fragment's showPromptDialog method which handles the preference click
-                        settingsFragment.showPromptDialog();
-                    } else {
-                        android.util.Log.w("OpenAISavedPromptsDialog", "Activity null or fragment detached, cannot show dialog");
-                    }
-                } catch (Exception e) {
-                    android.util.Log.e("OpenAISavedPromptsDialog", "Error in handler showing prompt dialog", e);
+            // Show the dialog immediately without delay
+            try {
+                if (getActivity() != null && !settingsFragment.isDetached()) {
+                    android.util.Log.d("OpenAISavedPromptsDialog", "Showing prompt dialog immediately");
+                    // Use the fragment's showPromptDialog method which handles the preference click
+                    settingsFragment.showPromptDialog();
+                } else {
+                    android.util.Log.w("OpenAISavedPromptsDialog", "Activity null or fragment detached, cannot show dialog");
                 }
-            }, 200); // 200ms delay to ensure dialog is dismissed
+            } catch (Exception e) {
+                android.util.Log.e("OpenAISavedPromptsDialog", "Error showing prompt dialog", e);
+            }
             
         } catch (Exception e) {
             android.util.Log.e("OpenAISavedPromptsDialog", "Error setting up prompt dialog click", e);
