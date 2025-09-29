@@ -46,6 +46,7 @@ import com.anysoftkeyboard.base.utils.Logger;
 import com.anysoftkeyboard.dictionaries.DictionaryAddOnAndBuilder;
 import com.anysoftkeyboard.dictionaries.ExternalDictionaryFactory;
 import com.anysoftkeyboard.dictionaries.WordComposer;
+import com.anysoftkeyboard.emoji.EmojiSearchOverlay;
 import com.anysoftkeyboard.ime.AnySoftKeyboardColorizeNavBar;
 import com.anysoftkeyboard.ime.InputViewBinder;
 import com.anysoftkeyboard.keyboards.AnyKeyboard;
@@ -92,6 +93,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
   private VoiceRecognitionTrigger mVoiceRecognitionTrigger;
   private View mFullScreenExtractView;
   private EditText mFullScreenExtractTextView;
+  private EmojiSearchOverlay mEmojiSearchOverlay;
 
   // Enum for different voice input states
   private enum VoiceInputState {
@@ -323,6 +325,25 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
     }
 
     mDevToolsAction = new DevStripActionProvider(this);
+  }
+
+  @Override
+  public View onCreateInputView() {
+    View inputView = super.onCreateInputView();
+    
+    try {
+      // Initialize emoji search overlay
+      View searchOverlay = inputView.findViewById(R.id.emoji_search_overlay_include);
+      if (searchOverlay != null) {
+        mEmojiSearchOverlay = new EmojiSearchOverlay(getApplicationContext(), this, searchOverlay);
+      }
+    } catch (Exception e) {
+      // Log error but don't crash - emoji search is optional functionality
+      android.util.Log.e("AnySoftKeyboard", "Failed to initialize emoji search overlay", e);
+      mEmojiSearchOverlay = null;
+    }
+    
+    return inputView;
   }
 
   @Override
@@ -754,8 +775,37 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
       case KeyCodes.QUICK_TEXT:
         onQuickTextRequested(key);
         break;
+      case KeyCodes.EMOJI_SEARCH:
+        try {
+          if (mEmojiSearchOverlay != null) {
+            if (mEmojiSearchOverlay.isVisible()) {
+              mEmojiSearchOverlay.hideSearch();
+            } else {
+              mEmojiSearchOverlay.showSearch();
+            }
+          }
+        } catch (Exception e) {
+          android.util.Log.e("AnySoftKeyboard", "Error handling emoji search", e);
+        }
+        break;
       case KeyCodes.QUICK_TEXT_POPUP:
-        onQuickTextKeyboardRequested(key);
+        // Handle emoji search when long-pressing emoji key
+        try {
+          if (mEmojiSearchOverlay != null) {
+            if (mEmojiSearchOverlay.isVisible()) {
+              mEmojiSearchOverlay.hideSearch();
+            } else {
+              mEmojiSearchOverlay.showSearch();
+            }
+          } else {
+            // Fallback to original quick text popup if emoji search is not available
+            onQuickTextKeyboardRequested(key);
+          }
+        } catch (Exception e) {
+          android.util.Log.e("AnySoftKeyboard", "Error handling quick text popup for emoji search", e);
+          // Fallback to original behavior
+          onQuickTextKeyboardRequested(key);
+        }
         break;
       case KeyCodes.MODE_SYMBOLS:
         nextKeyboard(getCurrentInputEditorInfo(), NextKeyboardType.Symbols);
@@ -921,6 +971,31 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
       int primaryCode, Keyboard.Key key, int multiTapIndex, int[] nearByKeyCodes, boolean fromUI) {
     final InputConnection ic = getCurrentInputConnection();
     if (ic != null) ic.beginBatchEdit();
+    
+    // Handle emoji search
+    try {
+      if (mEmojiSearchOverlay != null && mEmojiSearchOverlay.isVisible()) {
+        if (primaryCode == KeyCodes.DELETE) {
+          mEmojiSearchOverlay.handleBackspace();
+          if (ic != null) ic.endBatchEdit();
+          return;
+        } else if (primaryCode > 0 && primaryCode < 128) {
+          // Handle printable ASCII characters
+          char character = (char) primaryCode;
+          mEmojiSearchOverlay.handleCharacterInput(character);
+          if (ic != null) ic.endBatchEdit();
+          return;
+        } else if (primaryCode == KeyCodes.EMOJI_SEARCH || primaryCode == KeyCodes.QUICK_TEXT_POPUP) {
+          mEmojiSearchOverlay.hideSearch();
+          if (ic != null) ic.endBatchEdit();
+          return;
+        }
+      }
+    } catch (Exception e) {
+      android.util.Log.e("AnySoftKeyboard", "Error in emoji search key handling", e);
+      // Continue with normal key handling if emoji search fails
+    }
+    
     super.onKey(primaryCode, key, multiTapIndex, nearByKeyCodes, fromUI);
     if (primaryCode > 0) {
       onNonFunctionKey(primaryCode, key, multiTapIndex, nearByKeyCodes);

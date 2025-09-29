@@ -27,6 +27,11 @@
     android:animateLayoutChanges="false"
     tools:ignore="UnusedAttribute">
 
+    <!-- Emoji Search Overlay -->
+    <include
+        android:id="@+id/emoji_search_overlay_include"
+        layout="@layout/emoji_search_overlay" />
+
     <com.anysoftkeyboard.keyboards.views.CandidateView
         android:id="@+id/candidate_view"
         android:layout_width="match_parent"

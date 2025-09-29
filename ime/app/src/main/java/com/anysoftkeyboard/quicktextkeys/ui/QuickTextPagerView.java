@@ -5,8 +5,11 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -48,7 +51,11 @@ public class QuickTextPagerView extends LinearLayout implements InputViewActions
   private QuickKeysKeyboardPagerAdapter mAdapter;
   private ViewPagerWithDisable mPager;
   private View mSearchIndicator;
-  private ImageView mClearSearchButton;
+  private LinearLayout mSearchContainer;
+  private EditText mSearchInput;
+  private ImageView mSearchBackspaceButton;
+  private ImageView mSearchClearButton;
+  private ImageView mSearchDoneButton;
 
   public QuickTextPagerView(Context context) {
     super(context);
@@ -178,6 +185,19 @@ public class QuickTextPagerView extends LinearLayout implements InputViewActions
     clearEmojiHistoryIcon.setImageDrawable(mDeleteRecentlyUsedDrawable);
     ((ImageView) findViewById(R.id.quick_keys_popup_quick_keys_settings))
         .setImageDrawable(mSettingsIcon);
+    
+    // Setup search button
+    ImageView searchButton = findViewById(R.id.quick_keys_popup_search);
+    if (searchButton != null) {
+      searchButton.setOnClickListener(v -> {
+        if (isEmojiSearchActive()) {
+          endEmojiSearch();
+        } else {
+          startEmojiSearch();
+        }
+      });
+    }
+    
     final View actionsLayout = findViewById(R.id.quick_text_actions_layout);
     actionsLayout.setPadding(
         actionsLayout.getPaddingLeft(),
@@ -204,13 +224,61 @@ public class QuickTextPagerView extends LinearLayout implements InputViewActions
   // Search-related methods
   
   private void setupSearchUI() {
-    // Initialize search indicator (could be a simple TextView or ImageView)
+    // Initialize search UI elements
     mSearchIndicator = findViewById(R.id.quick_keys_search_indicator);
-    mClearSearchButton = findViewById(R.id.quick_keys_clear_search);
+    mSearchContainer = findViewById(R.id.quick_keys_search_container);
+    mSearchInput = findViewById(R.id.quick_keys_search_input);
+    mSearchBackspaceButton = findViewById(R.id.quick_keys_search_backspace);
+    mSearchClearButton = findViewById(R.id.quick_keys_search_clear);
+    mSearchDoneButton = findViewById(R.id.quick_keys_search_done);
     
-    if (mClearSearchButton != null) {
-      mClearSearchButton.setOnClickListener(v -> {
-        mEmojiSearchManager.clearSearch();
+    if (mSearchInput != null) {
+      // Add text watcher for real-time search
+      mSearchInput.addTextChangedListener(new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        
+        @Override
+        public void afterTextChanged(Editable s) {
+          String query = s.toString();
+          mEmojiSearchManager.updateSearchQuery(query);
+        }
+      });
+      
+      // Handle done action
+      mSearchInput.setOnEditorActionListener((v, actionId, event) -> {
+        if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+          endEmojiSearch();
+          return true;
+        }
+        return false;
+      });
+    }
+    
+    // Setup search action buttons
+    if (mSearchBackspaceButton != null) {
+      mSearchBackspaceButton.setOnClickListener(v -> {
+        if (mSearchInput != null && mSearchInput.getText().length() > 0) {
+          Editable text = mSearchInput.getText();
+          text.delete(text.length() - 1, text.length());
+        }
+      });
+    }
+    
+    if (mSearchClearButton != null) {
+      mSearchClearButton.setOnClickListener(v -> {
+        if (mSearchInput != null) {
+          mSearchInput.setText("");
+        }
+      });
+    }
+    
+    if (mSearchDoneButton != null) {
+      mSearchDoneButton.setOnClickListener(v -> {
+        endEmojiSearch();
       });
     }
     
@@ -218,12 +286,25 @@ public class QuickTextPagerView extends LinearLayout implements InputViewActions
   }
   
   private void updateSearchUI() {
+    boolean searchActive = mEmojiSearchManager.isSearchActive();
+    
     if (mSearchIndicator != null) {
-      mSearchIndicator.setVisibility(mEmojiSearchManager.isSearchActive() ? View.VISIBLE : View.GONE);
+      mSearchIndicator.setVisibility(searchActive ? View.VISIBLE : View.GONE);
     }
     
-    if (mClearSearchButton != null) {
-      mClearSearchButton.setVisibility(mEmojiSearchManager.isSearchActive() ? View.VISIBLE : View.GONE);
+    if (mSearchContainer != null) {
+      mSearchContainer.setVisibility(searchActive ? View.VISIBLE : View.GONE);
+      if (searchActive && mSearchInput != null) {
+        mSearchInput.requestFocus();
+        // Show soft keyboard for the EditText
+        mSearchInput.post(() -> {
+          android.view.inputmethod.InputMethodManager imm = 
+              (android.view.inputmethod.InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+          if (imm != null) {
+            imm.showSoftInput(mSearchInput, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+          }
+        });
+      }
     }
   }
   
@@ -283,6 +364,10 @@ public class QuickTextPagerView extends LinearLayout implements InputViewActions
   
   public void updateSearchQuery(@NonNull String query) {
     mEmojiSearchManager.updateSearchQuery(query);
+    // Update search input field if it exists
+    if (mSearchInput != null && !mSearchInput.getText().toString().equals(query)) {
+      mSearchInput.setText(query);
+    }
   }
   
   public void startEmojiSearch() {
@@ -291,6 +376,14 @@ public class QuickTextPagerView extends LinearLayout implements InputViewActions
   
   public void endEmojiSearch() {
     mEmojiSearchManager.endSearch();
+    // Hide soft keyboard when ending search
+    if (mSearchInput != null) {
+      android.view.inputmethod.InputMethodManager imm = 
+          (android.view.inputmethod.InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+      if (imm != null) {
+        imm.hideSoftInputFromWindow(mSearchInput.getWindowToken(), 0);
+      }
+    }
   }
   
   public boolean isEmojiSearchActive() {
