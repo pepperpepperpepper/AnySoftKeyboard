@@ -149,6 +149,11 @@ import net.evendanan.pixel.ViewPagerWithDisable;
   public boolean isViewFromObject(View view, Object object) {
     return view == object;
   }
+  
+  @NonNull
+  public OnKeyboardActionListener getKeyboardActionListener() {
+    return mKeyboardActionListener;
+  }
 
   private static class PopupKeyboardShownHandler
       implements AnyKeyboardViewWithMiniKeyboard.OnPopupShownListener {

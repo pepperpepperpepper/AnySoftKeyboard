@@ -21,6 +21,8 @@ public abstract class AnySoftKeyboardWithQuickText extends AnySoftKeyboardMediaI
   private String mOverrideQuickTextText = "";
   private DefaultSkinTonePrefTracker mDefaultSkinTonePrefTracker;
   private DefaultGenderPrefTracker mDefaultGenderPrefTracker;
+  private QuickTextPagerView mQuickTextPagerView;
+  private StringBuilder mSearchQueryBuilder = new StringBuilder();
 
   @Override
   public void onCreate() {
@@ -88,7 +90,7 @@ public abstract class AnySoftKeyboardWithQuickText extends AnySoftKeyboardMediaI
     cleanUpQuickTextKeyboard(false);
 
     final AnyKeyboardView actualInputView = (AnyKeyboardView) getInputView();
-    QuickTextPagerView quickTextsLayout =
+    mQuickTextPagerView =
         QuickTextViewFactory.createQuickTextView(
             getApplicationContext(),
             inputViewContainer,
@@ -96,7 +98,7 @@ public abstract class AnySoftKeyboardWithQuickText extends AnySoftKeyboardMediaI
             mDefaultSkinTonePrefTracker,
             mDefaultGenderPrefTracker);
     actualInputView.resetInputView();
-    quickTextsLayout.setThemeValues(
+    mQuickTextPagerView.setThemeValues(
         mCurrentTheme,
         actualInputView.getLabelTextSize(),
         actualInputView.getCurrentResourcesHolder().getKeyTextColor(),
@@ -110,7 +112,7 @@ public abstract class AnySoftKeyboardWithQuickText extends AnySoftKeyboardMediaI
         getSupportedMediaTypesForInput());
 
     actualInputView.setVisibility(View.GONE);
-    inputViewContainer.addView(quickTextsLayout);
+    inputViewContainer.addView(mQuickTextPagerView);
   }
 
   private boolean cleanUpQuickTextKeyboard(boolean reshowStandardKeyboard) {
@@ -128,6 +130,10 @@ public abstract class AnySoftKeyboardWithQuickText extends AnySoftKeyboardMediaI
         inputViewContainer.findViewById(R.id.quick_text_pager_root);
     if (quickTextsLayout != null) {
       inputViewContainer.removeView(quickTextsLayout);
+      if (quickTextsLayout == mQuickTextPagerView) {
+        mQuickTextPagerView = null;
+        mSearchQueryBuilder.setLength(0);
+      }
       return true;
     } else {
       return false;
@@ -137,5 +143,101 @@ public abstract class AnySoftKeyboardWithQuickText extends AnySoftKeyboardMediaI
   @Override
   protected boolean handleCloseRequest() {
     return super.handleCloseRequest() || cleanUpQuickTextKeyboard(true);
+  }
+  
+  // Emoji search integration methods
+  
+  protected void onEmojiSearchCharacter(int primaryCode) {
+    if (mQuickTextPagerView != null && mQuickTextPagerView.isEmojiSearchActive()) {
+      if (primaryCode == KeyCodes.DELETE) {
+        // Handle backspace in search mode
+        if (mSearchQueryBuilder.length() > 0) {
+          mSearchQueryBuilder.deleteCharAt(mSearchQueryBuilder.length() - 1);
+          updateEmojiSearch();
+        } else {
+          // No more characters to delete, end search
+          endEmojiSearch();
+        }
+      } else if (primaryCode == KeyCodes.CANCEL || primaryCode == KeyCodes.ESCAPE) {
+        // Cancel search mode
+        endEmojiSearch();
+      } else if (primaryCode >= 32 && primaryCode < 127) {
+        // Add printable character to search query
+        mSearchQueryBuilder.append((char) primaryCode);
+        updateEmojiSearch();
+      }
+    }
+  }
+  
+  protected void startEmojiSearch() {
+    if (mQuickTextPagerView != null) {
+      mSearchQueryBuilder.setLength(0);
+      mQuickTextPagerView.startEmojiSearch();
+    }
+  }
+  
+  protected void endEmojiSearch() {
+    if (mQuickTextPagerView != null) {
+      mSearchQueryBuilder.setLength(0);
+      mQuickTextPagerView.endEmojiSearch();
+    }
+  }
+  
+  protected void updateEmojiSearch() {
+    if (mQuickTextPagerView != null) {
+      String query = mSearchQueryBuilder.toString();
+      mQuickTextPagerView.updateSearchQuery(query);
+    }
+  }
+  
+  protected boolean isEmojiSearchActive() {
+    return mQuickTextPagerView != null && mQuickTextPagerView.isEmojiSearchActive();
+  }
+  
+  @Override
+  protected void handleCharacter(int primaryCode, Keyboard.Key key, int multiTapIndex, int[] nearByKeyCodes) {
+    // Check if we're in emoji search mode
+    if (isEmojiSearchActive()) {
+      onEmojiSearchCharacter(primaryCode);
+      return;
+    }
+    
+    // Normal character handling
+    super.handleCharacter(primaryCode, key, multiTapIndex, nearByKeyCodes);
+  }
+  
+  @Override
+  protected void handleSeparator(int primaryCode) {
+    // Check if we're in emoji search mode
+    if (isEmojiSearchActive()) {
+      if (primaryCode == KeyCodes.SPACE) {
+        // Space could end search or be part of search, let's end search for now
+        endEmojiSearch();
+        return;
+      } else if (primaryCode == KeyCodes.ENTER) {
+        // Enter ends search
+        endEmojiSearch();
+        return;
+      }
+      onEmojiSearchCharacter(primaryCode);
+      return;
+    }
+    
+    // Normal separator handling
+    super.handleSeparator(primaryCode);
+  }
+  
+  @Override
+  public void onKey(
+      int primaryCode, Keyboard.Key key, int multiTapIndex, int[] nearByKeyCodes, boolean fromUI) {
+    if (primaryCode == KeyCodes.EMOJI_SEARCH) {
+      if (isEmojiSearchActive()) {
+        endEmojiSearch();
+      } else {
+        startEmojiSearch();
+      }
+    } else {
+      super.onKey(primaryCode, key, multiTapIndex, nearByKeyCodes, fromUI);
+    }
   }
 }

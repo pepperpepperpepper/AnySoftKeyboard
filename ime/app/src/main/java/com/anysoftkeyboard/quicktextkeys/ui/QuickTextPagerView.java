@@ -12,9 +12,11 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import com.anysoftkeyboard.ime.InputViewActionsProvider;
 import com.anysoftkeyboard.keyboards.views.OnKeyboardActionListener;
+import com.anysoftkeyboard.quicktextkeys.EmojiSearchManager;
 import com.anysoftkeyboard.quicktextkeys.HistoryQuickTextKey;
 import com.anysoftkeyboard.quicktextkeys.QuickKeyHistoryRecords;
 import com.anysoftkeyboard.quicktextkeys.QuickTextKey;
+import com.anysoftkeyboard.quicktextkeys.SearchableQuickTextKey;
 import com.anysoftkeyboard.remote.MediaType;
 import com.anysoftkeyboard.theme.KeyboardTheme;
 import com.astuetz.PagerSlidingTabStrip;
@@ -25,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 import net.evendanan.pixel.ViewPagerWithDisable;
 
-public class QuickTextPagerView extends LinearLayout implements InputViewActionsProvider {
+public class QuickTextPagerView extends LinearLayout implements InputViewActionsProvider, EmojiSearchManager.SearchListener {
 
   private KeyboardTheme mKeyboardTheme;
   private float mTabTitleTextSize;
@@ -39,17 +41,33 @@ public class QuickTextPagerView extends LinearLayout implements InputViewActions
   private QuickKeyHistoryRecords mQuickKeyHistoryRecords;
   private DefaultSkinTonePrefTracker mDefaultSkinTonePrefTracker;
   private DefaultGenderPrefTracker mDefaultGenderPrefTracker;
+  
+  // Search-related fields
+  private EmojiSearchManager mEmojiSearchManager;
+  private List<QuickTextKey> mOriginalQuickTextKeys;
+  private QuickKeysKeyboardPagerAdapter mAdapter;
+  private ViewPagerWithDisable mPager;
+  private View mSearchIndicator;
+  private ImageView mClearSearchButton;
 
   public QuickTextPagerView(Context context) {
     super(context);
+    initSearchManager();
   }
 
   public QuickTextPagerView(Context context, AttributeSet attrs) {
     super(context, attrs);
+    initSearchManager();
   }
 
   public QuickTextPagerView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
+    initSearchManager();
+  }
+  
+  private void initSearchManager() {
+    mEmojiSearchManager = new EmojiSearchManager(getContext());
+    mEmojiSearchManager.setSearchListener(this);
   }
 
   private static void setupSlidingTab(
@@ -103,22 +121,22 @@ public class QuickTextPagerView extends LinearLayout implements InputViewActions
     frameKeyboardViewClickListener.registerOnViews(this);
 
     final Context context = getContext();
-    final List<QuickTextKey> list = new ArrayList<>();
+    mOriginalQuickTextKeys = new ArrayList<>();
     // always starting with Recent
     final HistoryQuickTextKey historyQuickTextKey =
         new HistoryQuickTextKey(context, mQuickKeyHistoryRecords);
-    list.add(historyQuickTextKey);
+    mOriginalQuickTextKeys.add(historyQuickTextKey);
     // then all the rest
-    list.addAll(AnyApplication.getQuickTextKeyFactory(context).getEnabledAddOns());
+    mOriginalQuickTextKeys.addAll(AnyApplication.getQuickTextKeyFactory(context).getEnabledAddOns());
 
     final QuickTextUserPrefs quickTextUserPrefs = new QuickTextUserPrefs(context);
 
-    final ViewPagerWithDisable pager = findViewById(R.id.quick_text_keyboards_pager);
-    final QuickKeysKeyboardPagerAdapter adapter =
+    mPager = findViewById(R.id.quick_text_keyboards_pager);
+    mAdapter =
         new QuickKeysKeyboardPagerAdapter(
             context,
-            pager,
-            list,
+            mPager,
+            getCurrentFilteredKeys(),
             new RecordHistoryKeyboardActionListener(historyQuickTextKey, keyboardActionListener),
             mDefaultSkinTonePrefTracker,
             mDefaultGenderPrefTracker,
@@ -132,20 +150,23 @@ public class QuickTextPagerView extends LinearLayout implements InputViewActions
           @Override
           public void onPageSelected(int position) {
             super.onPageSelected(position);
-            QuickTextKey selectedKey = list.get(position);
-            quickTextUserPrefs.setLastSelectedAddOnId(selectedKey.getId());
-            // if this is History, we need to show clear icon
-            // else, hide the clear icon
-            clearEmojiHistoryIcon.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
+            List<QuickTextKey> currentKeys = getCurrentFilteredKeys();
+            if (position < currentKeys.size()) {
+              QuickTextKey selectedKey = currentKeys.get(position);
+              quickTextUserPrefs.setLastSelectedAddOnId(selectedKey.getId());
+              // if this is History, we need to show clear icon
+              // else, hide the clear icon
+              clearEmojiHistoryIcon.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
+            }
           }
         };
-    int startPageIndex = quickTextUserPrefs.getStartPageIndex(list);
+    int startPageIndex = quickTextUserPrefs.getStartPageIndex(getCurrentFilteredKeys());
     setupSlidingTab(
         this,
         mTabTitleTextSize,
         mTabTitleTextColor,
-        pager,
-        adapter,
+        mPager,
+        mAdapter,
         onPageChangeListener,
         startPageIndex);
 
@@ -164,6 +185,9 @@ public class QuickTextPagerView extends LinearLayout implements InputViewActions
         actionsLayout.getPaddingRight(),
         // this will support the case were we have navigation-bar offset
         actionsLayout.getPaddingBottom() + mBottomPadding);
+    
+    // Initialize search UI elements
+    setupSearchUI();
   }
 
   public void setQuickKeyHistoryRecords(QuickKeyHistoryRecords quickKeyHistoryRecords) {
@@ -175,5 +199,119 @@ public class QuickTextPagerView extends LinearLayout implements InputViewActions
       DefaultGenderPrefTracker defaultGenderPrefTracker) {
     mDefaultSkinTonePrefTracker = defaultSkinTonePrefTracker;
     mDefaultGenderPrefTracker = defaultGenderPrefTracker;
+  }
+  
+  // Search-related methods
+  
+  private void setupSearchUI() {
+    // Initialize search indicator (could be a simple TextView or ImageView)
+    mSearchIndicator = findViewById(R.id.quick_keys_search_indicator);
+    mClearSearchButton = findViewById(R.id.quick_keys_clear_search);
+    
+    if (mClearSearchButton != null) {
+      mClearSearchButton.setOnClickListener(v -> {
+        mEmojiSearchManager.clearSearch();
+      });
+    }
+    
+    updateSearchUI();
+  }
+  
+  private void updateSearchUI() {
+    if (mSearchIndicator != null) {
+      mSearchIndicator.setVisibility(mEmojiSearchManager.isSearchActive() ? View.VISIBLE : View.GONE);
+    }
+    
+    if (mClearSearchButton != null) {
+      mClearSearchButton.setVisibility(mEmojiSearchManager.isSearchActive() ? View.VISIBLE : View.GONE);
+    }
+  }
+  
+  private List<QuickTextKey> getCurrentFilteredKeys() {
+    if (mEmojiSearchManager.isSearchActive()) {
+      return createSearchableKeys(mEmojiSearchManager.filterEmojiKeys(mOriginalQuickTextKeys));
+    } else {
+      return mOriginalQuickTextKeys;
+    }
+  }
+  
+  private List<QuickTextKey> createSearchableKeys(List<QuickTextKey> filteredKeys) {
+    List<QuickTextKey> searchableKeys = new ArrayList<>();
+    String query = mEmojiSearchManager.getCurrentQuery();
+    
+    for (QuickTextKey key : filteredKeys) {
+      if (key instanceof HistoryQuickTextKey) {
+        // Don't wrap the history key
+        searchableKeys.add(key);
+      } else {
+        searchableKeys.add(new SearchableQuickTextKey(key, query));
+      }
+    }
+    
+    return searchableKeys;
+  }
+  
+  private void refreshAdapter() {
+    if (mAdapter != null && mPager != null) {
+      List<QuickTextKey> filteredKeys = getCurrentFilteredKeys();
+      
+      // Create a new adapter with the filtered keys
+      QuickKeysKeyboardPagerAdapter newAdapter =
+          new QuickKeysKeyboardPagerAdapter(
+              getContext(),
+              mPager,
+              filteredKeys,
+              mAdapter.getKeyboardActionListener(),
+              mDefaultSkinTonePrefTracker,
+              mDefaultGenderPrefTracker,
+              mKeyboardTheme,
+              mBottomPadding);
+      
+      // Update the adapter
+      mAdapter = newAdapter;
+      mPager.setAdapter(mAdapter);
+      
+      // Update the tab strip
+      PagerSlidingTabStrip pagerTabStrip = findViewById(R.id.pager_tabs);
+      if (pagerTabStrip != null) {
+        pagerTabStrip.setViewPager(mPager);
+      }
+    }
+  }
+  
+  // Public methods for search integration
+  
+  public void updateSearchQuery(@NonNull String query) {
+    mEmojiSearchManager.updateSearchQuery(query);
+  }
+  
+  public void startEmojiSearch() {
+    mEmojiSearchManager.startSearch();
+  }
+  
+  public void endEmojiSearch() {
+    mEmojiSearchManager.endSearch();
+  }
+  
+  public boolean isEmojiSearchActive() {
+    return mEmojiSearchManager.isSearchActive();
+  }
+  
+  // EmojiSearchManager.SearchListener implementation
+  
+  @Override
+  public void onSearchResultsChanged(@NonNull String query, @NonNull List<QuickTextKey> results) {
+    // Refresh the adapter with filtered results
+    refreshAdapter();
+    updateSearchUI();
+  }
+  
+  @Override
+  public void onSearchStateChanged(boolean isActive) {
+    updateSearchUI();
+    if (!isActive) {
+      // Search ended, refresh to show all keys
+      refreshAdapter();
+    }
   }
 }

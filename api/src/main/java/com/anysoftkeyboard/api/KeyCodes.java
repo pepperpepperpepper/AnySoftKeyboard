@@ -14,6 +14,7 @@ public class KeyCodes {
   public static final int QUICK_TEXT = -10;
   public static final int QUICK_TEXT_POPUP = -102;
   public static final int CLEAR_QUICK_TEXT_HISTORY = -103;
+  public static final int EMOJI_SEARCH = -104;
   public static final int DOMAIN = -9;
 
   public static final int SHIFT = -1;

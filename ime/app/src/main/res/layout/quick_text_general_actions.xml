@@ -35,6 +35,25 @@
         android:scaleType="centerInside"
         android:src="@drawable/ic_delete_forever_dark" />
 
+    <TextView
+        android:id="@+id/quick_keys_search_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:gravity="center"
+        android:text="🔍"
+        android:textSize="20sp"
+        android:visibility="gone"
+        android:contentDescription="@string/emoji_search_mode" />
+
+    <ImageView
+        android:id="@+id/quick_keys_clear_search"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/sym_keyboard_cancel"
+        android:visibility="gone"
+        android:contentDescription="@string/clear_emoji_search" />
+
     <View
         android:layout_width="1px"
         android:layout_height="0px"
