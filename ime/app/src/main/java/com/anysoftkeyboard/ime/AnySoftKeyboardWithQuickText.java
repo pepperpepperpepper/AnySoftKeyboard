@@ -143,33 +143,11 @@ public abstract class AnySoftKeyboardWithQuickText extends AnySoftKeyboardMediaI
     return super.handleCloseRequest() || cleanUpQuickTextKeyboard(true);
   }
   
-  // Emoji search integration methods
-  
-  protected void startEmojiSearch() {
-    if (mQuickTextPagerView != null) {
-      mQuickTextPagerView.startEmojiSearch();
-    }
-  }
-  
-  protected void endEmojiSearch() {
-    if (mQuickTextPagerView != null) {
-      mQuickTextPagerView.endEmojiSearch();
-    }
-  }
-  
-  protected boolean isEmojiSearchActive() {
-    return mQuickTextPagerView != null && mQuickTextPagerView.isEmojiSearchActive();
-  }
-  
-  @Override
+@Override
   public void onKey(
       int primaryCode, Keyboard.Key key, int multiTapIndex, int[] nearByKeyCodes, boolean fromUI) {
     if (primaryCode == KeyCodes.EMOJI_SEARCH) {
-      if (isEmojiSearchActive()) {
-        endEmojiSearch();
-      } else {
-        startEmojiSearch();
-      }
+      // Emoji search functionality removed - using built-in tag searching instead
     } else {
       super.onKey(primaryCode, key, multiTapIndex, nearByKeyCodes, fromUI);
     }

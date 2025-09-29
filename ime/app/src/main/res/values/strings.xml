@@ -1045,9 +1045,5 @@
     <string name="openai_saved_prompts_error_text_required">Please enter prompt text</string>
     <string name="openai_saved_prompts_error_save_failed">Failed to save prompt</string>
     
-    <!-- Emoji Search Strings -->
-    <string name="emoji_search_mode">Emoji search mode active</string>
-    <string name="clear_emoji_search">Clear emoji search</string>
-    <string name="delete_search_char">Delete character</string>
-    <string name="finish_search">Finish search</string>
+    
     </resources>
