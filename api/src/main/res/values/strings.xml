@@ -45,6 +45,16 @@
     <string name="openai_prompt_summary">Optional prompt to guide transcription style and spelling (max 224 tokens)</string>
     <string name="openai_prompt_dialog_title">Enter Transcription Customization Prompt</string>
     
+    <string name="openai_use_default_prompt_title">Use Default Prompt</string>
+    <string name="openai_use_default_prompt_summary">Use optimized default prompts for better transcription quality</string>
+    
+    <string name="openai_default_prompt_type_title">Default Prompt Type</string>
+    <string name="openai_default_prompt_type_summary">Choose the default prompt template based on your model</string>
+    <string name="openai_default_prompt_type_dialog_title">Select Default Prompt Type</string>
+    
+    <string name="openai_append_custom_prompt_title">Append Custom Prompt</string>
+    <string name="openai_append_custom_prompt_summary">Append your custom prompt to the default prompt (instead of replacing it)</string>
+    
     <string name="openai_behavior_settings_group">Behavior Settings</string>
     
     
@@ -74,4 +84,9 @@
     <string name="openai_copy_destination_summary">Directory path where audio files will be copied before sending to OpenAI API</string>
     <string name="openai_copy_destination_dialog_title">Enter Destination Directory Path</string>
     <string name="openai_copy_destination_default">Default (app external files directory)</string>
+    
+    <!-- Default prompt type entries -->
+    <string name="openai_default_prompt_type_whisper">Whisper-1 (Basic formatting)</string>
+    <string name="openai_default_prompt_type_gpt4_dictation">GPT-4o (Dictation mode with punctuation)</string>
+    <string name="openai_default_prompt_type_none">None (Custom only)</string>
 </resources>

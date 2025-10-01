@@ -75,6 +75,9 @@ public class OpenAITranscriber {
             @NonNull String chunkingStrategy,
             @NonNull String prompt,
             boolean addTrailingSpace,
+            boolean useDefaultPrompt,
+            @NonNull String defaultPromptType,
+            boolean appendCustomPrompt,
             @NonNull TranscriptionCallback callback) {
         
         // Validate inputs
@@ -91,7 +94,7 @@ public class OpenAITranscriber {
         // Run transcription in a background thread
         new Thread(() -> {
             try {
-                String result = performTranscription(filename, mediaType, apiKey, endpoint, model, language, temperature, responseFormat, chunkingStrategy, prompt);
+                String result = performTranscription(filename, mediaType, apiKey, endpoint, model, language, temperature, responseFormat, chunkingStrategy, prompt, useDefaultPrompt, defaultPromptType, appendCustomPrompt);
                 
                 // Post result to main thread
                 postResultToMainThread(result, addTrailingSpace, callback);
@@ -117,7 +120,10 @@ public class OpenAITranscriber {
             String temperature,
             String responseFormat,
             String chunkingStrategy,
-            String prompt) throws IOException {
+            String prompt,
+            boolean useDefaultPrompt,
+            String defaultPromptType,
+            boolean appendCustomPrompt) throws IOException {
         
         File audioFile = new File(filename);
         if (!audioFile.exists()) {
@@ -162,19 +168,29 @@ public class OpenAITranscriber {
             Log.w(TAG, "Invalid temperature value: " + temperature + ", using default");
         }
         
-        // Add chunking strategy if not "none"
-        if (!"none".equals(chunkingStrategy)) {
-            requestBodyBuilder.addFormDataPart("chunking_strategy", chunkingStrategy);
-            formFieldValues.put("chunking_strategy", chunkingStrategy);
+        // Add chunking strategy if not "none" and model supports it
+        if (!"none".equals(chunkingStrategy) && isChunkingStrategySupported(model)) {
+            String chunkingStrategyValue = formatChunkingStrategy(chunkingStrategy);
+            requestBodyBuilder.addFormDataPart("chunking_strategy", chunkingStrategyValue);
+            formFieldValues.put("chunking_strategy", chunkingStrategyValue);
+        }
+        
+        // Handle default prompts and custom prompt combination
+        String finalPrompt = prompt;
+        if (useDefaultPrompt) {
+            OpenAIDefaultPrompts.PromptType promptTypeEnum = OpenAIDefaultPrompts.PromptType.fromValue(defaultPromptType);
+            String defaultPrompt = OpenAIDefaultPrompts.getDefaultPrompt(model, promptTypeEnum);
+            finalPrompt = OpenAIDefaultPrompts.combinePrompts(defaultPrompt, prompt, appendCustomPrompt);
+            Log.d(TAG, "Using default prompt type: " + defaultPromptType + ", append custom: " + appendCustomPrompt);
         }
         
         // Add prompt parameter if not empty
-        if (!prompt.isEmpty()) {
-            Log.d(TAG, "Adding prompt to request: " + prompt);
-            requestBodyBuilder.addFormDataPart("prompt", prompt);
-            formFieldValues.put("prompt", prompt);
+        if (!finalPrompt.isEmpty()) {
+            Log.d(TAG, "Adding final prompt to request: " + finalPrompt);
+            requestBodyBuilder.addFormDataPart("prompt", finalPrompt);
+            formFieldValues.put("prompt", finalPrompt);
         } else {
-            Log.d(TAG, "Prompt is empty, not adding to request");
+            Log.d(TAG, "Final prompt is empty, not adding to request");
         }
         
         RequestBody requestBody = requestBodyBuilder.build();
@@ -215,6 +231,10 @@ public class OpenAITranscriber {
             }
             
             String result = responseBody.trim();
+            // Replace newlines with spaces to maintain sentence separation
+            result = result.replaceAll("\\n+", " ");
+            // Replace multiple spaces with single space
+            result = result.replaceAll(" +", " ");
             Log.d(TAG, "Transcription result: " + result);
             Log.d(TAG, "Checking if debug format - responseFormat: '" + responseFormat + "', equals debug: " + "debug".equals(responseFormat));
             
@@ -360,5 +380,26 @@ public class OpenAITranscriber {
                 Log.e(TAG, "Error in error callback", e);
             }
         });
+    }
+    
+    /**
+     * Checks if the specified model supports chunking_strategy parameter
+     */
+    private boolean isChunkingStrategySupported(String model) {
+        // whisper-1 does not support chunking_strategy
+        // gpt-4o-transcribe and gpt-4o-mini-transcribe support it
+        return "gpt-4o-transcribe".equals(model) || "gpt-4o-mini-transcribe".equals(model);
+    }
+    
+    /**
+     * Formats the chunking strategy value according to OpenAI API requirements
+     */
+    private String formatChunkingStrategy(String chunkingStrategy) {
+        // For supported models, chunking_strategy should be a JSON object
+        if ("auto".equals(chunkingStrategy) || "server_vad".equals(chunkingStrategy)) {
+            return "{\"type\": \"server_vad\"}";
+        }
+        // Return as-is for any other values (though "none" should be filtered out before this)
+        return chunkingStrategy;
     }
 }

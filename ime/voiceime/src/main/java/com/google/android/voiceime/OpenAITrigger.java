@@ -397,6 +397,21 @@ public class OpenAITrigger implements Trigger {
         boolean addTrailingSpace = mSharedPreferences.getBoolean(
             mInputMethodService.getString(R.string.settings_key_openai_add_trailing_space), true);
         
+        // Get default prompt settings
+        boolean useDefaultPrompt = mSharedPreferences.getBoolean(
+            mInputMethodService.getString(R.string.settings_key_openai_use_default_prompt), false);
+        String defaultPromptType = mSharedPreferences.getString(
+            mInputMethodService.getString(R.string.settings_key_openai_default_prompt_type), "whisper");
+        boolean appendCustomPrompt = mSharedPreferences.getBoolean(
+            mInputMethodService.getString(R.string.settings_key_openai_append_custom_prompt), true);
+        
+        // Auto-select recommended prompt type if not set
+        if (useDefaultPrompt && "whisper".equals(defaultPromptType)) {
+            OpenAIDefaultPrompts.PromptType recommendedType = OpenAIDefaultPrompts.getRecommendedPromptType(model);
+            defaultPromptType = recommendedType.getValue();
+            Log.d(TAG, "Auto-selected prompt type: " + defaultPromptType + " for model: " + model);
+        }
+        
         // Update status to "Transcribing"
         updateTranscriptionStatus(true);
         notifyTranscriptionStateChanged(true);
@@ -415,6 +430,9 @@ public class OpenAITrigger implements Trigger {
             chunkingStrategy,
             prompt,
             addTrailingSpace,
+            useDefaultPrompt,
+            defaultPromptType,
+            appendCustomPrompt,
             new OpenAITranscriber.TranscriptionCallback() {
                 @Override
                 public void onResult(String result) {

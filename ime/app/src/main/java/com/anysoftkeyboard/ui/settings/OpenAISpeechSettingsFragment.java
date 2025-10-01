@@ -19,6 +19,7 @@ package com.anysoftkeyboard.ui.settings;
 import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.NonNull;
+import androidx.preference.ListPreference;
 import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -38,6 +39,38 @@ public class OpenAISpeechSettingsFragment extends PreferenceFragmentCompat {
                 // Let the preference handle the value change
                 return true;
             });
+        }
+        
+        // Set up default prompt type preference to auto-select based on model
+        ListPreference defaultPromptTypePreference = findPreference(getString(R.string.settings_key_openai_default_prompt_type));
+        if (defaultPromptTypePreference != null) {
+            defaultPromptTypePreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                // Update summary to show selected option
+                if (newValue instanceof String) {
+                    String[] entries = getResources().getStringArray(R.array.openai_default_prompt_type_entries);
+                    String[] values = getResources().getStringArray(R.array.openai_default_prompt_type_values);
+                    for (int i = 0; i < values.length; i++) {
+                        if (values[i].equals(newValue)) {
+                            defaultPromptTypePreference.setSummary(entries[i]);
+                            break;
+                        }
+                    }
+                }
+                return true;
+            });
+            
+            // Set initial summary
+            String currentValue = defaultPromptTypePreference.getValue();
+            if (currentValue != null) {
+                String[] entries = getResources().getStringArray(R.array.openai_default_prompt_type_entries);
+                String[] values = getResources().getStringArray(R.array.openai_default_prompt_type_values);
+                for (int i = 0; i < values.length; i++) {
+                    if (values[i].equals(currentValue)) {
+                        defaultPromptTypePreference.setSummary(entries[i]);
+                        break;
+                    }
+                }
+            }
         }
         
         // Set up the saved prompts preference

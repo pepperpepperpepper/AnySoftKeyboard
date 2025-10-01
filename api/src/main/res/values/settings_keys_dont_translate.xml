@@ -12,6 +12,9 @@
     <string name="settings_key_openai_add_trailing_space">settings_key_openai_add_trailing_space</string>
     <string name="settings_key_openai_prompt">settings_key_openai_prompt</string>
     <string name="settings_key_openai_copy_destination">settings_key_openai_copy_destination</string>
+    <string name="settings_key_openai_use_default_prompt">settings_key_openai_use_default_prompt</string>
+    <string name="settings_key_openai_default_prompt_type">settings_key_openai_default_prompt_type</string>
+    <string name="settings_key_openai_append_custom_prompt">settings_key_openai_append_custom_prompt</string>
     
     <string-array name="openai_audio_format_values">
         <item>m4a</item>
@@ -49,5 +52,16 @@
     <string-array name="openai_model_entries">
         <item>Whisper-1</item>
         <item>GPT-4o Transcribe</item>
+    </string-array>
+    
+    <string-array name="openai_default_prompt_type_values">
+        <item>whisper</item>
+        <item>gpt4_dictation</item>
+        <item>none</item>
+    </string-array>
+    <string-array name="openai_default_prompt_type_entries">
+        <item>Whisper-1 (Basic formatting)</item>
+        <item>GPT-4o (Dictation mode with punctuation)</item>
+        <item>None (Custom only)</item>
     </string-array>
 </resources>

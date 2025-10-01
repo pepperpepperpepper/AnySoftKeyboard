@@ -363,6 +363,9 @@
     <string name="settings_key_openai_prompt">settings_key_openai_prompt</string>
     <string name="settings_key_openai_saved_prompts">settings_key_openai_saved_prompts</string>
     <string name="settings_key_openai_copy_destination">settings_key_openai_copy_destination</string>
+    <string name="settings_key_openai_use_default_prompt">settings_key_openai_use_default_prompt</string>
+    <string name="settings_key_openai_default_prompt_type">settings_key_openai_default_prompt_type</string>
+    <string name="settings_key_openai_append_custom_prompt">settings_key_openai_append_custom_prompt</string>
     
     <string-array name="openai_audio_format_values">
         <item>m4a</item>
@@ -388,19 +391,23 @@
     
     <string-array name="openai_chunking_strategy_values">
         <item>auto</item>
+        <item>server_vad</item>
         <item>none</item>
     </string-array>
     <string-array name="openai_chunking_strategy_entries">
         <item>Auto (split long files)</item>
+        <item>Server VAD (voice activity detection)</item>
         <item>None (no splitting)</item>
     </string-array>
     
     <string-array name="openai_model_values">
         <item>whisper-1</item>
         <item>gpt-4o-transcribe</item>
+        <item>gpt-4o-mini-transcribe</item>
     </string-array>
     <string-array name="openai_model_entries">
         <item>Whisper-1</item>
         <item>GPT-4o Transcribe</item>
+        <item>GPT-4o Mini Transcribe</item>
     </string-array>
 </resources>
