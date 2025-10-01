@@ -307,6 +307,8 @@ public class OpenAITrigger implements Trigger {
         
         try {
             mAudioRecorderManager.startRecording(mRecordedAudioFilename, false); // Always use M4A format
+            // Set up auto-stop for 5 minutes
+            mAudioRecorderManager.setupAutoStop();
             mIsRecording = true;
             notifyRecordingStateChanged(true); // Notify about state change
             Log.d(TAG, "Started recording to: " + mRecordedAudioFilename);

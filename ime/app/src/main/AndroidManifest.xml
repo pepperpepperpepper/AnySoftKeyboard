@@ -19,6 +19,8 @@
     <!-- REQUIRED FOR OPENAI SPEECH-TO-TEXT -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- REQUIRED TO KEEP DEVICE AWAKE DURING RECORDING -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- currently, only support touch and fake-touch devices -->
     <uses-feature android:name="android.hardware.faketouch" />
     <uses-feature
