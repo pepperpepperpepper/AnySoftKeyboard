@@ -11,6 +11,7 @@
     <string name="settings_key_openai_chunking_strategy">settings_key_openai_chunking_strategy</string>
     <string name="settings_key_openai_add_trailing_space">settings_key_openai_add_trailing_space</string>
     <string name="settings_key_openai_prompt">settings_key_openai_prompt</string>
+    <string name="settings_key_openai_copy_destination">settings_key_openai_copy_destination</string>
     
     <string-array name="openai_audio_format_values">
         <item>m4a</item>

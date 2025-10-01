@@ -165,12 +165,12 @@ public class AudioRecorderManager {
         Log.d(TAG, "Stopping recording");
         
         try {
-            // Stop amplitude updates
-            stopAmplitudeUpdates();
-            
-            // Stop recording
+            // Stop recording FIRST before stopping amplitude updates to prevent interference
             mMediaRecorder.stop();
             mIsRecording = false;
+            
+            // Stop amplitude updates after recording is stopped
+            stopAmplitudeUpdates();
             
             // Notify callback of success
             if (mRecordingCallback != null) {

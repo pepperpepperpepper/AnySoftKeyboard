@@ -23,6 +23,13 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /** Triggers a voice recognition using OpenAI's Whisper API. */
 public class OpenAITrigger implements Trigger {
@@ -37,6 +44,7 @@ public class OpenAITrigger implements Trigger {
     private String mLastRecognitionResult;
     private String mRecordedAudioFilename;
     private String mAudioMediaType;
+    private String mCopiedAudioFilename;
     
     private boolean mIsRecording = false;
     
@@ -332,6 +340,16 @@ public class OpenAITrigger implements Trigger {
             return;
         }
         
+        // Copy the audio file to a different location before sending to API
+        try {
+            mCopiedAudioFilename = copyAudioFileToDestination(mRecordedAudioFilename);
+            Log.d(TAG, "Audio file copied to: " + mCopiedAudioFilename);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to copy audio file", e);
+            showError("Failed to copy audio file: " + e.getMessage());
+            return;
+        }
+        
         // Get OpenAI configuration from preferences
         String apiKey = mSharedPreferences.getString(
             mInputMethodService.getString(R.string.settings_key_openai_api_key), "");
@@ -386,7 +404,7 @@ public class OpenAITrigger implements Trigger {
         // Start transcription
         mOpenAITranscriber.startAsync(
             mInputMethodService,
-            mRecordedAudioFilename,
+            mCopiedAudioFilename,
             mAudioMediaType,
             apiKey,
             endpoint,
@@ -416,6 +434,54 @@ public class OpenAITrigger implements Trigger {
                 }
             }
         );
+    }
+    
+    /**
+     * Copies the audio file to a destination directory before sending to OpenAI API.
+     * @param sourcePath The original audio file path
+     * @return The path to the copied file
+     * @throws IOException if the copy operation fails
+     */
+    private String copyAudioFileToDestination(String sourcePath) throws IOException {
+        File sourceFile = new File(sourcePath);
+        
+        // Get destination directory from preferences or use default
+        String destinationDirPath = mSharedPreferences.getString(
+            mInputMethodService.getString(R.string.settings_key_openai_copy_destination), "");
+        
+        File destinationDir;
+        if (destinationDirPath.isEmpty()) {
+            // Use default destination in external files directory
+            destinationDir = new File(mInputMethodService.getExternalFilesDir(null), "openai_audio_copies");
+        } else {
+            destinationDir = new File(destinationDirPath);
+        }
+        
+        // Create destination directory if it doesn't exist
+        if (!destinationDir.exists()) {
+            boolean created = destinationDir.mkdirs();
+            if (!created) {
+                throw new IOException("Failed to create destination directory: " + destinationDir.getAbsolutePath());
+            }
+        }
+        
+        // Generate unique filename with timestamp
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+        String timestamp = dateFormat.format(new Date());
+        String copiedFileName = "recorded_" + timestamp + ".m4a";
+        File copiedFile = new File(destinationDir, copiedFileName);
+        
+        // Copy the file using FileChannel for better performance
+        try (FileInputStream inStream = new FileInputStream(sourceFile);
+             FileOutputStream outStream = new FileOutputStream(copiedFile);
+             FileChannel inChannel = inStream.getChannel();
+             FileChannel outChannel = outStream.getChannel()) {
+            
+            outChannel.transferFrom(inChannel, 0, inChannel.size());
+        }
+        
+        Log.d(TAG, "Successfully copied audio file from " + sourcePath + " to " + copiedFile.getAbsolutePath());
+        return copiedFile.getAbsolutePath();
     }
     
     private String formatFileSize(long bytes) {
@@ -502,19 +568,27 @@ public class OpenAITrigger implements Trigger {
     }
     
     private void cleanupAudioFile() {
-        try {
-            File file = new File(mRecordedAudioFilename);
-            if (file.exists()) {
-                boolean deleted = file.delete();
-                if (deleted) {
-                    Log.d(TAG, "Audio file deleted: " + mRecordedAudioFilename);
-                } else {
-                    Log.w(TAG, "Failed to delete audio file: " + mRecordedAudioFilename);
+        // Clean up original recorded file
+        if (mRecordedAudioFilename != null) {
+            try {
+                File file = new File(mRecordedAudioFilename);
+                if (file.exists()) {
+                    boolean deleted = file.delete();
+                    if (deleted) {
+                        Log.d(TAG, "Original audio file deleted: " + mRecordedAudioFilename);
+                    } else {
+                        Log.w(TAG, "Failed to delete original audio file: " + mRecordedAudioFilename);
+                    }
                 }
+            } catch (Exception e) {
+                Log.e(TAG, "Error cleaning up original audio file", e);
             }
-        } catch (Exception e) {
-            Log.e(TAG, "Error cleaning up audio file", e);
         }
+        
+        // NOTE: We do NOT clean up the copied file since the purpose is to keep it
+        // The copied file will remain in the destination directory for user access
+        Log.d(TAG, "Keeping copied audio file at: " + mCopiedAudioFilename);
+        mCopiedAudioFilename = null;
     }
     
     private void showError(String message) {

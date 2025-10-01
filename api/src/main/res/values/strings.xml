@@ -70,4 +70,8 @@
     <string name="speech_recognition_group">Speech Recognition</string>
     <string name="openai_speech_settings_title">OpenAI Speech-to-Text</string>
     <string name="openai_speech_settings_summary">Configure OpenAI API for voice input</string>
+    <string name="openai_copy_destination_title">Copy Audio Files To</string>
+    <string name="openai_copy_destination_summary">Directory path where audio files will be copied before sending to OpenAI API</string>
+    <string name="openai_copy_destination_dialog_title">Enter Destination Directory Path</string>
+    <string name="openai_copy_destination_default">Default (app external files directory)</string>
 </resources>

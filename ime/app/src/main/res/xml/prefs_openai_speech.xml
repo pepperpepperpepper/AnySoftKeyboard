@@ -105,6 +105,14 @@
             android:defaultValue="false"
             android:persistent="true" />
 
+        <androidx.preference.EditTextPreference
+            android:key="@string/settings_key_openai_copy_destination"
+            android:title="@string/openai_copy_destination_title"
+            android:summary="@string/openai_copy_destination_summary"
+            android:dialogTitle="@string/openai_copy_destination_dialog_title"
+            android:defaultValue=""
+            android:persistent="true" />
+
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
